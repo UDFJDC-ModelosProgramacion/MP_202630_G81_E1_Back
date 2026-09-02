@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class Vacuna extends BaseEntity {
+public class VacunaEntity extends BaseEntity {
 
 	private String nombre;
 

@@ -22,14 +22,14 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
  */
 @DataJpaTest
 @Transactional
-public class AdoptanteTest {
+public class AdoptanteEntityTest {
 
 	@Autowired
 	private TestEntityManager entityManager;
 
 	private final PodamFactory factory = new PodamFactoryImpl();
 
-	private final List<Adoptante> data = new ArrayList<>();
+	private final List<AdoptanteEntity> data = new ArrayList<>();
 
 	@BeforeEach
 	void setUp() {
@@ -38,12 +38,12 @@ public class AdoptanteTest {
 	}
 
 	private void clearData() {
-		entityManager.getEntityManager().createQuery("delete from Adoptante").executeUpdate();
+		entityManager.getEntityManager().createQuery("delete from AdoptanteEntity").executeUpdate();
 	}
 
 	private void insertData() {
 		for (int i = 0; i < 3; i++) {
-			Adoptante entity = factory.manufacturePojo(Adoptante.class);
+			AdoptanteEntity entity = factory.manufacturePojo(AdoptanteEntity.class);
 			entityManager.persist(entity);
 			data.add(entity);
 		}
@@ -51,8 +51,8 @@ public class AdoptanteTest {
 
 	@Test
 	void testCreateAdoptante() {
-		Adoptante newEntity = factory.manufacturePojo(Adoptante.class);
-		Adoptante result = entityManager.persistFlushFind(newEntity);
+		AdoptanteEntity newEntity = factory.manufacturePojo(AdoptanteEntity.class);
+		AdoptanteEntity result = entityManager.persistFlushFind(newEntity);
 
 		assertNotNull(result);
 		assertEquals(newEntity.getNombre(), result.getNombre());
@@ -64,8 +64,8 @@ public class AdoptanteTest {
 
 	@Test
 	void testGetAdoptante() {
-		Adoptante entity = data.get(0);
-		Adoptante result = entityManager.find(Adoptante.class, entity.getId());
+		AdoptanteEntity entity = data.get(0);
+		AdoptanteEntity result = entityManager.find(AdoptanteEntity.class, entity.getId());
 
 		assertNotNull(result);
 		assertEquals(entity.getNombre(), result.getNombre());
@@ -74,8 +74,8 @@ public class AdoptanteTest {
 
 	@Test
 	void testUpdateAdoptante() {
-		Adoptante entity = data.get(0);
-		Adoptante newData = factory.manufacturePojo(Adoptante.class);
+		AdoptanteEntity entity = data.get(0);
+		AdoptanteEntity newData = factory.manufacturePojo(AdoptanteEntity.class);
 
 		entity.setNombre(newData.getNombre());
 		entity.setTelefono(newData.getTelefono());
@@ -84,7 +84,7 @@ public class AdoptanteTest {
 		entity.setCiudad(newData.getCiudad());
 		entityManager.merge(entity);
 
-		Adoptante resp = entityManager.find(Adoptante.class, entity.getId());
+		AdoptanteEntity resp = entityManager.find(AdoptanteEntity.class, entity.getId());
 		assertEquals(newData.getNombre(), resp.getNombre());
 		assertEquals(newData.getEmail(), resp.getEmail());
 		assertEquals(newData.getCiudad(), resp.getCiudad());
@@ -92,10 +92,10 @@ public class AdoptanteTest {
 
 	@Test
 	void testDeleteAdoptante() {
-		Adoptante entity = data.get(0);
+		AdoptanteEntity entity = data.get(0);
 		entityManager.remove(entity);
 
-		Adoptante deleted = entityManager.find(Adoptante.class, entity.getId());
+		AdoptanteEntity deleted = entityManager.find(AdoptanteEntity.class, entity.getId());
 		assertNull(deleted);
 	}
 

@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class Adoptante extends BaseEntity {
+public class AdoptanteEntity extends BaseEntity {
 
 	private String nombre;
 

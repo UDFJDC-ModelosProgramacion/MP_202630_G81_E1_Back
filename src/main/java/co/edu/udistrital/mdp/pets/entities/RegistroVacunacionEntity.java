@@ -24,7 +24,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class RegistroVacunacion extends BaseEntity {
+public class RegistroVacunacionEntity extends BaseEntity {
 
 	@Temporal(TemporalType.DATE)
 	private Date fechaAplicacion;
@@ -37,6 +37,6 @@ public class RegistroVacunacion extends BaseEntity {
 	private String observacion;
 
 	@ManyToOne
-	private Vacuna vacuna;
+	private VacunaEntity vacuna;
 
 }

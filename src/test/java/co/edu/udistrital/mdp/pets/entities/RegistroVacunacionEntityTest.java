@@ -24,16 +24,16 @@ import java.util.Date;
  */
 @DataJpaTest
 @Transactional
-public class RegistroVacunacionTest {
+public class RegistroVacunacionEntityTest {
 
 	@Autowired
 	private TestEntityManager entityManager;
 
 	private final PodamFactory factory = new PodamFactoryImpl();
 
-	private final List<RegistroVacunacion> data = new ArrayList<>();
+	private final List<RegistroVacunacionEntity> data = new ArrayList<>();
 
-	private Vacuna vacuna;
+	private VacunaEntity vacuna;
 
 	@BeforeEach
 	void setUp() {
@@ -42,16 +42,16 @@ public class RegistroVacunacionTest {
 	}
 
 	private void clearData() {
-		entityManager.getEntityManager().createQuery("delete from RegistroVacunacion").executeUpdate();
-		entityManager.getEntityManager().createQuery("delete from Vacuna").executeUpdate();
+		entityManager.getEntityManager().createQuery("delete from RegistroVacunacionEntity").executeUpdate();
+		entityManager.getEntityManager().createQuery("delete from VacunaEntity").executeUpdate();
 	}
 
 	private void insertData() {
-		vacuna = factory.manufacturePojo(Vacuna.class);
+		vacuna = factory.manufacturePojo(VacunaEntity.class);
 		entityManager.persist(vacuna);
 
 		for (int i = 0; i < 3; i++) {
-			RegistroVacunacion entity = factory.manufacturePojo(RegistroVacunacion.class);
+			RegistroVacunacionEntity entity = factory.manufacturePojo(RegistroVacunacionEntity.class);
 			entity.setVacuna(vacuna);
 			entityManager.persist(entity);
 			data.add(entity);
@@ -60,10 +60,10 @@ public class RegistroVacunacionTest {
 
 	@Test
 	void testCreateRegistroVacunacion() {
-	    RegistroVacunacion newEntity = factory.manufacturePojo(RegistroVacunacion.class);
+	    RegistroVacunacionEntity newEntity = factory.manufacturePojo(RegistroVacunacionEntity.class);
 	    newEntity.setVacuna(vacuna);
 
-	    RegistroVacunacion result = entityManager.persistFlushFind(newEntity);
+	    RegistroVacunacionEntity result = entityManager.persistFlushFind(newEntity);
 
 	    assertNotNull(result);
 	    // fechaAplicacion/proximaFecha están mapeadas como @Temporal(TemporalType.DATE),
@@ -87,8 +87,8 @@ public class RegistroVacunacionTest {
 
 	@Test
 	void testGetRegistroVacunacion() {
-		RegistroVacunacion entity = data.get(0);
-		RegistroVacunacion result = entityManager.find(RegistroVacunacion.class, entity.getId());
+		RegistroVacunacionEntity entity = data.get(0);
+		RegistroVacunacionEntity result = entityManager.find(RegistroVacunacionEntity.class, entity.getId());
 
 		assertNotNull(result);
 		assertEquals(entity.getNumeroLote(), result.getNumeroLote());
@@ -97,24 +97,24 @@ public class RegistroVacunacionTest {
 
 	@Test
 	void testUpdateRegistroVacunacion() {
-		RegistroVacunacion entity = data.get(0);
-		RegistroVacunacion newData = factory.manufacturePojo(RegistroVacunacion.class);
+		RegistroVacunacionEntity entity = data.get(0);
+		RegistroVacunacionEntity newData = factory.manufacturePojo(RegistroVacunacionEntity.class);
 
 		entity.setNumeroLote(newData.getNumeroLote());
 		entity.setObservacion(newData.getObservacion());
 		entityManager.merge(entity);
 
-		RegistroVacunacion resp = entityManager.find(RegistroVacunacion.class, entity.getId());
+		RegistroVacunacionEntity resp = entityManager.find(RegistroVacunacionEntity.class, entity.getId());
 		assertEquals(newData.getNumeroLote(), resp.getNumeroLote());
 		assertEquals(newData.getObservacion(), resp.getObservacion());
 	}
 
 	@Test
 	void testDeleteRegistroVacunacion() {
-		RegistroVacunacion entity = data.get(0);
+		RegistroVacunacionEntity entity = data.get(0);
 		entityManager.remove(entity);
 
-		RegistroVacunacion deleted = entityManager.find(RegistroVacunacion.class, entity.getId());
+		RegistroVacunacionEntity deleted = entityManager.find(RegistroVacunacionEntity.class, entity.getId());
 		assertNull(deleted);
 	}
 
