@@ -8,18 +8,17 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import uk.co.jemos.podam.common.PodamExclude;
 
 /**
- * Entidad que representa el registro de aplicación de una vacuna a una
- * mascota.
+ * Entidad que representa el registro de aplicación de una vacuna a una mascota.
  *
- * Relaciones ya implementadas:
- * - RegistroVacunacion "*" --> "1" Vacuna
+ * Relaciones implementadas: - RegistroVacunacionEntity "*" --> "1" VacunaEntity
+ * - MascotaEntity "1" --> "*" RegistroVacunacionEntity - SeguimientoEntity
+ * "0..1" --> "*" RegistroVacunacionEntity : origina
  *
- * Relaciones pendientes (entidades aún no creadas por el equipo):
- * - Mascota "1" --> "*" RegistroVacunacion
- * - Seguimiento "0..1" --> "*" RegistroVacunacion : origina
- * Cuando esas entidades existan, agregar aquí el @ManyToOne correspondiente.
+ * MascotaEntity y SeguimientoEntity son placeholders temporales (ver esas
+ * clases) mientras sus responsables suben la versión completa a Develop.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -36,7 +35,16 @@ public class RegistroVacunacionEntity extends BaseEntity {
 
 	private String observacion;
 
+	@PodamExclude
 	@ManyToOne
 	private VacunaEntity vacuna;
+
+	@PodamExclude
+	@ManyToOne
+	private MascotaEntity mascota;
+
+	@PodamExclude
+	@ManyToOne
+	private SeguimientoEntity seguimientoOrigen;
 
 }

@@ -1,18 +1,28 @@
 package co.edu.udistrital.mdp.pets.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import uk.co.jemos.podam.common.PodamExclude;
 
 /**
  * Entidad que representa a una persona interesada en adoptar una mascota.
  *
- * Relaciones pendientes (entidades aún no creadas por el equipo):
- * - Adoptante "1" --> "*" SolicitudAdopcion
- * - Adoptante "1" --> "*" Mensaje
- * - Adoptante "1" --> "*" Resena
- * - Adoptante "1" --> "*" Notificacion
- * - Adoptante "1" --> "*" Actualizacion
+ * Relaciones implementadas:
+ * - AdoptanteEntity "1" --> "*" SolicitudAdopcionEntity
+ * - AdoptanteEntity "1" --> "*" MensajeEntity
+ * (SolicitudAdopcionEntity y MensajeEntity son placeholders temporales, ver
+ * esas clases, mientras sus responsables suben la versión completa a
+ * Develop).
+ *
+ * Relaciones pendientes (entidades que todavía no existen en ninguna rama):
+ * - AdoptanteEntity "1" --> "*" ResenaEntity
+ * - AdoptanteEntity "1" --> "*" NotificacionEntity
+ * - AdoptanteEntity "1" --> "*" ActualizacionEntity
  * Cuando esas entidades existan, agregar aquí los @OneToMany correspondientes.
  */
 @Data
@@ -29,5 +39,13 @@ public class AdoptanteEntity extends BaseEntity {
 	private String direccion;
 
 	private String ciudad;
+
+	@PodamExclude
+	@OneToMany(mappedBy = "adoptante")
+	private List<SolicitudAdopcionEntity> solicitudesAdopcion = new ArrayList<>();
+
+	@PodamExclude
+	@OneToMany(mappedBy = "adoptante")
+	private List<MensajeEntity> mensajes = new ArrayList<>();
 
 }
