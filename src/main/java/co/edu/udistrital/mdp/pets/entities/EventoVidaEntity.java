@@ -1,10 +1,15 @@
 package co.edu.udistrital.mdp.pets.entities;
 
+import java.sql.Date;
+
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
-
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Data;
 import uk.co.jemos.podam.common.PodamExclude;
 
@@ -16,48 +21,19 @@ import uk.co.jemos.podam.common.PodamExclude;
  */
 
 
- @Data
- @MappedSuperclass
+@Data
+@Entity
 public abstract class EventoVidaEntity extends BaseEntity {
     
-    // Attributes
-
-    @PodamExclude
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
     private String tipo;
-    private String fecha;
+
+    @Temporal(TemporalType.DATE)
+    private Date fecha;
+    
     private String descripcion;
 
-    //@ManyToOne
-    //private MascotaEntity mascota;
+    @PodamExclude
+    @ManyToOne
+    private MascotaEntity mascota;
 
-    // Getters and Setters
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public String getFecha() {
-        return fecha;
-    }
-
-
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 }
