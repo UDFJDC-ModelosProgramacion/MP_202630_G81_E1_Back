@@ -42,4 +42,8 @@ public class MensajeEntity extends BaseEntity {
     @PodamExclude
     @ManyToAny
     private ActualizacionEntity actualizacion;
+
+    @PodamExclude
+    @ManyToOne
+    private AdoptanteEntity adoptante;
 }
