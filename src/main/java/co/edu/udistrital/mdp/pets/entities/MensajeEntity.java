@@ -1,30 +1,49 @@
 package co.edu.udistrital.mdp.pets.entities;
 
+import java.sql.Date;
+
+import org.hibernate.annotations.ManyToAny;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import uk.co.jemos.podam.common.PodamExclude;
 
 /**
- * PLACEHOLDER TEMPORAL.
+ * Entidad de contencion de los mensajes
+ * 
  *
- * Esta clase le corresponde implementar por completo al integrante
- * encargado de Mensaje (rama feature/Samuel_Branch). Solo se agregó el
- * campo 'adoptante', porque es necesario para que compile la relación
- * AdoptanteEntity "1" --> "*" MensajeEntity (mappedBy) desde este lado.
- *
- * Cuando esa rama se integre a Develop, este archivo debe reemplazarse por
- * la versión completa (con sus atributos y demás asociaciones), conservando
- * este campo 'adoptante' para que la relación no se rompa.
+ * @author Samuel Leonardo Acosta Cruz
  */
+
+
 @Data
-@EqualsAndHashCode(callSuper = true)
 @Entity
 public class MensajeEntity extends BaseEntity {
 
-	@PodamExclude
-	@ManyToOne
-	private AdoptanteEntity adoptante;
+    @Temporal(TemporalType.DATE)
+    private Date fecha;
 
+    private String asunto;
+    private String contenido;
+
+    private boolean leido;
+
+    @PodamExclude
+    @ManyToOne
+    private MascotaEntity mascota;
+
+    @PodamExclude
+    @ManyToAny
+    private ActualizacionEntity actualizacion;
+
+    @PodamExclude
+    @ManyToOne
+    private AdoptanteEntity adoptante;
 }
