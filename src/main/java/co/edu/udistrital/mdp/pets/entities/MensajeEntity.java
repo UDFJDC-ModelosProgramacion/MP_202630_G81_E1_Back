@@ -25,7 +25,6 @@ import uk.co.jemos.podam.common.PodamExclude;
 
 @Data
 @Entity
-@MappedSuperclass
 public class MensajeEntity extends BaseEntity {
 
     @Temporal(TemporalType.DATE)
