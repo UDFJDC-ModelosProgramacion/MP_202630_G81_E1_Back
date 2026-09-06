@@ -1,23 +1,48 @@
 package co.edu.udistrital.mdp.pets.entities;
 
+import java.sql.Date;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import uk.co.jemos.podam.common.PodamExclude;
 
 /**
- * PLACEHOLDER TEMPORAL.
- *
- * Esta clase le corresponde implementar por completo al integrante
- * encargado de Seguimiento (rama David_branch). Se dejó vacía a propósito,
- * solo para que el tipo exista y se puedan compilar y probar las
- * asociaciones de RegistroVacunacionEntity hacia SeguimientoEntity desde
- * este lado.
- *
- * Cuando esa rama se integre a Develop, este archivo debe reemplazarse
- * por la versión completa (con sus atributos y demás asociaciones).
+ * Represents a follow-up / checkup record for a pet, assigned to a
+ * veterinarian.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
+@Table(name = "seguimiento")
 public class SeguimientoEntity extends BaseEntity {
+
+    @Temporal(TemporalType.DATE)
+    private Date fechaAsignacion;
+
+    @Temporal(TemporalType.DATE)
+    private Date proximaCita;
+
+    private String observacion;
+    private String estado;
+
+    // many Seguimiento are performed by one Veterinario
+    @PodamExclude
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "veterinario_id")
+    private VeterinarioEntity veterinario;
+
+    // many Seguimiento belong to one Mascota
+    @PodamExclude
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mascota_id")
+    private MascotaEntity mascota;
+
 }
