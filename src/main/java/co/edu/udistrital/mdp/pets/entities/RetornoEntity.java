@@ -14,6 +14,7 @@ import uk.co.jemos.podam.common.PodamExclude;
  * Entidad que representa el retorno de una mascota al refugio.
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 public class RetornoEntity extends BaseEntity {
 

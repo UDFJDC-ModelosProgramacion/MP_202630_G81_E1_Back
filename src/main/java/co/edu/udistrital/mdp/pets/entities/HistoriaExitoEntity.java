@@ -18,6 +18,7 @@ import uk.co.jemos.podam.common.PodamExclude;
 
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 public class HistoriaExitoEntity {
     

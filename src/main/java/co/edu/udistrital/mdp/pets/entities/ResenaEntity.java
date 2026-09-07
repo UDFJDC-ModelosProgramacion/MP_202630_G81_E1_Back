@@ -18,6 +18,7 @@ import uk.co.jemos.podam.common.PodamExclude;
  * @author Eddie Santiago Rondón Capera
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 public class ResenaEntity extends BaseEntity implements Serializable {
 

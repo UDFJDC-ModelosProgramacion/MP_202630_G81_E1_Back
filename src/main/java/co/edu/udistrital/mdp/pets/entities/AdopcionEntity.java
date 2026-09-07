@@ -14,6 +14,7 @@ import uk.co.jemos.podam.common.PodamExclude;
  * Entidad que representa una adopción.
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 public class AdopcionEntity extends BaseEntity {
 
