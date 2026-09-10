@@ -7,6 +7,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import uk.co.jemos.podam.common.PodamExclude;
 
 /**
@@ -20,7 +21,7 @@ import uk.co.jemos.podam.common.PodamExclude;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class HistoriaExitoEntity {
+public class HistoriaExitoEntity extends BaseEntity {
     
     private String titulo;
     
