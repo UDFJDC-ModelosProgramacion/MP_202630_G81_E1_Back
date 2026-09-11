@@ -16,7 +16,6 @@ import uk.co.jemos.podam.common.PodamExclude;
  */
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @MappedSuperclass
 public abstract class BaseEntity {
 
