@@ -3,7 +3,6 @@ package co.edu.udistrital.mdp.pets.entities;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -12,32 +11,29 @@ import lombok.Data;
 import uk.co.jemos.podam.common.PodamExclude;
 
 /**
- * Entidad que representa una solicitud de adopción.
+ * Entidad que representa una adopción.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class SolicitudAdopcionEntity extends BaseEntity {
+public class AdopcionEntity extends BaseEntity {
 
     @Temporal(TemporalType.DATE)
-    private Date fecha;
+    private Date fechaAdopcion;
 
     private String estado;
-
-    private String tipoSolicitud;
 
     private String observacion;
 
     @PodamExclude
-    @ManyToOne
-    private AdoptanteEntity adoptante;
+    @OneToOne
+    private SolicitudAdopcionEntity solicitud;
 
     @PodamExclude
-    @ManyToOne
-    private MascotaEntity mascota;
+    @OneToOne(mappedBy = "adopcion")
+    private PruebaConvivenciaEntity pruebaConvivencia;
 
     @PodamExclude
-    @OneToOne(mappedBy = "solicitud")
-    private AdopcionEntity adopcion;
-
+    @OneToOne(mappedBy = "adopcion")
+    private RetornoEntity retorno;
 }

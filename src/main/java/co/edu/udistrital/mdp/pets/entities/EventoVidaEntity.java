@@ -1,43 +1,36 @@
 package co.edu.udistrital.mdp.pets.entities;
 
-import java.util.Date;
+import java.sql.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-
 import lombok.Data;
 import uk.co.jemos.podam.common.PodamExclude;
 
 /**
- * Entidad que representa una solicitud de adopción.
+ * Entidad de registro para los eventos de la vida de una mascota en especifico
+ * 
+ *
+ * @author Samuel Leonardo Acosta Cruz
  */
+
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class SolicitudAdopcionEntity extends BaseEntity {
+public abstract class EventoVidaEntity extends BaseEntity {
+    
+    private String tipo;
 
     @Temporal(TemporalType.DATE)
     private Date fecha;
-
-    private String estado;
-
-    private String tipoSolicitud;
-
-    private String observacion;
-
-    @PodamExclude
-    @ManyToOne
-    private AdoptanteEntity adoptante;
+    
+    private String descripcion;
 
     @PodamExclude
     @ManyToOne
     private MascotaEntity mascota;
-
-    @PodamExclude
-    @OneToOne(mappedBy = "solicitud")
-    private AdopcionEntity adopcion;
 
 }
