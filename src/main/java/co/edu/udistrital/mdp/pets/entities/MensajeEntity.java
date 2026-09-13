@@ -2,17 +2,12 @@ package co.edu.udistrital.mdp.pets.entities;
 
 import java.sql.Date;
 
-import org.hibernate.annotations.ManyToAny;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import uk.co.jemos.podam.common.PodamExclude;
 
 /**
@@ -24,6 +19,7 @@ import uk.co.jemos.podam.common.PodamExclude;
 
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 public class MensajeEntity extends BaseEntity {
 
@@ -40,7 +36,7 @@ public class MensajeEntity extends BaseEntity {
     private MascotaEntity mascota;
 
     @PodamExclude
-    @ManyToAny
+    @ManyToOne
     private ActualizacionEntity actualizacion;
 
     @PodamExclude

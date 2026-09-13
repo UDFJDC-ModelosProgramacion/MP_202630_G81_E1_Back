@@ -8,12 +8,14 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import uk.co.jemos.podam.common.PodamExclude;
 
 /**
  * Entidad que representa una prueba de convivencia.
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 public class PruebaConvivenciaEntity extends BaseEntity {
 
