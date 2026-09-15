@@ -139,10 +139,10 @@
 						</goals>
 						<configuration>
 							<executable>
-								postman-combine-collections
+								npx
 							</executable>
 							<commandlineArgs>
-								--name Composed -f collections/*.postman_collection.json -o it/composed.collection.json
+								postman-combine-collections --name Composed -f collections/*.postman_collection.json -o it/composed.collection.json
 							</commandlineArgs>
 						</configuration>
 					</execution>
