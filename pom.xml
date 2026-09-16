@@ -105,7 +105,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.1</version>
-    		</plugin>
+    			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -125,6 +125,45 @@
             					</goals>
         				</execution>
     				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>combine-collection</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>
+								postman-combine-collections
+							</executable>
+							<commandlineArgs>
+								--name Composed -f collections/*.postman_collection.json -o it/composed.collection.json
+							</commandlineArgs>
+						</configuration>
+					</execution>
+					<!-- Remover esta línea
+					<execution>
+						<id>integration-tests-composed-collection</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>
+								newman
+							</executable>
+							<commandlineArgs>
+								run it/composed.collection.json -e collections/EntornoIT.postman_environment.json
+							</commandlineArgs>
+						</configuration>
+					</execution>
+					-->
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
