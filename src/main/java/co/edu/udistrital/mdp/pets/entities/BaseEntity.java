@@ -18,7 +18,7 @@ import uk.co.jemos.podam.common.PodamExclude;
 
 @Data
 @MappedSuperclass
-public abstract class BaseEntity {
+public abstract class BaseEntity implements Serializable {
 
 	@PodamExclude
 	@Id
