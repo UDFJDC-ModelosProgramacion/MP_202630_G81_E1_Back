@@ -2,6 +2,7 @@ package co.edu.udistrital.mdp.pets.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -28,7 +29,7 @@ import uk.co.jemos.podam.common.PodamExclude;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class AdoptanteEntity extends BaseEntity {
+public class AdoptanteEntity extends BaseEntity implements Serializable {
 
 	private String nombre;
 

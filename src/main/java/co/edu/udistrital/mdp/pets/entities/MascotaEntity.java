@@ -2,6 +2,7 @@ package co.edu.udistrital.mdp.pets.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -27,7 +28,7 @@ import uk.co.jemos.podam.common.PodamExclude;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "mascota")
-public class MascotaEntity extends BaseEntity {
+public class MascotaEntity extends BaseEntity implements Serializable {
 
     private String nombre;
     private String especie;

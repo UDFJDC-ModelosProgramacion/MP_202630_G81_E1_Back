@@ -22,7 +22,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
  */
 @DataJpaTest
 @Transactional
-public class VacunaEntityTest {
+class VacunaEntityTest {
 
 	@Autowired
 	private TestEntityManager entityManager;
