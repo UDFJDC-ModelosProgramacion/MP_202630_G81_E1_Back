@@ -15,8 +15,8 @@ public interface MensajeRepository extends JpaRepository<MensajeEntity, Long> {
 
     List<MensajeEntity> findByAdoptanteIdAndLeidoFalse(Long adoptanteId);
 
-    List<MensajeEntity> findByAdoptanteAndDateBetween(Long adoptanteId ,Date fechaInicio, Date fechaFin);
+    List<MensajeEntity> findByAdoptanteIdAndFechaBetween(Long adoptanteId, Date fechaInicio, Date fechaFin);
 
-    List<MensajeEntity> findByDateBetween(Long mascotaId ,Date fechaInicio, Date fechaFin);
+    List<MensajeEntity> findByMascotaIdAndFechaBetween(Long mascotaId, Date fechaInicio, Date fechaFin);
 
 }

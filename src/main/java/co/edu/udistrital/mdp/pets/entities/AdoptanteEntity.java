@@ -39,6 +39,7 @@ public class AdoptanteEntity extends BaseEntity {
 	private String direccion;
 
 	private String ciudad;
+	
 
 	@PodamExclude
 	@OneToMany(mappedBy = "adoptante")

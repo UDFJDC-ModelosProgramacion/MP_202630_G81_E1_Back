@@ -9,11 +9,13 @@ import co.edu.udistrital.mdp.pets.entities.HistoriaExitoEntity;
 
 public interface HistoriaExitoRepository extends JpaRepository<HistoriaExitoEntity, Long> {
     
-    List<HistoriaExitoEntity> findByNombreContainingIgnoreCase(String nombre);
+    List<HistoriaExitoEntity> findByTituloContainingIgnoreCase(String titulo);
 
     List<HistoriaExitoEntity> findByDescripcionContainingIgnoreCase(String descripcion);
 
-    List<HistoriaExitoEntity> findByFechaContainingIgnoreCase(Date fecha);
+    List<HistoriaExitoEntity> findByFecha(Date fecha);
 
     List<HistoriaExitoEntity> findByMascotaId(Long mascotaId);
+
+    HistoriaExitoEntity findByMascotaIdAndId(Long mascotaId, Long id);
 }

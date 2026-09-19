@@ -1,5 +1,6 @@
 package co.edu.udistrital.mdp.pets.repositories;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,10 +11,10 @@ public interface EventoVidaRepository extends JpaRepository<EventoVidaEntity, Lo
     
     List<EventoVidaEntity> findByMascotaId(Long mascotaId);
 
-    List<EventoVidaEntity> findByMascotaIdAndTipoEvento(Long mascotaId, String tipoEvento);
+    List<EventoVidaEntity> findByMascotaIdAndTipo(Long mascotaId, String tipo);
 
-    List<EventoVidaEntity> findByMascotaIdAndTipoEventoAndFechaEventoBetween(Long mascotaId, String tipoEvento, String fechaInicio, String fechaFin);
+    List<EventoVidaEntity> findByMascotaIdAndTipoAndFechaBetween(Long mascotaId, String tipo, Date fechaInicio, Date fechaFin);
 
-    List<EventoVidaEntity> findByMascotaIdAndTipoEventoAndFechaEventoAfter(Long mascotaId, String tipoEvento, String fechaInicio);
+    List<EventoVidaEntity> findByMascotaIdAndTipoAndFechaAfter(Long mascotaId, String tipo, Date fechaInicio);
 
 }

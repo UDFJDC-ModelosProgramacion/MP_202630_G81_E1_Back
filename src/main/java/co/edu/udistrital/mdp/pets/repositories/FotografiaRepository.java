@@ -14,6 +14,4 @@ public interface FotografiaRepository extends JpaRepository<FotografiaEntity, Lo
     List<FotografiaEntity> findAllByMascotaId(Long mascotaId);
 
     List<FotografiaEntity> findByMascotaIdAndPrincipalTrue(Long mascotaId);
-
-
 }
