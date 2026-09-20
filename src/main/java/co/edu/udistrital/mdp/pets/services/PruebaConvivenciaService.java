@@ -2,6 +2,7 @@ package co.edu.udistrital.mdp.pets.services;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import co.edu.udistrital.mdp.pets.entities.PruebaConvivenciaEntity;
 import co.edu.udistrital.mdp.pets.repositories.PruebaConvivenciaRepository;
 
@@ -10,12 +11,17 @@ public class PruebaConvivenciaService {
 
     private final PruebaConvivenciaRepository pruebaRepository;
 
-    PruebaConvivenciaService(PruebaConvivenciaRepository pruebaRepository) {
+    public PruebaConvivenciaService(PruebaConvivenciaRepository pruebaRepository) {
         this.pruebaRepository = pruebaRepository;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public PruebaConvivenciaEntity createPrueba(PruebaConvivenciaEntity prueba) {
-        return pruebaRepository.save(prueba);
+        try {
+            return pruebaRepository.save(prueba);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al crear la prueba de convivencia.", e);
+        }
     }
 
     public List<PruebaConvivenciaEntity> getPruebas() {
@@ -34,18 +40,29 @@ public class PruebaConvivenciaService {
         return pruebaRepository.findByAdopcionId(adopcionId).orElse(null);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public PruebaConvivenciaEntity updatePrueba(Long id, PruebaConvivenciaEntity prueba) {
-        PruebaConvivenciaEntity pruebaEntity = getPrueba(id);
+        try {
+            PruebaConvivenciaEntity entity = getPrueba(id);
 
-        if (pruebaEntity == null) {
-            return null;
+            if (entity == null) {
+                throw new IllegalArgumentException("La prueba de convivencia no existe.");
+            }
+
+            prueba.setId(id);
+            return pruebaRepository.save(prueba);
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al actualizar la prueba de convivencia.", e);
         }
-
-        prueba.setId(id);
-        return pruebaRepository.save(prueba);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deletePrueba(Long id) {
-        pruebaRepository.deleteById(id);
+        try {
+            pruebaRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al eliminar la prueba de convivencia.", e);
+        }
     }
 }

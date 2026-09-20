@@ -2,6 +2,7 @@ package co.edu.udistrital.mdp.pets.services;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import co.edu.udistrital.mdp.pets.entities.RetornoEntity;
 import co.edu.udistrital.mdp.pets.repositories.RetornoRepository;
 
@@ -10,12 +11,17 @@ public class RetornoService {
 
     private final RetornoRepository retornoRepository;
 
-    RetornoService(RetornoRepository retornoRepository) {
+    public RetornoService(RetornoRepository retornoRepository) {
         this.retornoRepository = retornoRepository;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public RetornoEntity createRetorno(RetornoEntity retorno) {
-        return retornoRepository.save(retorno);
+        try {
+            return retornoRepository.save(retorno);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al registrar el retorno.", e);
+        }
     }
 
     public List<RetornoEntity> getRetornos() {
@@ -34,18 +40,29 @@ public class RetornoService {
         return retornoRepository.findByAdopcionId(adopcionId).orElse(null);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public RetornoEntity updateRetorno(Long id, RetornoEntity retorno) {
-        RetornoEntity retornoEntity = getRetorno(id);
+        try {
+            RetornoEntity entity = getRetorno(id);
 
-        if (retornoEntity == null) {
-            return null;
+            if (entity == null) {
+                throw new IllegalArgumentException("El retorno no existe.");
+            }
+
+            retorno.setId(id);
+            return retornoRepository.save(retorno);
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al actualizar el retorno.", e);
         }
-
-        retorno.setId(id);
-        return retornoRepository.save(retorno);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deleteRetorno(Long id) {
-        retornoRepository.deleteById(id);
+        try {
+            retornoRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al eliminar el retorno.", e);
+        }
     }
 }

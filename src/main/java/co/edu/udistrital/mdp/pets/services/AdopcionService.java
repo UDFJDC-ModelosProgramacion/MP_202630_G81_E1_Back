@@ -2,6 +2,7 @@ package co.edu.udistrital.mdp.pets.services;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import co.edu.udistrital.mdp.pets.entities.AdopcionEntity;
 import co.edu.udistrital.mdp.pets.repositories.AdopcionRepository;
 
@@ -10,12 +11,17 @@ public class AdopcionService {
 
     private final AdopcionRepository adopcionRepository;
 
-    AdopcionService(AdopcionRepository adopcionRepository) {
+    public AdopcionService(AdopcionRepository adopcionRepository) {
         this.adopcionRepository = adopcionRepository;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public AdopcionEntity createAdopcion(AdopcionEntity adopcion) {
-        return adopcionRepository.save(adopcion);
+        try {
+            return adopcionRepository.save(adopcion);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al crear la adopción.", e);
+        }
     }
 
     public List<AdopcionEntity> getAdopciones() {
@@ -34,18 +40,29 @@ public class AdopcionService {
         return adopcionRepository.findBySolicitudId(solicitudId).orElse(null);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public AdopcionEntity updateAdopcion(Long id, AdopcionEntity adopcion) {
-        AdopcionEntity adopcionEntity = getAdopcion(id);
+        try {
+            AdopcionEntity entity = getAdopcion(id);
 
-        if (adopcionEntity == null) {
-            return null;
+            if (entity == null) {
+                throw new IllegalArgumentException("La adopción no existe.");
+            }
+
+            adopcion.setId(id);
+            return adopcionRepository.save(adopcion);
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al actualizar la adopción.", e);
         }
-
-        adopcion.setId(id);
-        return adopcionRepository.save(adopcion);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deleteAdopcion(Long id) {
-        adopcionRepository.deleteById(id);
+        try {
+            adopcionRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al eliminar la adopción.", e);
+        }
     }
 }
