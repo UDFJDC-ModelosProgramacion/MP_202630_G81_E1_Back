@@ -1,6 +1,5 @@
 package co.edu.udistrital.mdp.pets.entities;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
@@ -30,7 +29,7 @@ import uk.co.jemos.podam.common.PodamExclude;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class NotificacionEntity extends BaseEntity implements Serializable {
+public class NotificacionEntity extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 
