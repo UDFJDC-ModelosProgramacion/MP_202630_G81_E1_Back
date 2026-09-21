@@ -1,6 +1,6 @@
 ﻿# Reglas de negocio — Refugio, Mascota, Veterinario, Seguimiento
 
-> Responsable de las 4 entidades: \*\*David Santiago Cruz Aroca\*\*
+> Responsable de las 4 entidades: **David Santiago Cruz Aroca**
 > Estas reglas están implementadas y validadas en `RefugioService`, `MascotaService`, `VeterinarioService` y `SeguimientoService` (paquete `services`), lanzando `IllegalOperationException` o `EntityNotFoundException` según el caso.
 
 | Entidad/asociación | Método | Regla | Responsable |
@@ -39,7 +39,7 @@
 
 ## Nota sobre asociaciones muchos a muchos
 
-Las 4 entidades asignadas (Refugio, Mascota, Veterinario, Seguimiento) solo tienen relaciones \*\*uno a muchos / muchos a uno\*\* entre sí (Refugio–Mascota, Refugio–Veterinario, Mascota–Seguimiento, Veterinario–Seguimiento). No hay ninguna asociación muchos a muchos entre estas 4 entidades, por lo que no aplica una fila adicional de "asociación" en la tabla para ellas.
+Las 4 entidades asignadas (Refugio, Mascota, Veterinario, Seguimiento) solo tienen relaciones **uno a muchos / muchos a uno** entre sí (Refugio–Mascota, Refugio–Veterinario, Mascota–Seguimiento, Veterinario–Seguimiento). No hay ninguna asociación muchos a muchos entre estas 4 entidades, por lo que no aplica una fila adicional de "asociación" en la tabla para ellas.
 
 ## Limitación conocida
 
