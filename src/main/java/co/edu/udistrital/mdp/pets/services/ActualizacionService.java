@@ -3,6 +3,7 @@ package co.edu.udistrital.mdp.pets.services;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.ActualizacionEntity;
 import co.edu.udistrital.mdp.pets.repositories.ActualizacionRepository;
@@ -12,12 +13,17 @@ public class ActualizacionService {
 
     private final ActualizacionRepository actualizacionRepository;
 
-    ActualizacionService(ActualizacionRepository actualizacionRepository) {
+    public ActualizacionService(ActualizacionRepository actualizacionRepository) {
         this.actualizacionRepository = actualizacionRepository;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public ActualizacionEntity createActualizacion(ActualizacionEntity actualizacion) {
-        return actualizacionRepository.save(actualizacion);
+        try {
+            return actualizacionRepository.save(actualizacion);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al crear la actualización.", e);
+        }
     }
 
     public List<ActualizacionEntity> getActualizaciones() {
@@ -40,16 +46,28 @@ public class ActualizacionService {
         return actualizacionRepository.findByAdoptanteId(adoptanteId);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public ActualizacionEntity updateActualizacion(Long id, ActualizacionEntity actualizacion) {
-        ActualizacionEntity actualizacionEntity = getActualizacion(id);
-        if (actualizacionEntity == null) {
-            return null;
+        try {
+            ActualizacionEntity entity = getActualizacion(id);
+
+            if (entity == null) {
+                throw new IllegalArgumentException("La actualización no existe.");
+            }
+            actualizacion.setId(id);
+            return actualizacionRepository.save(actualizacion);
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al actualizar la actualización.", e);
         }
-        actualizacion.setId(id);
-        return actualizacionRepository.save(actualizacion);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deleteActualizacion(Long id) {
-        actualizacionRepository.deleteById(id);
+        try {
+            actualizacionRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al eliminar la actualización.", e);
+        }
     }
 }

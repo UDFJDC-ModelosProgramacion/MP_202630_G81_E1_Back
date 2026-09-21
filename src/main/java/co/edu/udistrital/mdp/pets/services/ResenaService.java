@@ -3,6 +3,7 @@ package co.edu.udistrital.mdp.pets.services;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.ResenaEntity;
 import co.edu.udistrital.mdp.pets.repositories.ResenaRepository;
@@ -12,12 +13,17 @@ public class ResenaService {
 
     private final ResenaRepository resenaRepository;
 
-    ResenaService(ResenaRepository resenaRepository) {
+    public ResenaService(ResenaRepository resenaRepository) {
         this.resenaRepository = resenaRepository;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public ResenaEntity createResena(ResenaEntity resena) {
-        return resenaRepository.save(resena);
+        try {
+            return resenaRepository.save(resena);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al crear la reseña.", e);
+        }
     }
 
     public List<ResenaEntity> getResenas() {
@@ -40,16 +46,28 @@ public class ResenaService {
         return resenaRepository.findByCalificacion(calificacion);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public ResenaEntity updateResena(Long id, ResenaEntity resena) {
-        ResenaEntity resenaEntity = getResena(id);
-        if (resenaEntity == null) {
-            return null;
+        try {
+            ResenaEntity entity = getResena(id);
+
+            if (entity == null) {
+                throw new IllegalArgumentException("La reseña no existe.");
+            }
+            resena.setId(id);
+            return resenaRepository.save(resena);
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al actualizar la reseña.", e);
         }
-        resena.setId(id);
-        return resenaRepository.save(resena);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deleteResena(Long id) {
-        resenaRepository.deleteById(id);
+        try {
+            resenaRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al eliminar la reseña.", e);
+        }
     }
 }
