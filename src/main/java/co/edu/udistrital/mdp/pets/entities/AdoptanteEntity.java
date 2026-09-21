@@ -28,7 +28,7 @@ import uk.co.jemos.podam.common.PodamExclude;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class AdoptanteEntity extends BaseEntity {
+public class AdoptanteEntity extends BaseEntity  {
 
 	private String nombre;
 
