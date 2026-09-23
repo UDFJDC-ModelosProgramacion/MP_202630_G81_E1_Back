@@ -2,7 +2,6 @@ package co.edu.udistrital.mdp.pets.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +24,7 @@ public class VeterinarioService {
     private final VeterinarioRepository veterinarioRepository;
     private final RefugioRepository refugioRepository;
 
-    @Autowired
+    
     public VeterinarioService(VeterinarioRepository veterinarioRepository, RefugioRepository refugioRepository) {
         this.veterinarioRepository = veterinarioRepository;
         this.refugioRepository = refugioRepository;
