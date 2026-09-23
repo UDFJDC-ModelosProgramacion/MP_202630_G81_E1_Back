@@ -3,7 +3,6 @@ package co.edu.udistrital.mdp.pets.services;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +17,11 @@ import co.edu.udistrital.mdp.pets.repositories.VacunaRepository;
 @Service
 public class VacunaService {
 
-	@Autowired
-	private VacunaRepository vacunaRepository;
+	private final VacunaRepository vacunaRepository;
+
+	public VacunaService(VacunaRepository vacunaRepository) {
+		this.vacunaRepository = vacunaRepository;
+	}
 
 	@Transactional
 	public VacunaEntity createVacuna(VacunaEntity vacuna) throws IllegalOperationException {
