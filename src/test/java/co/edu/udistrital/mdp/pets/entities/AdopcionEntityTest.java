@@ -42,6 +42,7 @@ public class AdopcionEntityTest {
 
     private void insertData() {
 
+        // Solicitud independiente para testCreateAdopcion
         AdoptanteEntity adoptante = factory.manufacturePojo(AdoptanteEntity.class);
         MascotaEntity mascota = factory.manufacturePojo(MascotaEntity.class);
 
@@ -54,9 +55,24 @@ public class AdopcionEntityTest {
 
         entityManager.persist(solicitud);
 
+        // Cada adopción tendrá una solicitud diferente
         for (int i = 0; i < 3; i++) {
+
+            AdoptanteEntity nuevoAdoptante = factory.manufacturePojo(AdoptanteEntity.class);
+            MascotaEntity nuevaMascota = factory.manufacturePojo(MascotaEntity.class);
+
+            entityManager.persist(nuevoAdoptante);
+            entityManager.persist(nuevaMascota);
+
+            SolicitudAdopcionEntity nuevaSolicitud = factory.manufacturePojo(SolicitudAdopcionEntity.class);
+            nuevaSolicitud.setAdoptante(nuevoAdoptante);
+            nuevaSolicitud.setMascota(nuevaMascota);
+
+            entityManager.persist(nuevaSolicitud);
+
             AdopcionEntity entity = factory.manufacturePojo(AdopcionEntity.class);
-            entity.setSolicitud(solicitud);
+            entity.setSolicitud(nuevaSolicitud);
+
             entityManager.persist(entity);
             data.add(entity);
         }
@@ -64,8 +80,21 @@ public class AdopcionEntityTest {
 
     @Test
     void testCreateAdopcion() {
+
+        AdoptanteEntity adoptante = factory.manufacturePojo(AdoptanteEntity.class);
+        MascotaEntity mascota = factory.manufacturePojo(MascotaEntity.class);
+
+        entityManager.persist(adoptante);
+        entityManager.persist(mascota);
+
+        SolicitudAdopcionEntity nuevaSolicitud = factory.manufacturePojo(SolicitudAdopcionEntity.class);
+        nuevaSolicitud.setAdoptante(adoptante);
+        nuevaSolicitud.setMascota(mascota);
+
+        entityManager.persist(nuevaSolicitud);
+
         AdopcionEntity entity = factory.manufacturePojo(AdopcionEntity.class);
-        entity.setSolicitud(solicitud);
+        entity.setSolicitud(nuevaSolicitud);
 
         AdopcionEntity result = entityManager.persistFlushFind(entity);
 
