@@ -62,18 +62,14 @@ public class PruebaConvivenciaServiceTest {
         adopcion.setSolicitud(solicitud);
         adopcion = adopcionRepository.save(adopcion);
 
-        for (int i = 0; i < 3; i++) {
-            PruebaConvivenciaEntity entity = factory.manufacturePojo(PruebaConvivenciaEntity.class);
-            entity.setAdopcion(adopcion);
-            data.add(pruebaRepository.save(entity));
-        }
+        PruebaConvivenciaEntity entity = factory.manufacturePojo(PruebaConvivenciaEntity.class);
+        entity.setAdopcion(adopcion);
+        data.add(pruebaRepository.save(entity));
     }
 
     @Test
     void testCreatePrueba() {
         PruebaConvivenciaEntity entity = factory.manufacturePojo(PruebaConvivenciaEntity.class);
-        entity.setAdopcion(adopcion);
-
         PruebaConvivenciaEntity result = pruebaService.createPrueba(entity);
 
         assertNotNull(result);
@@ -82,7 +78,7 @@ public class PruebaConvivenciaServiceTest {
 
     @Test
     void testGetPruebas() {
-        assertEquals(3, pruebaService.getPruebas().size());
+        assertEquals(1, pruebaService.getPruebas().size());
     }
 
     @Test

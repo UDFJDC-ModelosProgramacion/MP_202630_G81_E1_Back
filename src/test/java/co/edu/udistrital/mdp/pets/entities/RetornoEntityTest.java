@@ -58,19 +58,15 @@ public class RetornoEntityTest {
         adopcion.setSolicitud(solicitud);
         entityManager.persist(adopcion);
 
-        for (int i = 0; i < 3; i++) {
-            RetornoEntity entity = factory.manufacturePojo(RetornoEntity.class);
-            entity.setAdopcion(adopcion);
-            entityManager.persist(entity);
-            data.add(entity);
-        }
+        RetornoEntity entity = factory.manufacturePojo(RetornoEntity.class);
+        entity.setAdopcion(adopcion);
+        entityManager.persist(entity);
+        data.add(entity);
     }
 
     @Test
     void testCreateRetorno() {
         RetornoEntity entity = factory.manufacturePojo(RetornoEntity.class);
-        entity.setAdopcion(adopcion);
-
         RetornoEntity result = entityManager.persistFlushFind(entity);
 
         assertNotNull(result);

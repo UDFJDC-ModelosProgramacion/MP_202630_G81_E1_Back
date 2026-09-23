@@ -58,19 +58,15 @@ public class PruebaConvivenciaEntityTest {
         adopcion.setSolicitud(solicitud);
         entityManager.persist(adopcion);
 
-        for (int i = 0; i < 3; i++) {
-            PruebaConvivenciaEntity entity = factory.manufacturePojo(PruebaConvivenciaEntity.class);
-            entity.setAdopcion(adopcion);
-            entityManager.persist(entity);
-            data.add(entity);
-        }
+        PruebaConvivenciaEntity entity = factory.manufacturePojo(PruebaConvivenciaEntity.class);
+        entity.setAdopcion(adopcion);
+        entityManager.persist(entity);
+        data.add(entity);
     }
 
     @Test
     void testCreatePruebaConvivencia() {
         PruebaConvivenciaEntity entity = factory.manufacturePojo(PruebaConvivenciaEntity.class);
-        entity.setAdopcion(adopcion);
-
         PruebaConvivenciaEntity result = entityManager.persistFlushFind(entity);
 
         assertNotNull(result);

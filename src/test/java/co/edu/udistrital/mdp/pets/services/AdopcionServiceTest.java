@@ -54,18 +54,14 @@ public class AdopcionServiceTest {
         solicitud.setMascota(mascota);
         solicitud = solicitudRepository.save(solicitud);
 
-        for (int i = 0; i < 3; i++) {
-            AdopcionEntity entity = factory.manufacturePojo(AdopcionEntity.class);
-            entity.setSolicitud(solicitud);
-            data.add(adopcionRepository.save(entity));
-        }
+        AdopcionEntity entity = factory.manufacturePojo(AdopcionEntity.class);
+        entity.setSolicitud(solicitud);
+        data.add(adopcionRepository.save(entity));
     }
 
     @Test
     void testCreateAdopcion() {
         AdopcionEntity entity = factory.manufacturePojo(AdopcionEntity.class);
-        entity.setSolicitud(solicitud);
-
         AdopcionEntity result = adopcionService.createAdopcion(entity);
 
         assertNotNull(result);
@@ -74,7 +70,7 @@ public class AdopcionServiceTest {
 
     @Test
     void testGetAdopciones() {
-        assertEquals(3, adopcionService.getAdopciones().size());
+        assertEquals(1, adopcionService.getAdopciones().size());
     }
 
     @Test

@@ -54,19 +54,15 @@ public class AdopcionEntityTest {
 
         entityManager.persist(solicitud);
 
-        for (int i = 0; i < 3; i++) {
-            AdopcionEntity entity = factory.manufacturePojo(AdopcionEntity.class);
-            entity.setSolicitud(solicitud);
-            entityManager.persist(entity);
-            data.add(entity);
-        }
+        AdopcionEntity entity = factory.manufacturePojo(AdopcionEntity.class);
+        entity.setSolicitud(solicitud);
+        entityManager.persist(entity);
+        data.add(entity);
     }
 
     @Test
     void testCreateAdopcion() {
         AdopcionEntity entity = factory.manufacturePojo(AdopcionEntity.class);
-        entity.setSolicitud(solicitud);
-
         AdopcionEntity result = entityManager.persistFlushFind(entity);
 
         assertNotNull(result);

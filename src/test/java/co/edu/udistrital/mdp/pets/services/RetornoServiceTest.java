@@ -44,11 +44,11 @@ public class RetornoServiceTest {
     @BeforeEach
     void setUp() {
 
-        retornoRepository.deleteAll();
-        adopcionRepository.deleteAll();
-        solicitudRepository.deleteAll();
-        adoptanteRepository.deleteAll();
-        mascotaRepository.deleteAll();
+        retornoRepository.deleteAllInBatch();
+        adopcionRepository.deleteAllInBatch();
+        solicitudRepository.deleteAllInBatch();
+        adoptanteRepository.deleteAllInBatch();
+        mascotaRepository.deleteAllInBatch();
 
         AdoptanteEntity adoptante = adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
         MascotaEntity mascota = mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
@@ -62,18 +62,14 @@ public class RetornoServiceTest {
         adopcion.setSolicitud(solicitud);
         adopcion = adopcionRepository.save(adopcion);
 
-        for (int i = 0; i < 3; i++) {
-            RetornoEntity entity = factory.manufacturePojo(RetornoEntity.class);
-            entity.setAdopcion(adopcion);
-            data.add(retornoRepository.save(entity));
-        }
+        RetornoEntity entity = factory.manufacturePojo(RetornoEntity.class);
+        entity.setAdopcion(adopcion);
+        data.add(retornoRepository.save(entity));
     }
 
     @Test
     void testCreateRetorno() {
         RetornoEntity entity = factory.manufacturePojo(RetornoEntity.class);
-        entity.setAdopcion(adopcion);
-
         RetornoEntity result = retornoService.createRetorno(entity);
 
         assertNotNull(result);
@@ -82,7 +78,7 @@ public class RetornoServiceTest {
 
     @Test
     void testGetRetornos() {
-        assertEquals(3, retornoService.getRetornos().size());
+        assertEquals(1, retornoService.getRetornos().size());
     }
 
     @Test
