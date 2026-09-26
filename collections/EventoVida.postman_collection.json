@@ -1,0 +1,357 @@
+{
+	"info": {
+		"_postman_id": "eventovida-collection-001",
+		"name": "EventoVida",
+		"description": "Colección de endpoints para la gestión de eventos de vida de mascotas. Permite crear, consultar, actualizar y eliminar eventos de vida (Nacimiento, Vacunación, Enfermedad, Adopción, Muerte).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Obtener Eventos de Vida por Mascota",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+		],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/eventos-vida",
+					"host": ["{{baseUrl}}"],
+					"path": ["mascotas", "{{mascotaId}}", "eventos-vida"]
+				},
+				"description": "Obtiene todos los eventos de vida de una mascota específica."
+			},
+			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"[]"}]
+		},
+		{
+			"name": "Obtener Eventos de Vida por Tipo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/eventos-vida?tipo={{tipoEvento}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["mascotas", "{{mascotaId}}", "eventos-vida"],
+					"query": [
+						{
+							"key": "tipo",
+							"value": "{{tipoEvento}}",
+							"description": "Tipo de evento: Nacimiento, Vacunación, Enfermedad, Adopción, Muerte"
+						}
+					]
+				},
+				"description": "Obtiene eventos de vida de una mascota filtrados por tipo. Tipos válidos: Nacimiento, Vacunación, Enfermedad, Adopción, Muerte."
+			},
+			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"[]"}]
+		},
+		{
+			"name": "Obtener Eventos de Vida por Tipo y Rango de Fechas",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/eventos-vida?tipo={{tipoEvento}}&fechaInicio={{fechaInicio}}&fechaFin={{fechaFin}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["mascotas", "{{mascotaId}}", "eventos-vida"],
+					"query": [
+						{
+							"key": "tipo",
+							"value": "{{tipoEvento}}",
+							"description": "Tipo de evento: Nacimiento, Vacunación, Enfermedad, Adopción, Muerte"
+						},
+						{
+							"key": "fechaInicio",
+							"value": "{{fechaInicio}}",
+							"description": "Fecha de inicio en formato YYYY-MM-DD"
+						},
+						{
+							"key": "fechaFin",
+							"value": "{{fechaFin}}",
+							"description": "Fecha de fin en formato YYYY-MM-DD"
+						}
+					]
+				},
+				"description": "Obtiene eventos de vida de una mascota filtrados por tipo y rango de fechas."
+			},
+			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"[]"}]
+		},
+		{
+			"name": "Obtener Eventos de Vida por Tipo desde Fecha",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/eventos-vida?tipo={{tipoEvento}}&fechaInicio={{fechaInicio}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["mascotas", "{{mascotaId}}", "eventos-vida"],
+					"query": [
+						{
+							"key": "tipo",
+							"value": "{{tipoEvento}}",
+							"description": "Tipo de evento: Nacimiento, Vacunación, Enfermedad, Adopción, Muerte"
+						},
+						{
+							"key": "fechaInicio",
+							"value": "{{fechaInicio}}",
+							"description": "Fecha de inicio en formato YYYY-MM-DD"
+						}
+					]
+				},
+				"description": "Obtiene eventos de vida de una mascota filtrados por tipo a partir de una fecha específica."
+			},
+			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"[]"}]
+		},
+		{
+			"name": "Crear Evento de Vida",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 or 200\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							"pm.test(\"Evento creado correctamente\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tipo\": \"Vacunación\",\n    \"fecha\": \"2024-01-15\",\n    \"descripcion\": \"Vacuna antirrábica anual\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/eventos-vida",
+					"host": ["{{baseUrl}}"],
+					"path": ["mascotas", "{{mascotaId}}", "eventos-vida"]
+				},
+				"description": "Crea un nuevo evento de vida para una mascota. Tipos válidos: Nacimiento, Vacunación, Enfermedad, Adopción, Muerte. La fecha no puede ser futura."
+			},
+			"response": [{"name":"Respuesta 201 Created","status":"Created","code":201,"body":"{\"id\":1,\"tipo\":\"Vacunación\",\"fecha\":\"2024-01-15\",\"descripcion\":\"Vacuna antirrábica anual\"}"}]
+		},
+		{
+			"name": "Actualizar Evento de Vida",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Evento actualizado correctamente\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": {{eventoVidaId}},\n    \"tipo\": \"Enfermedad\",\n    \"fecha\": \"2024-02-10\",\n    \"descripcion\": \"Infección leve tratada con antibióticos\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/eventos-vida/{{eventoVidaId}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["mascotas", "{{mascotaId}}", "eventos-vida", "{{eventoVidaId}}"]
+				},
+				"description": "Actualiza un evento de vida existente. La fecha no puede ser futura y el tipo debe ser válido."
+			},
+			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"{\"id\":1,\"tipo\":\"Enfermedad\",\"fecha\":\"2024-02-10\",\"descripcion\":\"Infección leve tratada\"}"}]
+		},
+		{
+			"name": "Eliminar Evento de Vida",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 or 204\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+							"});",
+							"pm.test(\"Evento eliminado correctamente\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/eventos-vida/{{eventoVidaId}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["mascotas", "{{mascotaId}}", "eventos-vida", "{{eventoVidaId}}"]
+				},
+				"description": "Elimina un evento de vida por su ID."
+			},
+			"response": [{"name":"Respuesta 204 No Content","status":"No Content","code":204,"body":""}]
+		},
+		{
+			"name": "Obtener Evento de Vida por ID",
+			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"],"type":"text/javascript"}}],
+					"request": {"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/mascotas/{{mascotaId}}/eventos-vida/{{eventoVidaId}}","host":["{{baseUrl}}"],"path":["mascotas","{{mascotaId}}","eventos-vida","{{eventoVidaId}}"]}},
+			"response":[{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"{\"id\":1,\"tipo\":\"Vacunación\",\"fecha\":\"2024-01-15\",\"descripcion\":\"Vacuna antirrábica anual\"}"}]
+		},
+		{
+			"name": "Obtener Evento de Vida que no existe",
+			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"],"type":"text/javascript"}}],
+					"request": {"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/mascotas/{{mascotaId}}/eventos-vida/0","host":["{{baseUrl}}"],"path":["mascotas","{{mascotaId}}","eventos-vida","0"]}},
+			"response":[{"name":"Respuesta 404 Not Found","status":"Not Found","code":404,"body":"{\"apiError\":{\"status\":\"NOT_FOUND\",\"message\":\"El evento de vida con el id dado no existe\"}}"}]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "mascotaId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "eventoVidaId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "tipoEvento",
+			"value": "Vacunación",
+			"type": "string"
+		},
+		{
+			"key": "fechaInicio",
+			"value": "2024-01-01",
+			"type": "string"
+		},
+		{
+			"key": "fechaFin",
+			"value": "2024-12-31",
+			"type": "string"
+		}
+	]
+}

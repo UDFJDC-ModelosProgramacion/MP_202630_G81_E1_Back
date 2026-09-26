@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +38,6 @@ public class MascotaController {
     private final MascotaService mascotaService;
     private final ModelMapper modelMapper;
 
-    @Autowired
     public MascotaController(MascotaService mascotaService, ModelMapper modelMapper) {
         this.mascotaService = mascotaService;
         this.modelMapper = modelMapper;

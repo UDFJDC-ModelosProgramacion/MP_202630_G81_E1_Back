@@ -3,7 +3,6 @@ package co.edu.udistrital.mdp.pets.services;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +28,6 @@ public class MascotaService {
     private final MascotaRepository mascotaRepository;
     private final RefugioRepository refugioRepository;
 
-    @Autowired
     public MascotaService(MascotaRepository mascotaRepository, RefugioRepository refugioRepository) {
         this.mascotaRepository = mascotaRepository;
         this.refugioRepository = refugioRepository;
