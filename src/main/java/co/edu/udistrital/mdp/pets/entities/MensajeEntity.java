@@ -1,6 +1,9 @@
 package co.edu.udistrital.mdp.pets.entities;
 
 import java.sql.Date;
+import java.util.List;
+
+import org.hibernate.annotations.ManyToAny;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
@@ -36,8 +39,8 @@ public class MensajeEntity extends BaseEntity {
     private MascotaEntity mascota;
 
     @PodamExclude
-    @ManyToOne
-    private ActualizacionEntity actualizacion;
+    @ManyToAny
+    private List<ActualizacionEntity> actualizacion;
 
     @PodamExclude
     @ManyToOne
