@@ -49,7 +49,7 @@ public class SeguimientoController {
         List<SeguimientoEntity> seguimientos = seguimientoService.getSeguimientos();
         return seguimientos.stream()
                 .map(entity -> modelMapper.map(entity, SeguimientoDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/{id}")

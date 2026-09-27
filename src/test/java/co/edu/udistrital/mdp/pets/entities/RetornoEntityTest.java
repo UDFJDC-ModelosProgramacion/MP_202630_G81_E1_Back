@@ -16,7 +16,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @DataJpaTest
 @Transactional
-public class RetornoEntityTest {
+class RetornoEntityTest {
 
     @Autowired
     private TestEntityManager entityManager;

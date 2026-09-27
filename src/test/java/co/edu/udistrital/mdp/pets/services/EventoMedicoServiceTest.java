@@ -18,7 +18,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @SpringBootTest
 @Transactional
-public class EventoMedicoServiceTest {
+class EventoMedicoServiceTest {
 
     @Autowired
     private EventoMedicoService eventoMedicoService;

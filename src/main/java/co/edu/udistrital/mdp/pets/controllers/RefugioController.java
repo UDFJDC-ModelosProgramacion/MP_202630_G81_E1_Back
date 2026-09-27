@@ -47,7 +47,7 @@ public class RefugioController {
         List<RefugioEntity> refugios = refugioService.getRefugios();
         return refugios.stream()
                 .map(entity -> modelMapper.map(entity, RefugioDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/{id}")
