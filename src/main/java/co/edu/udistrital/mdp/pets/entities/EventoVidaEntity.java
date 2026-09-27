@@ -21,7 +21,7 @@ import uk.co.jemos.podam.common.PodamExclude;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public abstract class EventoVidaEntity extends BaseEntity {
+public class EventoVidaEntity extends BaseEntity {
     
     private String tipo;
 

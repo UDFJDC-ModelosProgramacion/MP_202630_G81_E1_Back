@@ -11,6 +11,8 @@ public interface EventoVidaRepository extends JpaRepository<EventoVidaEntity, Lo
     
     List<EventoVidaEntity> findByMascotaId(Long mascotaId);
 
+    EventoVidaEntity findByMascotaIdAndId(Long mascotaId, Long id);
+
     List<EventoVidaEntity> findByMascotaIdAndTipo(Long mascotaId, String tipo);
 
     List<EventoVidaEntity> findByMascotaIdAndTipoAndFechaBetween(Long mascotaId, String tipo, Date fechaInicio, Date fechaFin);
