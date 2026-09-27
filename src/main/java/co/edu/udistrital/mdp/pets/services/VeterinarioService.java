@@ -24,6 +24,7 @@ public class VeterinarioService {
     private final VeterinarioRepository veterinarioRepository;
     private final RefugioRepository refugioRepository;
 
+    
     public VeterinarioService(VeterinarioRepository veterinarioRepository, RefugioRepository refugioRepository) {
         this.veterinarioRepository = veterinarioRepository;
         this.refugioRepository = refugioRepository;

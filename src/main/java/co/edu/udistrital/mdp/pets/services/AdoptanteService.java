@@ -20,7 +20,11 @@ public class AdoptanteService {
 
 	private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
 
-	private AdoptanteRepository adoptanteRepository;
+	private final AdoptanteRepository adoptanteRepository;
+
+	public AdoptanteService(AdoptanteRepository adoptanteRepository) {
+		this.adoptanteRepository = adoptanteRepository;
+	}
 
 	@Transactional
 	public AdoptanteEntity createAdoptante(AdoptanteEntity adoptante) throws IllegalOperationException {

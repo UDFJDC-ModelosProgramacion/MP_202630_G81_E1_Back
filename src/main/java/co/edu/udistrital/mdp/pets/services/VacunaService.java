@@ -17,8 +17,11 @@ import co.edu.udistrital.mdp.pets.repositories.VacunaRepository;
 @Service
 public class VacunaService {
 
+	private final VacunaRepository vacunaRepository;
 
-	private VacunaRepository vacunaRepository;
+	public VacunaService(VacunaRepository vacunaRepository) {
+		this.vacunaRepository = vacunaRepository;
+	}
 
 	@Transactional
 	public VacunaEntity createVacuna(VacunaEntity vacuna) throws IllegalOperationException {
