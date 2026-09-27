@@ -8,8 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import co.edu.udistrital.mdp.pets.entities.*;
-import co.edu.udistrital.mdp.pets.repositories.*;
+import co.edu.udistrital.mdp.pets.entities.AdopcionEntity;
+import co.edu.udistrital.mdp.pets.entities.AdoptanteEntity;
+import co.edu.udistrital.mdp.pets.entities.MascotaEntity;
+import co.edu.udistrital.mdp.pets.entities.SolicitudAdopcionEntity;
+import co.edu.udistrital.mdp.pets.repositories.AdopcionRepository;
+import co.edu.udistrital.mdp.pets.repositories.AdoptanteRepository;
+import co.edu.udistrital.mdp.pets.repositories.MascotaRepository;
+import co.edu.udistrital.mdp.pets.repositories.SolicitudAdopcionRepository;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -46,25 +52,66 @@ public class AdopcionServiceTest {
         adoptanteRepository.deleteAll();
         mascotaRepository.deleteAll();
 
-        AdoptanteEntity adoptante = adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
-        MascotaEntity mascota = mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
+        // Solicitud independiente para testCreateAdopcion
+        AdoptanteEntity adoptante =
+                adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
+
+        MascotaEntity mascota =
+                mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
 
         solicitud = factory.manufacturePojo(SolicitudAdopcionEntity.class);
         solicitud.setAdoptante(adoptante);
         solicitud.setMascota(mascota);
+
         solicitud = solicitudRepository.save(solicitud);
 
+        // Cada adopción tendrá una solicitud diferente
         for (int i = 0; i < 3; i++) {
-            AdopcionEntity entity = factory.manufacturePojo(AdopcionEntity.class);
-            entity.setSolicitud(solicitud);
+
+            AdoptanteEntity nuevoAdoptante =
+                    adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
+
+            MascotaEntity nuevaMascota =
+                    mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
+
+            SolicitudAdopcionEntity nuevaSolicitud =
+                    factory.manufacturePojo(SolicitudAdopcionEntity.class);
+
+            nuevaSolicitud.setAdoptante(nuevoAdoptante);
+            nuevaSolicitud.setMascota(nuevaMascota);
+
+            nuevaSolicitud = solicitudRepository.save(nuevaSolicitud);
+
+            AdopcionEntity entity =
+                    factory.manufacturePojo(AdopcionEntity.class);
+
+            entity.setSolicitud(nuevaSolicitud);
+
             data.add(adopcionRepository.save(entity));
         }
     }
 
     @Test
     void testCreateAdopcion() {
-        AdopcionEntity entity = factory.manufacturePojo(AdopcionEntity.class);
-        entity.setSolicitud(solicitud);
+
+        AdoptanteEntity adoptante =
+                adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
+
+        MascotaEntity mascota =
+                mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
+
+        SolicitudAdopcionEntity nuevaSolicitud =
+                factory.manufacturePojo(SolicitudAdopcionEntity.class);
+
+        nuevaSolicitud.setAdoptante(adoptante);
+        nuevaSolicitud.setMascota(mascota);
+
+        nuevaSolicitud = solicitudRepository.save(nuevaSolicitud);
+
+        AdopcionEntity entity =
+                factory.manufacturePojo(AdopcionEntity.class);
+
+        entity.setSolicitud(nuevaSolicitud);
 
         AdopcionEntity result = adopcionService.createAdopcion(entity);
 
@@ -74,30 +121,43 @@ public class AdopcionServiceTest {
 
     @Test
     void testGetAdopciones() {
-        assertEquals(3, adopcionService.getAdopciones().size());
+        List<AdopcionEntity> list = adopcionService.getAdopciones();
+        assertEquals(3, list.size());
     }
 
     @Test
     void testGetAdopcion() {
         AdopcionEntity entity = data.get(0);
-        assertEquals(entity.getId(), adopcionService.getAdopcion(entity.getId()).getId());
+
+        AdopcionEntity result = adopcionService.getAdopcion(entity.getId());
+
+        assertNotNull(result);
+        assertEquals(entity.getId(), result.getId());
     }
 
     @Test
     void testUpdateAdopcion() {
+
         AdopcionEntity entity = data.get(0);
         entity.setEstado("FINALIZADA");
 
-        AdopcionEntity result = adopcionService.updateAdopcion(entity.getId(), entity);
+        AdopcionEntity result =
+                adopcionService.updateAdopcion(entity.getId(), entity);
 
+        assertNotNull(result);
         assertEquals("FINALIZADA", result.getEstado());
     }
 
     @Test
     void testDeleteAdopcion() {
+
         AdopcionEntity entity = data.get(0);
+
         adopcionService.deleteAdopcion(entity.getId());
 
-        assertNull(adopcionService.getAdopcion(entity.getId()));
+        AdopcionEntity deleted =
+                adopcionService.getAdopcion(entity.getId());
+
+        assertNull(deleted);
     }
 }
