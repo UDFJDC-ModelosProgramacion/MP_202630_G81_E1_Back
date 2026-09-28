@@ -17,7 +17,7 @@ import uk.co.jemos.podam.common.PodamExclude;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public abstract class FotografiaEntity extends BaseEntity {
+public class FotografiaEntity extends BaseEntity {
     
     private String url;
 
