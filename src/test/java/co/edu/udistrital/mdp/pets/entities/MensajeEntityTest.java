@@ -19,7 +19,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @DataJpaTest
 @Transactional
-class MensajeEntityTest {
+public class MensajeEntityTest {
 
     @Autowired
     private TestEntityManager entityManager;

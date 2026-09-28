@@ -18,90 +18,74 @@ import co.edu.udistrital.mdp.pets.repositories.AdoptanteRepository;
 @Service
 public class AdoptanteService {
 
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
+	private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
 
-    private static final String ADOPTANTE_NO_ENCONTRADO =
-            "El adoptante con el id dado no fue encontrado";
+	private final AdoptanteRepository adoptanteRepository;
 
-    private final AdoptanteRepository adoptanteRepository;
+	public AdoptanteService(AdoptanteRepository adoptanteRepository) {
+		this.adoptanteRepository = adoptanteRepository;
+	}
 
-    public AdoptanteService(AdoptanteRepository adoptanteRepository) {
-        this.adoptanteRepository = adoptanteRepository;
+	@Transactional
+	public AdoptanteEntity createAdoptante(AdoptanteEntity adoptante) throws IllegalOperationException {
+		validarDatosBasicos(adoptante);
+		validarEmailUnico(adoptante, null);
+		return adoptanteRepository.save(adoptante);
+	}
+
+	@Transactional
+	public List<AdoptanteEntity> getAdoptantes() {
+		return adoptanteRepository.findAll();
+	}
+
+	@Transactional
+	public AdoptanteEntity getAdoptante(Long id) throws EntityNotFoundException {
+		Optional<AdoptanteEntity> adoptante = adoptanteRepository.findById(id);
+		if (adoptante.isEmpty()) {
+			throw new EntityNotFoundException("El adoptante con el id dado no fue encontrado");
+		}
+		return adoptante.get();
+	}
+
+	@Transactional
+	public AdoptanteEntity updateAdoptante(Long id, AdoptanteEntity adoptante)
+			throws EntityNotFoundException, IllegalOperationException {
+		Optional<AdoptanteEntity> existente = adoptanteRepository.findById(id);
+		if (existente.isEmpty()) {
+			throw new EntityNotFoundException("El adoptante con el id dado no fue encontrado");
+		}
+		validarDatosBasicos(adoptante);
+		validarEmailUnico(adoptante, id);
+		adoptante.setId(id);
+		return adoptanteRepository.save(adoptante);
+	}
+
+	@Transactional
+	public void deleteAdoptante(Long id) throws EntityNotFoundException, IllegalOperationException {
+		Optional<AdoptanteEntity> adoptante = adoptanteRepository.findById(id);
+		if (adoptante.isEmpty()) {
+			throw new EntityNotFoundException("El adoptante con el id dado no fue encontrado");
+		}
+		if (!adoptante.get().getSolicitudesAdopcion().isEmpty()) {
+			throw new IllegalOperationException(
+					"No se puede eliminar el adoptante porque tiene solicitudes de adopción asociadas");
+		}
+		adoptanteRepository.deleteById(id);
+	}
+
+	private void validarDatosBasicos(AdoptanteEntity adoptante) throws IllegalOperationException {
+		if (adoptante.getNombre() == null || adoptante.getNombre().isBlank()) {
+			throw new IllegalOperationException("El nombre del adoptante no puede estar vacío");
+		}
+		if (adoptante.getEmail() == null || !EMAIL_PATTERN.matcher(adoptante.getEmail()).matches()) {
+			throw new IllegalOperationException("El correo electrónico del adoptante no es válido");
+		}
+	}
+
+	private void validarEmailUnico(AdoptanteEntity adoptante, Long idActual) throws IllegalOperationException {
+    Optional<AdoptanteEntity> conMismoEmail = adoptanteRepository.findByEmailIgnoreCase(adoptante.getEmail());
+    if (conMismoEmail.isPresent() && !conMismoEmail.get().getId().equals(idActual)) {
+        throw new IllegalOperationException("Ya existe un adoptante registrado con ese correo electrónico");
     }
-
-    @Transactional
-    public AdoptanteEntity createAdoptante(AdoptanteEntity adoptante) throws IllegalOperationException {
-        validarDatosBasicos(adoptante);
-        validarEmailUnico(adoptante, null);
-        return adoptanteRepository.save(adoptante);
-    }
-
-    @Transactional
-    public List<AdoptanteEntity> getAdoptantes() {
-        return adoptanteRepository.findAll();
-    }
-
-    @Transactional
-    public AdoptanteEntity getAdoptante(Long id) throws EntityNotFoundException {
-        Optional<AdoptanteEntity> adoptante = adoptanteRepository.findById(id);
-
-        if (adoptante.isEmpty()) {
-            throw new EntityNotFoundException(ADOPTANTE_NO_ENCONTRADO);
-        }
-
-        return adoptante.get();
-    }
-
-    @Transactional
-    public AdoptanteEntity updateAdoptante(Long id, AdoptanteEntity adoptante)
-            throws EntityNotFoundException, IllegalOperationException {
-
-        Optional<AdoptanteEntity> existente = adoptanteRepository.findById(id);
-
-        if (existente.isEmpty()) {
-            throw new EntityNotFoundException(ADOPTANTE_NO_ENCONTRADO);
-        }
-
-        validarDatosBasicos(adoptante);
-        validarEmailUnico(adoptante, id);
-        adoptante.setId(id);
-
-        return adoptanteRepository.save(adoptante);
-    }
-
-    @Transactional
-    public void deleteAdoptante(Long id) throws EntityNotFoundException, IllegalOperationException {
-        Optional<AdoptanteEntity> adoptante = adoptanteRepository.findById(id);
-
-        if (adoptante.isEmpty()) {
-            throw new EntityNotFoundException(ADOPTANTE_NO_ENCONTRADO);
-        }
-
-        if (!adoptante.get().getSolicitudesAdopcion().isEmpty()) {
-            throw new IllegalOperationException(
-                    "No se puede eliminar el adoptante porque tiene solicitudes de adopción asociadas");
-        }
-
-        adoptanteRepository.deleteById(id);
-    }
-
-    private void validarDatosBasicos(AdoptanteEntity adoptante) throws IllegalOperationException {
-        if (adoptante.getNombre() == null || adoptante.getNombre().isBlank()) {
-            throw new IllegalOperationException("El nombre del adoptante no puede estar vacío");
-        }
-
-        if (adoptante.getEmail() == null || !EMAIL_PATTERN.matcher(adoptante.getEmail()).matches()) {
-            throw new IllegalOperationException("El correo electrónico del adoptante no es válido");
-        }
-    }
-
-    private void validarEmailUnico(AdoptanteEntity adoptante, Long idActual) throws IllegalOperationException {
-        Optional<AdoptanteEntity> conMismoEmail =
-                adoptanteRepository.findByEmailIgnoreCase(adoptante.getEmail());
-
-        if (conMismoEmail.isPresent() && !conMismoEmail.get().getId().equals(idActual)) {
-            throw new IllegalOperationException(
-                    "Ya existe un adoptante registrado con ese correo electrónico");
-        }
-    }
+}
 }

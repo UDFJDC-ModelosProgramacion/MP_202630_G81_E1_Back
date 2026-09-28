@@ -18,7 +18,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @SpringBootTest
 @Transactional
-class ResenaServiceTest {
+public class ResenaServiceTest {
 
     @Autowired
     private ResenaService resenaService;
