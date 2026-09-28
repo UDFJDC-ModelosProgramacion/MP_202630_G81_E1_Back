@@ -23,7 +23,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @SpringBootTest
 @Transactional
-public class PruebaConvivenciaServiceTest {
+class PruebaConvivenciaServiceTest {
 
     @Autowired
     private PruebaConvivenciaService pruebaService;
