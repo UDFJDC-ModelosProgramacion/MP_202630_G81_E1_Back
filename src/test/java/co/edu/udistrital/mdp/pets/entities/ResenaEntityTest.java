@@ -19,7 +19,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @DataJpaTest
 @Transactional
-class ResenaEntityTest {
+public class ResenaEntityTest {
 
     @Autowired
     private TestEntityManager entityManager;

@@ -19,7 +19,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @SpringBootTest
 @Transactional
-class SolicitudAdopcionServiceTest {
+public class SolicitudAdopcionServiceTest {
 
     @Autowired
     private SolicitudAdopcionService solicitudService;

@@ -49,8 +49,8 @@ public class SeguimientoController {
     public List<SeguimientoDetailDTO> findAll() {
         List<SeguimientoEntity> seguimientos = seguimientoService.getSeguimientos();
         return seguimientos.stream()
-                .map(entity -> modelMapper.map(entity, SeguimientoDTO.class))
-                .toList();
+                .map(entity -> modelMapper.map(entity, SeguimientoDetailDTO.class))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")

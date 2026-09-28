@@ -48,8 +48,8 @@ public class VeterinarioController {
     public List<VeterinarioDetailDTO> findAll() {
         List<VeterinarioEntity> veterinarios = veterinarioService.getVeterinarios();
         return veterinarios.stream()
-                .map(entity -> modelMapper.map(entity, VeterinarioDTO.class))
-                .toList();
+                .map(entity -> modelMapper.map(entity, VeterinarioDetailDTO.class))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")

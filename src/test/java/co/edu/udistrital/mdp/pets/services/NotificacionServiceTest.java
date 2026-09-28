@@ -18,7 +18,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @SpringBootTest
 @Transactional
-class NotificacionServiceTest {
+public class NotificacionServiceTest {
 
     @Autowired
     private NotificacionService notificacionService;
