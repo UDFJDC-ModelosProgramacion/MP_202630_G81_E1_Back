@@ -27,31 +27,15 @@ public class HistoriaExitoService  {
 
     // Método para eliminar una historia de éxito asociada a una mascota
     @Transactional(rollbackOn = Exception.class)
-    public void eliminarHistoriaExito(Long idHistoriaExito, Long idMascota) {
-        try {
-            validarMascotaActiva(idMascota);
-
-            HistoriaExitoEntity historiaExito =
-                    historiaExitoRepository.findByMascotaIdAndId(
-                            idMascota,
-                            idHistoriaExito);
-
-            if (historiaExito == null) {
-                log.warn(
-                        "La historia de éxito con ID: {} no existe",
-                        idHistoriaExito);
-
-                throw new HistoriaExitoException(
-                        String.format(HISTORIA_NO_EXISTE, idHistoriaExito));
-            }
-
-            log.info(
-                    "La historia de éxito con ID asociada a la mascota seleccionada: {} existe",
-                    idHistoriaExito);
-
-            log.info(
-                    "Eliminando historia de éxito con ID: {}",
-                    idHistoriaExito);
+    public void eliminarHistoriaExito(Long idHistoriaExito , Long idMascota) {
+        try{
+        // Verificar si la mascota existe
+        if(mascotaRepository.existsById(idMascota)) {
+            log.info("La mascota con ID: {} existe", idMascota);
+        } else {
+            log.warn("La mascota con ID: {} no existe", idMascota);
+            throw new IllegalArgumentException("La mascota con ID: " + idMascota + " no existe");
+        }
 
         // Verificar si la historia de éxito existe asociada a esta mascota
         if(historiaExitoRepository.findByMascotaIdAndId(idMascota, idHistoriaExito) != null) {
