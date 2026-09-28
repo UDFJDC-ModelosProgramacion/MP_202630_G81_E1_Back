@@ -44,11 +44,11 @@ public class VeterinarioController {
 
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public List<VeterinarioDTO> findAll() {
+    public List<VeterinarioDetailDTO> findAll() {
         List<VeterinarioEntity> veterinarios = veterinarioService.getVeterinarios();
         return veterinarios.stream()
                 .map(entity -> modelMapper.map(entity, VeterinarioDetailDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/{id}")

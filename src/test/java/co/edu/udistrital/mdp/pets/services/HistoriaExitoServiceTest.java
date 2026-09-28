@@ -3,9 +3,9 @@ package co.edu.udistrital.mdp.pets.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -39,14 +39,13 @@ class HistoriaExitoServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new HistoriaExitoService(historiaExitoRepository, mascotaRepository, adoptanteRepository);
+        service = new HistoriaExitoService(historiaExitoRepository, mascotaRepository);
     }
 
     @Test
     void crearHistoriaExitoSavesHistoryForActiveMascota() {
         MascotaEntity mascota = new MascotaEntity();
         mascota.setEstado("Disponible");
-        when(mascotaRepository.existsById(1L)).thenReturn(true);
         when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
 
         service.crearHistoriaExito(1L, "Adopción feliz", "Una nueva familia");
@@ -58,10 +57,10 @@ class HistoriaExitoServiceTest {
     void crearHistoriaExitoRejectsInactiveMascota() {
         MascotaEntity mascota = new MascotaEntity();
         mascota.setEstado("Inactivo");
-        when(mascotaRepository.existsById(1L)).thenReturn(true);
         when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
 
-        assertThrows(RuntimeException.class, () -> service.crearHistoriaExito(1L, "Título", "Descripción"));
+        assertThrows(HistoriaExitoService.HistoriaExitoException.class,
+                () -> service.crearHistoriaExito(1L, "Título", "Descripción"));
         verifyNoInteractions(historiaExitoRepository);
     }
 
@@ -70,9 +69,8 @@ class HistoriaExitoServiceTest {
         MascotaEntity mascota = new MascotaEntity();
         mascota.setEstado("Disponible");
         HistoriaExitoEntity history = new HistoriaExitoEntity();
-        when(mascotaRepository.existsById(1L)).thenReturn(true);
-        when(historiaExitoRepository.findByMascotaIdAndId(1L, 2L)).thenReturn(history);
         when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
+        when(historiaExitoRepository.findByMascotaIdAndId(1L, 2L)).thenReturn(history);
 
         service.eliminarHistoriaExito(2L, 1L);
 
@@ -81,10 +79,13 @@ class HistoriaExitoServiceTest {
 
     @Test
     void eliminarHistoriaExitoRejectsMissingHistory() {
-        when(mascotaRepository.existsById(1L)).thenReturn(true);
+        MascotaEntity mascota = new MascotaEntity();
+        mascota.setEstado("Disponible");
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
         when(historiaExitoRepository.findByMascotaIdAndId(1L, 2L)).thenReturn(null);
 
-        assertThrows(RuntimeException.class, () -> service.eliminarHistoriaExito(2L, 1L));
+        assertThrows(HistoriaExitoService.HistoriaExitoException.class,
+                () -> service.eliminarHistoriaExito(2L, 1L));
         verify(historiaExitoRepository).findByMascotaIdAndId(1L, 2L);
         verify(historiaExitoRepository, never()).deleteById(2L);
     }
@@ -96,7 +97,7 @@ class HistoriaExitoServiceTest {
         HistoriaExitoEntity submitted = new HistoriaExitoEntity();
         submitted.setId(2L);
         HistoriaExitoEntity stored = new HistoriaExitoEntity();
-        when(mascotaRepository.existsById(1L)).thenReturn(true);
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
         when(historiaExitoRepository.findByMascotaIdAndId(1L, 2L)).thenReturn(stored);
 
         service.actualizarHistoriaExito(submitted, 1L);
@@ -106,8 +107,10 @@ class HistoriaExitoServiceTest {
 
     @Test
     void obtenerHistoriaExitoByIdAndIdMascotaReturnsHistory() {
+        MascotaEntity mascota = new MascotaEntity();
+        mascota.setEstado("Disponible");
         HistoriaExitoEntity expected = new HistoriaExitoEntity();
-        when(mascotaRepository.existsById(1L)).thenReturn(true);
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
         when(historiaExitoRepository.findByMascotaIdAndId(1L, 2L)).thenReturn(expected);
 
         assertEquals(expected, service.obtenerHistoriaExitoByIdAndIdMascota(2L, 1L));
@@ -115,16 +118,21 @@ class HistoriaExitoServiceTest {
 
     @Test
     void obtenerHistoriaExitoByIdAndIdMascotaRejectsMissingHistory() {
-        when(mascotaRepository.existsById(1L)).thenReturn(true);
+        MascotaEntity mascota = new MascotaEntity();
+        mascota.setEstado("Disponible");
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
         when(historiaExitoRepository.findByMascotaIdAndId(1L, 2L)).thenReturn(null);
 
-        assertThrows(RuntimeException.class, () -> service.obtenerHistoriaExitoByIdAndIdMascota(2L, 1L));
+        assertThrows(HistoriaExitoService.HistoriaExitoException.class,
+                () -> service.obtenerHistoriaExitoByIdAndIdMascota(2L, 1L));
     }
 
     @Test
     void obtenerHistoriasExitoByIdMascotaReturnsHistories() {
+        MascotaEntity mascota = new MascotaEntity();
+        mascota.setEstado("Disponible");
         List<HistoriaExitoEntity> expected = List.of(new HistoriaExitoEntity());
-        when(mascotaRepository.existsById(1L)).thenReturn(true);
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
         when(historiaExitoRepository.findByMascotaId(1L)).thenReturn(expected);
 
         assertEquals(expected, service.obtenerHistoriasExitoByIdMascota(1L));

@@ -43,11 +43,11 @@ public class RefugioController {
 
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public List<RefugioDTO> findAll() {
+    public List<RefugioDetailDTO> findAll() {
         List<RefugioEntity> refugios = refugioService.getRefugios();
         return refugios.stream()
                 .map(entity -> modelMapper.map(entity, RefugioDetailDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/{id}")
