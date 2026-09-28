@@ -43,6 +43,7 @@ public class PruebaConvivenciaEntityTest {
 
     private void insertData() {
 
+        // Adopción independiente para testCreatePruebaConvivencia
         AdoptanteEntity adoptante = factory.manufacturePojo(AdoptanteEntity.class);
         MascotaEntity mascota = factory.manufacturePojo(MascotaEntity.class);
 
@@ -58,9 +59,27 @@ public class PruebaConvivenciaEntityTest {
         adopcion.setSolicitud(solicitud);
         entityManager.persist(adopcion);
 
+        // Cada prueba tendrá una adopción diferente
         for (int i = 0; i < 3; i++) {
+
+            AdoptanteEntity nuevoAdoptante = factory.manufacturePojo(AdoptanteEntity.class);
+            MascotaEntity nuevaMascota = factory.manufacturePojo(MascotaEntity.class);
+
+            entityManager.persist(nuevoAdoptante);
+            entityManager.persist(nuevaMascota);
+
+            SolicitudAdopcionEntity nuevaSolicitud = factory.manufacturePojo(SolicitudAdopcionEntity.class);
+            nuevaSolicitud.setAdoptante(nuevoAdoptante);
+            nuevaSolicitud.setMascota(nuevaMascota);
+            entityManager.persist(nuevaSolicitud);
+
+            AdopcionEntity nuevaAdopcion = factory.manufacturePojo(AdopcionEntity.class);
+            nuevaAdopcion.setSolicitud(nuevaSolicitud);
+            entityManager.persist(nuevaAdopcion);
+
             PruebaConvivenciaEntity entity = factory.manufacturePojo(PruebaConvivenciaEntity.class);
-            entity.setAdopcion(adopcion);
+            entity.setAdopcion(nuevaAdopcion);
+
             entityManager.persist(entity);
             data.add(entity);
         }
@@ -68,8 +87,24 @@ public class PruebaConvivenciaEntityTest {
 
     @Test
     void testCreatePruebaConvivencia() {
+
+        AdoptanteEntity adoptante = factory.manufacturePojo(AdoptanteEntity.class);
+        MascotaEntity mascota = factory.manufacturePojo(MascotaEntity.class);
+
+        entityManager.persist(adoptante);
+        entityManager.persist(mascota);
+
+        SolicitudAdopcionEntity solicitud = factory.manufacturePojo(SolicitudAdopcionEntity.class);
+        solicitud.setAdoptante(adoptante);
+        solicitud.setMascota(mascota);
+        entityManager.persist(solicitud);
+
+        AdopcionEntity nuevaAdopcion = factory.manufacturePojo(AdopcionEntity.class);
+        nuevaAdopcion.setSolicitud(solicitud);
+        entityManager.persist(nuevaAdopcion);
+
         PruebaConvivenciaEntity entity = factory.manufacturePojo(PruebaConvivenciaEntity.class);
-        entity.setAdopcion(adopcion);
+        entity.setAdopcion(nuevaAdopcion);
 
         PruebaConvivenciaEntity result = entityManager.persistFlushFind(entity);
 

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +39,6 @@ public class SeguimientoController {
     private final SeguimientoService seguimientoService;
     private final ModelMapper modelMapper;
 
-    @Autowired
     public SeguimientoController(SeguimientoService seguimientoService, ModelMapper modelMapper) {
         this.seguimientoService = seguimientoService;
         this.modelMapper = modelMapper;

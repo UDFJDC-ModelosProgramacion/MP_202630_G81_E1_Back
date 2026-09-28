@@ -2,7 +2,6 @@ package co.edu.udistrital.mdp.pets.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +29,6 @@ public class SeguimientoService {
     private final MascotaRepository mascotaRepository;
     private final VeterinarioRepository veterinarioRepository;
 
-    @Autowired
     public SeguimientoService(SeguimientoRepository seguimientoRepository,
             MascotaRepository mascotaRepository,
             VeterinarioRepository veterinarioRepository) {

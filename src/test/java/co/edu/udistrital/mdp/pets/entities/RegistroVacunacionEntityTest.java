@@ -24,7 +24,7 @@ import java.util.Date;
  */
 @DataJpaTest
 @Transactional
-public class RegistroVacunacionEntityTest {
+class RegistroVacunacionEntityTest {
 
 	@Autowired
 	private TestEntityManager entityManager;
