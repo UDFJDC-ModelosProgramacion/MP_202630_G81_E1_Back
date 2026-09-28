@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -46,7 +45,7 @@ public class SeguimientoController {
 
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public List<SeguimientoDetailDTO> findAll() {
+    public List<SeguimientoDTO> findAll() {
         List<SeguimientoEntity> seguimientos = seguimientoService.getSeguimientos();
         return seguimientos.stream()
                 .map(entity -> modelMapper.map(entity, SeguimientoDetailDTO.class))

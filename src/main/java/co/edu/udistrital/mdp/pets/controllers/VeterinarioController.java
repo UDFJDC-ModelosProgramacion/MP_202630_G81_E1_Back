@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -45,7 +44,7 @@ public class VeterinarioController {
 
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public List<VeterinarioDetailDTO> findAll() {
+    public List<VeterinarioDTO> findAll() {
         List<VeterinarioEntity> veterinarios = veterinarioService.getVeterinarios();
         return veterinarios.stream()
                 .map(entity -> modelMapper.map(entity, VeterinarioDetailDTO.class))
