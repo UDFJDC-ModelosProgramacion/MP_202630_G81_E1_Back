@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.udistrital.mdp.pets.dto.VeterinarioDTO;
+import co.edu.udistrital.mdp.pets.dto.VeterinarioDetailDTO;
 import co.edu.udistrital.mdp.pets.entities.VeterinarioEntity;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
@@ -44,7 +45,7 @@ public class VeterinarioController {
 
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public List<VeterinarioDTO> findAll() {
+    public List<VeterinarioDetailDTO> findAll() {
         List<VeterinarioEntity> veterinarios = veterinarioService.getVeterinarios();
         return veterinarios.stream()
                 .map(entity -> modelMapper.map(entity, VeterinarioDTO.class))
@@ -53,9 +54,9 @@ public class VeterinarioController {
 
     @GetMapping("/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public VeterinarioDTO findOne(@PathVariable Long id) throws EntityNotFoundException {
+    public VeterinarioDetailDTO findOne(@PathVariable Long id) throws EntityNotFoundException {
         VeterinarioEntity veterinario = veterinarioService.getVeterinario(id);
-        return modelMapper.map(veterinario, VeterinarioDTO.class);
+        return modelMapper.map(veterinario, VeterinarioDetailDTO.class);
     }
 
     @PostMapping

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.udistrital.mdp.pets.dto.SeguimientoDTO;
+import co.edu.udistrital.mdp.pets.dto.SeguimientoDetailDTO;
 import co.edu.udistrital.mdp.pets.entities.SeguimientoEntity;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
@@ -45,7 +46,7 @@ public class SeguimientoController {
 
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public List<SeguimientoDTO> findAll() {
+    public List<SeguimientoDetailDTO> findAll() {
         List<SeguimientoEntity> seguimientos = seguimientoService.getSeguimientos();
         return seguimientos.stream()
                 .map(entity -> modelMapper.map(entity, SeguimientoDTO.class))
@@ -54,9 +55,9 @@ public class SeguimientoController {
 
     @GetMapping("/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public SeguimientoDTO findOne(@PathVariable Long id) throws EntityNotFoundException {
+    public SeguimientoDetailDTO findOne(@PathVariable Long id) throws EntityNotFoundException {
         SeguimientoEntity seguimiento = seguimientoService.getSeguimiento(id);
-        return modelMapper.map(seguimiento, SeguimientoDTO.class);
+        return modelMapper.map(seguimiento, SeguimientoDetailDTO.class);
     }
 
     @PostMapping
