@@ -36,7 +36,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(SeguimientoService.class)
-class SeguimientoServiceTest {
+public class SeguimientoServiceTest {
 
     @Autowired
     private SeguimientoService seguimientoService;

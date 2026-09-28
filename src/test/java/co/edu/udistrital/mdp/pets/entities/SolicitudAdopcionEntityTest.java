@@ -16,7 +16,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @DataJpaTest
 @Transactional
-class SolicitudAdopcionEntityTest {
+public class SolicitudAdopcionEntityTest {
 
     @Autowired
     private TestEntityManager entityManager;
