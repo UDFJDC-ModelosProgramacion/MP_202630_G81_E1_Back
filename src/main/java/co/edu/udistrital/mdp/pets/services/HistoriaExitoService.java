@@ -53,7 +53,7 @@ public class HistoriaExitoService {
     @Transactional(rollbackOn = Exception.class)
     public void eliminarHistoriaExito(Long idHistoriaExito, Long idMascota) {
         try {
-            MascotaEntity mascota = validarMascotaActiva(idMascota);
+            validarMascotaActiva(idMascota);
 
             HistoriaExitoEntity historiaExito =
                     historiaExitoRepository.findByMascotaIdAndId(

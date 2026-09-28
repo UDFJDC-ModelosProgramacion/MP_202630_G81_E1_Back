@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import co.edu.udistrital.mdp.pets.entities.AdoptanteEntity;
-import co.edu.udistrital.mdp.pets.entities.MascotaEntity;
 import co.edu.udistrital.mdp.pets.entities.MensajeEntity;
 import co.edu.udistrital.mdp.pets.repositories.AdoptanteRepository;
 import co.edu.udistrital.mdp.pets.repositories.MascotaRepository;
