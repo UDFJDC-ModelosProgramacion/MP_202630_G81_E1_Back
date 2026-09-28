@@ -46,7 +46,7 @@ public class MascotaController {
 
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public List<MascotaDetailDTO> findAll() {
+    public List<MascotaDTO> findAll() {
         List<MascotaEntity> mascotas = mascotaService.getMascotas();
         return mascotas.stream()
                 .map(entity -> modelMapper.map(entity, MascotaDetailDTO.class))
