@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.udistrital.mdp.pets.dto.MascotaDTO;
+import co.edu.udistrital.mdp.pets.dto.MascotaDetailDTO;
 import co.edu.udistrital.mdp.pets.entities.MascotaEntity;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
@@ -47,18 +48,18 @@ public class MascotaController {
 
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public List<MascotaDTO> findAll() {
+    public List<MascotaDetailDTO> findAll() {
         List<MascotaEntity> mascotas = mascotaService.getMascotas();
         return mascotas.stream()
-                .map(entity -> modelMapper.map(entity, MascotaDTO.class))
+                .map(entity -> modelMapper.map(entity, MascotaDetailDTO.class))
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public MascotaDTO findOne(@PathVariable Long id) throws EntityNotFoundException {
+    public MascotaDetailDTO findOne(@PathVariable Long id) throws EntityNotFoundException {
         MascotaEntity mascota = mascotaService.getMascota(id);
-        return modelMapper.map(mascota, MascotaDTO.class);
+        return modelMapper.map(mascota, MascotaDetailDTO.class);
     }
 
     @PostMapping
