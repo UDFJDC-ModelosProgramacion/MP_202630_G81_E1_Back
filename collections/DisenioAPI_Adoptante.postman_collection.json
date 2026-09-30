@@ -1,0 +1,182 @@
+{
+  "info": {
+    "_postman_id": "25afcc2e-9d04-4322-b3a0-5fcc2697885f",
+    "name": "Diseno API - Adoptante",
+    "description": "Diseno del API del recurso Adoptante: operaciones findAll, findOne, create, update y delete, representaciones basica (AdoptanteDTO) y detallada (AdoptanteDTODetail), y codigos de estado HTTP de cada operacion.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Listar adoptantes (representacion basica)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/adoptantes",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adoptantes"
+          ]
+        },
+        "description": "200 OK. Devuelve List<AdoptanteDTO>: nombre, telefono, email, direccion, ciudad (sin mensajes ni solicitudes de adopcion)."
+      },
+      "response": []
+    },
+    {
+      "name": "Consultar un adoptante (representacion detallada)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/adoptantes/{{adoptanteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adoptantes",
+            "{{adoptanteId}}"
+          ]
+        },
+        "description": "200 OK -> AdoptanteDTODetail (agrega mensajes y, cuando exista SolicitudAdopcionDTO, solicitudesAdopcion).\n404 Not Found si el id no existe."
+      },
+      "response": []
+    },
+    {
+      "name": "Crear adoptante",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Laura Gomez\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"laura.gomez@example.com\",\n  \"direccion\": \"Cra 10 # 20-30\",\n  \"ciudad\": \"Bogota\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/adoptantes",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adoptantes"
+          ]
+        },
+        "description": "201 Created -> AdoptanteDTODetail.\n412 Precondition Failed si el nombre esta vacio, el email es invalido, o ya existe un adoptante con ese email."
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar adoptante",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Laura Gomez\",\n  \"telefono\": \"3009876543\",\n  \"email\": \"laura.gomez@example.com\",\n  \"direccion\": \"Cra 10 # 20-30\",\n  \"ciudad\": \"Bogota\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/adoptantes/{{adoptanteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adoptantes",
+            "{{adoptanteId}}"
+          ]
+        },
+        "description": "200 OK -> AdoptanteDTODetail.\n404 Not Found si el id no existe.\n412 Precondition Failed si el email es invalido o esta duplicado en otro adoptante."
+      },
+      "response": []
+    },
+    {
+      "name": "Eliminar adoptante",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/adoptantes/{{adoptanteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adoptantes",
+            "{{adoptanteId}}"
+          ]
+        },
+        "description": "204 No Content.\n404 Not Found si el id no existe.\n412 Precondition Failed si el adoptante tiene solicitudes de adopcion asociadas."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "adoptanteId",
+      "value": "1"
+    }
+  ]
+}
