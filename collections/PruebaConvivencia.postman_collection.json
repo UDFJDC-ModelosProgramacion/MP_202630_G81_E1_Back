@@ -1,0 +1,213 @@
+{
+  "info": {
+    "_postman_id": "a7c3e951-4d28-46b1-8f72-5c104d9a6382",
+    "name": "PruebaConvivencia - Pet Adoption",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Crear prueba de convivencia",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "   pm.response.to.have.status(201);",
+              "});",
+              "",
+              "var data = pm.response.json();",
+              "pm.globals.set(\"prueba_convivencia_id_1\", data.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fechaInicio\": \"2026-09-30\",\n  \"fechaFin\": \"2026-10-14\",\n  \"duracionDias\": 14,\n  \"estado\": \"EN_CURSO\",\n  \"observacion\": \"Prueba de convivencia inicial\",\n  \"adopcion\": {\n    \"id\": {{adopcion_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pruebas-convivencia",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pruebas-convivencia"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener todas las pruebas",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Number of items > 0\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(data.length).to.be.greaterThan(0);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pruebas-convivencia",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pruebas-convivencia"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener una prueba",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pruebas-convivencia/{{prueba_convivencia_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pruebas-convivencia",
+            "{{prueba_convivencia_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar prueba",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fechaInicio\": \"2026-09-30\",\n  \"fechaFin\": \"2026-10-14\",\n  \"duracionDias\": 14,\n  \"estado\": \"FINALIZADA\",\n  \"observacion\": \"Prueba finalizada correctamente\",\n  \"adopcion\": {\n    \"id\": {{adopcion_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pruebas-convivencia/{{prueba_convivencia_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pruebas-convivencia",
+            "{{prueba_convivencia_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar prueba",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {",
+              "   pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pruebas-convivencia/{{prueba_convivencia_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pruebas-convivencia",
+            "{{prueba_convivencia_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
