@@ -47,7 +47,7 @@ public class HistoriaExitoService {
         this.mascotaRepository = mascotaRepository;
     }
 
-    // Método para eliminar una historia de éxito asociada a una mascota
+        // Método para eliminar una historia de éxito asociada a una mascota
     @Transactional(rollbackOn = Exception.class)
     public void eliminarHistoriaExito(Long idHistoriaExito, Long idMascota) {
         try {
@@ -67,15 +67,12 @@ public class HistoriaExitoService {
                         String.format(HISTORIA_NO_EXISTE, idHistoriaExito));
             }
 
-            log.info(
-                    "La historia de éxito con ID asociada a la mascota seleccionada: {} existe",
-                    idHistoriaExito);
-
-            log.info(
-                    "Eliminando historia de éxito con ID: {}",
-                    idHistoriaExito);
-
             historiaExitoRepository.deleteById(idHistoriaExito);
+
+            log.info(
+                    "Historia de éxito con ID: {} eliminada exitosamente para la mascota con ID: {}",
+                    idHistoriaExito,
+                    idMascota);
 
         } catch (HistoriaExitoException e) {
             throw e;
@@ -90,7 +87,6 @@ public class HistoriaExitoService {
                     e);
         }
     }
-
     // Método para crear una historia de éxito asociada a una mascota
     @Transactional(rollbackOn = Exception.class)
     public void crearHistoriaExito(

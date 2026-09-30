@@ -1,0 +1,183 @@
+{
+  "info": {
+    "_postman_id": "68cc78a2-7cbe-4891-89d0-3ebf459b8388",
+    "name": "Diseno API - Vacuna",
+    "description": "Diseno del API del recurso Vacuna: operaciones findAll, findOne, create, update y delete, representaciones basica (VacunaDTO) y detallada (VacunaDTODetail), y codigos de estado HTTP de cada operacion.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Listar vacunas (representacion basica)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Respuesta es un arreglo\", function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/vacunas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "vacunas"
+          ]
+        },
+        "description": "200 OK. Devuelve List<VacunaDTO>: id, nombre, descripcion (sin la coleccion de registros de vacunacion)."
+      },
+      "response": []
+    },
+    {
+      "name": "Consultar una vacuna (representacion detallada)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/vacunas/{{vacunaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "vacunas",
+            "{{vacunaId}}"
+          ]
+        },
+        "description": "200 OK -> VacunaDTODetail (agrega registrosVacunacion).\n404 Not Found si el id no existe (ApiError con mensaje)."
+      },
+      "response": []
+    },
+    {
+      "name": "Crear vacuna",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Antirrabica\",\n  \"descripcion\": \"Vacuna anual contra la rabia\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/vacunas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "vacunas"
+          ]
+        },
+        "description": "201 Created -> VacunaDTODetail.\n412 Precondition Failed si el nombre viene vacio o ya existe una vacuna con ese nombre."
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar vacuna",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Antirrabica\",\n  \"descripcion\": \"Vacuna anual contra la rabia - refuerzo\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/vacunas/{{vacunaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "vacunas",
+            "{{vacunaId}}"
+          ]
+        },
+        "description": "200 OK -> VacunaDTODetail.\n404 Not Found si el id no existe.\n412 Precondition Failed si el nombre es invalido o esta duplicado."
+      },
+      "response": []
+    },
+    {
+      "name": "Eliminar vacuna",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/vacunas/{{vacunaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "vacunas",
+            "{{vacunaId}}"
+          ]
+        },
+        "description": "204 No Content.\n404 Not Found si el id no existe.\n412 Precondition Failed si la vacuna tiene registros de vacunacion asociados."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "vacunaId",
+      "value": "1"
+    }
+  ]
+}
