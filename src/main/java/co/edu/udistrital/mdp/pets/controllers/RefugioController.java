@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.udistrital.mdp.pets.dto.RefugioDTO;
+import co.edu.udistrital.mdp.pets.dto.RefugioDetailDTO;
 import co.edu.udistrital.mdp.pets.entities.RefugioEntity;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
@@ -43,18 +44,18 @@ public class RefugioController {
 
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public List<RefugioDTO> findAll() {
+    public List<RefugioDetailDTO> findAll() {
         List<RefugioEntity> refugios = refugioService.getRefugios();
         return refugios.stream()
-                .map(entity -> modelMapper.map(entity, RefugioDTO.class))
-                .collect(Collectors.toList());
+                .map(entity -> modelMapper.map(entity, RefugioDetailDTO.class))
+                .toList();
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public RefugioDTO findOne(@PathVariable Long id) throws EntityNotFoundException {
+    public RefugioDetailDTO findOne(@PathVariable Long id) throws EntityNotFoundException {
         RefugioEntity refugio = refugioService.getRefugio(id);
-        return modelMapper.map(refugio, RefugioDTO.class);
+        return modelMapper.map(refugio, RefugioDetailDTO.class);
     }
 
     @PostMapping
