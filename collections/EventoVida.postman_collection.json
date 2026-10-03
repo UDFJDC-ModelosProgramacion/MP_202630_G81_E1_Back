@@ -7,6 +7,52 @@
 	},
 	"item": [
 		{
+			"name": "Preparar mascota base para eventos de vida",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"  pm.response.to.have.status(201);",
+							"});",
+							"if (pm.response.code === 201) {",
+							"  var jsonData = pm.response.json();",
+							"  if (jsonData && jsonData.id) {",
+							"    pm.collectionVariables.set(\"mascotaId\", jsonData.id.toString());",
+							"  }",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombre\": \"Luna\",\n  \"especie\": \"Perro\",\n  \"edad\": 2,\n  \"sexo\": \"Hembra\",\n  \"estado\": \"Disponible\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/mascotas",
+					"host": ["{{baseUrl}}"],
+					"path": ["mascotas"]
+				}
+			},
+			"response": [{"name":"Respuesta 201 Created","status":"Created","code":201,"body":"{\"id\":1,\"nombre\":\"Luna\",\"especie\":\"Perro\"}"}]
+		},
+		{
 			"name": "Obtener Eventos de Vida por Mascota",
 			"event": [
 				{
@@ -24,7 +70,7 @@
 						"type": "text/javascript"
 					}
 				}
-		],
+			],
 			"request": {
 				"method": "GET",
 				"header": [
@@ -198,7 +244,13 @@
 							"});",
 							"pm.test(\"Evento creado correctamente\", function () {",
 							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-							"});"
+							"});",
+							"if (pm.response.code === 200 || pm.response.code === 201) {",
+							"    var jsonData = pm.response.json();",
+							"    if (jsonData && jsonData.id) {",
+							"        pm.collectionVariables.set(\"eventoVidaId\", jsonData.id.toString());",
+							"    }",
+							"}"
 						],
 						"type": "text/javascript"
 					}
@@ -311,47 +363,22 @@
 		},
 		{
 			"name": "Obtener Evento de Vida por ID",
-			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"],"type":"text/javascript"}}],
+			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 404 after deletion\", function () { pm.response.to.have.status(404); });"],"type":"text/javascript"}}],
 					"request": {"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/mascotas/{{mascotaId}}/eventos-vida/{{eventoVidaId}}","host":["{{baseUrl}}"],"path":["mascotas","{{mascotaId}}","eventos-vida","{{eventoVidaId}}"]}},
-			"response":[{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"{\"id\":1,\"tipo\":\"Vacunación\",\"fecha\":\"2024-01-15\",\"descripcion\":\"Vacuna antirrábica anual\"}"}]
+			"response":[{"name":"Respuesta 404 Not Found","status":"Not Found","code":404,"body":"{\"apiError\":{\"status\":\"NOT_FOUND\",\"message\":\"El evento de vida con el id dado no existe\"}}"}]
 		},
 		{
 			"name": "Obtener Evento de Vida que no existe",
 			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"],"type":"text/javascript"}}],
-					"request": {"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/mascotas/{{mascotaId}}/eventos-vida/0","host":["{{baseUrl}}"],"path":["mascotas","{{mascotaId}}","eventos-vida","0"]}},
+			"request": {"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/mascotas/{{mascotaId}}/eventos-vida/0","host":["{{baseUrl}}"],"path":["mascotas","{{mascotaId}}","eventos-vida","0"]}},
 			"response":[{"name":"Respuesta 404 Not Found","status":"Not Found","code":404,"body":"{\"apiError\":{\"status\":\"NOT_FOUND\",\"message\":\"El evento de vida con el id dado no existe\"}}"}]
 		}
 	],
 	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "http://localhost:8080",
-			"type": "string"
-		},
-		{
-			"key": "mascotaId",
-			"value": "1",
-			"type": "string"
-		},
-		{
-			"key": "eventoVidaId",
-			"value": "1",
-			"type": "string"
-		},
-		{
-			"key": "tipoEvento",
-			"value": "Vacunación",
-			"type": "string"
-		},
-		{
-			"key": "fechaInicio",
-			"value": "2024-01-01",
-			"type": "string"
-		},
-		{
-			"key": "fechaFin",
-			"value": "2024-12-31",
-			"type": "string"
-		}
+		{"key":"mascotaId","value":"1","type":"string"},
+		{"key":"eventoVidaId","value":"1","type":"string"},
+		{"key":"tipoEvento","value":"Vacunación","type":"string"},
+		{"key":"fechaInicio","value":"2024-01-01","type":"string"},
+		{"key":"fechaFin","value":"2024-12-31","type":"string"}
 	]
 }

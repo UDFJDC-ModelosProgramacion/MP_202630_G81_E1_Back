@@ -1,231 +1,268 @@
 {
-	"info": {
-		"_postman_id": "historiaexito-collection-001",
-		"name": "HistoriaExito",
-		"description": "Colección de endpoints para la gestión de historias de éxito de mascotas adoptadas. Permite crear, consultar, actualizar y eliminar historias de éxito asociadas a una mascota.",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Obtener Todas las Historias de Éxito de una Mascota",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"pm.test(\"Response is an array\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.be.an('array');",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"url": {
-					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/historias-exito",
-					"host": ["{{baseUrl}}"],
-					"path": ["mascotas", "{{mascotaId}}", "historias-exito"]
-				},
-				"description": "Obtiene todas las historias de éxito asociadas a una mascota específica."
-			},
-			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"[]"}]
-		},
-		{
-			"name": "Obtener Historia de Éxito por ID",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"pm.test(\"Response has historia data\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.have.property('id');",
-							"    pm.expect(jsonData).to.have.property('titulo');",
-							"    pm.expect(jsonData).to.have.property('descripcion');",
-							"    pm.expect(jsonData).to.have.property('fecha');",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"url": {
-					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/historias-exito/{{historiaExitoId}}",
-					"host": ["{{baseUrl}}"],
-					"path": ["mascotas", "{{mascotaId}}", "historias-exito", "{{historiaExitoId}}"]
-				},
-				"description": "Obtiene una historia de éxito específica por su ID, verificando que pertenezca a la mascota indicada."
-			},
-			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"{\"id\":1,\"titulo\":\"Max encontró su hogar\",\"descripcion\":\"Fue adoptado\",\"fecha\":\"2024-03-20\"}"}]
-		},
-		{
-			"name": "Crear Historia de Éxito",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 201 or 200\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-							"});",
-							"pm.test(\"Historia creada correctamente\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"titulo\": \"Max encontró su hogar para siempre\",\n    \"descripcion\": \"Después de 6 meses en el refugio, Max fue adoptado por una familia amorosa que le brinda todo el cuidado que merece.\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/historias-exito",
-					"host": ["{{baseUrl}}"],
-					"path": ["mascotas", "{{mascotaId}}", "historias-exito"]
-				},
-				"description": "Crea una nueva historia de éxito para una mascota. La mascota debe existir y estar activa."
-			},
-			"response": [{"name":"Respuesta 201 Created","status":"Created","code":201,"body":"{\"id\":1,\"titulo\":\"Max encontró su hogar\",\"descripcion\":\"Fue adoptado\"}"}]
-		},
-		{
-			"name": "Actualizar Historia de Éxito",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"pm.test(\"Historia actualizada correctamente\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"id\": {{historiaExitoId}},\n    \"titulo\": \"Max encontró su hogar para siempre (actualizado)\",\n    \"descripcion\": \"Después de 6 meses en el refugio, Max fue adoptado por una familia amorosa. Hoy es feliz y saludable.\",\n    \"fecha\": \"2024-03-20\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/historias-exito/{{historiaExitoId}}",
-					"host": ["{{baseUrl}}"],
-					"path": ["mascotas", "{{mascotaId}}", "historias-exito", "{{historiaExitoId}}"]
-				},
-				"description": "Actualiza una historia de éxito existente. La mascota debe existir y estar activa."
-			},
-			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"{\"id\":1,\"titulo\":\"Max encontró su hogar actualizado\"}"}]
-		},
-		{
-			"name": "Eliminar Historia de Éxito",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200 or 204\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-							"});",
-							"pm.test(\"Historia eliminada correctamente\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"url": {
-					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/historias-exito/{{historiaExitoId}}",
-					"host": ["{{baseUrl}}"],
-					"path": ["mascotas", "{{mascotaId}}", "historias-exito", "{{historiaExitoId}}"]
-				},
-				"description": "Elimina una historia de éxito. Verifica que la mascota exista, esté activa y que la historia pertenezca a esa mascota."
-			},
-			"response": [{"name":"Respuesta 204 No Content","status":"No Content","code":204,"body":""}]
-				},
-				{
-					"name": "Obtener Historia de Exito que no existe",
-			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"],"type":"text/javascript"}}],
-			"request": {"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/mascotas/{{mascotaId}}/historias-exito/0","host":["{{baseUrl}}"],"path":["mascotas","{{mascotaId}}","historias-exito","0"]}},
-			"response":[{"name":"Respuesta 404 Not Found","status":"Not Found","code":404,"body":"{\"apiError\":{\"status\":\"NOT_FOUND\",\"message\":\"La historia de éxito con el id dado no existe\"}}"}]
-		}
-	],
-	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "http://localhost:8080",
-			"type": "string"
-		},
-		{
-			"key": "mascotaId",
-			"value": "1",
-			"type": "string"
-		},
-		{
-			"key": "historiaExitoId",
-			"value": "1",
-			"type": "string"
-		}
-	]
+  "info": {
+    "_postman_id": "historiaexito-collection-001",
+    "name": "HistoriaExito",
+    "description": "Colección de endpoints para la gestión de historias de éxito de mascotas adoptadas. Permite crear, consultar, actualizar y eliminar historias de éxito asociadas a una mascota.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Preparar refugio para pruebas",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Refugio de prueba creado\", function () {",
+              "    pm.response.to.have.status(201);",
+              "    var refugio = pm.response.json();",
+              "    pm.expect(refugio).to.have.property('id');",
+              "    pm.collectionVariables.set('historiaExitoRefugioId', refugio.id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Refugio Historia {{$guid}}\",\n  \"ciudad\": \"Bogota\",\n  \"direccion\": \"Calle 1 2-3\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"historia@example.com\",\n  \"descripcion\": \"Refugio para pruebas de HistoriaExito\",\n  \"fechaRegistro\": \"2026-01-10\"\n}",
+          "options": {"raw": {"language": "json"}}
+        },
+        "url": {
+          "raw": "{{baseUrl}}/refugios",
+          "host": ["{{baseUrl}}"],
+          "path": ["refugios"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Preparar mascota para pruebas",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Mascota de prueba creada\", function () {",
+              "    pm.response.to.have.status(201);",
+              "    var mascota = pm.response.json();",
+              "    pm.expect(mascota).to.have.property('id');",
+              "    pm.collectionVariables.set('historiaExitoMascotaId', mascota.id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Firulais Historia\",\n  \"especie\": \"Perro\",\n  \"raza\": \"Criollo\",\n  \"edad\": 3,\n  \"sexo\": \"Macho\",\n  \"tamano\": \"Mediano\",\n  \"temperamento\": \"Amigable\",\n  \"necesidadesEspecificas\": \"Ninguna\",\n  \"requisitoEspacio\": \"Patio\",\n  \"compatibleConNinos\": true,\n  \"compatibleConMascotas\": true,\n  \"nivelActividad\": \"Alto\",\n  \"estado\": \"Disponible\",\n  \"refugio\": {\n    \"id\": {{historiaExitoRefugioId}}\n  }\n}",
+          "options": {"raw": {"language": "json"}}
+        },
+        "url": {
+          "raw": "{{baseUrl}}/mascotas",
+          "host": ["{{baseUrl}}"],
+          "path": ["mascotas"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener Todas las Historias de Éxito de una Mascota",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Response is an array\", function () {",
+              "    pm.expect(pm.response.json()).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": {
+          "raw": "{{baseUrl}}/mascotas/{{historiaExitoMascotaId}}/historias-exito",
+          "host": ["{{baseUrl}}"],
+          "path": ["mascotas", "{{historiaExitoMascotaId}}", "historias-exito"]
+        },
+        "description": "Obtiene todas las historias de éxito asociadas a una mascota específica."
+      },
+      "response": [{"name": "Respuesta 200 OK", "status": "OK", "code": 200, "body": "[]"}]
+    },
+    {
+      "name": "Crear Historia de Éxito",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "    var historia = pm.response.json();",
+              "    pm.expect(historia).to.have.property('id');",
+              "    pm.collectionVariables.set('historiaExitoIdCreada', historia.id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Max encontró su hogar para siempre\",\n  \"descripcion\": \"Después de 6 meses en el refugio, Max fue adoptado por una familia amorosa que le brinda todo el cuidado que merece.\"\n}",
+          "options": {"raw": {"language": "json"}}
+        },
+        "url": {
+          "raw": "{{baseUrl}}/mascotas/{{historiaExitoMascotaId}}/historias-exito",
+          "host": ["{{baseUrl}}"],
+          "path": ["mascotas", "{{historiaExitoMascotaId}}", "historias-exito"]
+        },
+        "description": "Crea una nueva historia de éxito para una mascota activa."
+      },
+      "response": [{"name": "Respuesta 201 Created", "status": "Created", "code": 201, "body": "{\"id\":1,\"titulo\":\"Max encontró su hogar\",\"descripcion\":\"Fue adoptado\"}"}]
+    },
+    {
+      "name": "Obtener Historia de Éxito por ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Response has historia data\", function () {",
+              "    var historia = pm.response.json();",
+              "    pm.expect(historia).to.have.property('id');",
+              "    pm.expect(historia).to.have.property('titulo');",
+              "    pm.expect(historia).to.have.property('descripcion');",
+              "    pm.expect(historia).to.have.property('fecha');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": {
+          "raw": "{{baseUrl}}/mascotas/{{historiaExitoMascotaId}}/historias-exito/{{historiaExitoIdCreada}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["mascotas", "{{historiaExitoMascotaId}}", "historias-exito", "{{historiaExitoIdCreada}}"]
+        },
+        "description": "Obtiene una historia de éxito específica por su ID, verificando que pertenezca a la mascota indicada."
+      },
+      "response": [{"name": "Respuesta 200 OK", "status": "OK", "code": 200, "body": "{\"id\":1,\"titulo\":\"Max encontró su hogar\",\"descripcion\":\"Fue adoptado\",\"fecha\":\"2024-03-20\"}"}]
+    },
+    {
+      "name": "Actualizar Historia de Éxito",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json()).to.have.property('id');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": {{historiaExitoIdCreada}},\n  \"titulo\": \"Max encontró su hogar para siempre (actualizado)\",\n  \"descripcion\": \"Después de 6 meses en el refugio, Max fue adoptado por una familia amorosa. Hoy es feliz y saludable.\",\n  \"fecha\": \"2024-03-20\"\n}",
+          "options": {"raw": {"language": "json"}}
+        },
+        "url": {
+          "raw": "{{baseUrl}}/mascotas/{{historiaExitoMascotaId}}/historias-exito/{{historiaExitoIdCreada}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["mascotas", "{{historiaExitoMascotaId}}", "historias-exito", "{{historiaExitoIdCreada}}"]
+        },
+        "description": "Actualiza una historia de éxito existente."
+      },
+      "response": [{"name": "Respuesta 200 OK", "status": "OK", "code": 200, "body": "{\"id\":1,\"titulo\":\"Max encontró su hogar actualizado\"}"}]
+    },
+    {
+      "name": "Eliminar Historia de Éxito",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {",
+              "    pm.response.to.have.status(204);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": {
+          "raw": "{{baseUrl}}/mascotas/{{historiaExitoMascotaId}}/historias-exito/{{historiaExitoIdCreada}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["mascotas", "{{historiaExitoMascotaId}}", "historias-exito", "{{historiaExitoIdCreada}}"]
+        },
+        "description": "Elimina una historia de éxito asociada a la mascota."
+      },
+      "response": [{"name": "Respuesta 204 No Content", "status": "No Content", "code": 204, "body": ""}]
+    },
+    {
+      "name": "Obtener Historia de Exito que no existe",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/mascotas/{{historiaExitoMascotaId}}/historias-exito/0",
+          "host": ["{{baseUrl}}"],
+          "path": ["mascotas", "{{historiaExitoMascotaId}}", "historias-exito", "0"]
+        }
+      },
+      "response": [{"name": "Respuesta 404 Not Found", "status": "Not Found", "code": 404, "body": "{\"apiError\":{\"status\":\"NOT_FOUND\",\"message\":\"La historia de éxito con el id dado no existe\"}}"}]
+    }
+  ],
+  "variable": [
+    {"key": "historiaExitoRefugioId", "value": "1", "type": "string"},
+    {"key": "historiaExitoMascotaId", "value": "1", "type": "string"},
+    {"key": "historiaExitoIdCreada", "value": "1", "type": "string"}
+  ]
 }
