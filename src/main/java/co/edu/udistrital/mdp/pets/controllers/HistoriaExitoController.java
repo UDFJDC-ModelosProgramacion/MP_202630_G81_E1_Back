@@ -69,8 +69,9 @@ public class HistoriaExitoController {
         MascotaEntity mascota = requireMascota(mascotaId);
         requireActive(mascota);
         HistoriaExitoEntity entity = requireHistoria(mascotaId, historiaExitoId);
-        modelMapper.map(dto, entity);
-        entity.setId(historiaExitoId);
+        entity.setTitulo(dto.getTitulo());
+        entity.setDescripcion(dto.getDescripcion());
+        entity.setFecha(dto.getFecha());
         entity.setMascota(mascota);
         return detail(historiaRepository.save(entity));
     }
