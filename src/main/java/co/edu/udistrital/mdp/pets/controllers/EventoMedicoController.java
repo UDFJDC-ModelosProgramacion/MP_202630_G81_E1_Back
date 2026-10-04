@@ -1,10 +1,17 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import co.edu.udistrital.mdp.pets.dto.EventoMedicoDTO;
+import co.edu.udistrital.mdp.pets.dto.EventoMedicoDTODetail;
 import co.edu.udistrital.mdp.pets.entities.EventoMedicoEntity;
+import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
+import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import co.edu.udistrital.mdp.pets.services.EventoMedicoService;
 
 @RestController
@@ -12,44 +19,64 @@ import co.edu.udistrital.mdp.pets.services.EventoMedicoService;
 public class EventoMedicoController {
 
     private final EventoMedicoService eventoMedicoService;
+    private final ModelMapper modelMapper;
 
-    public EventoMedicoController(EventoMedicoService eventoMedicoService) {
+    public EventoMedicoController(EventoMedicoService eventoMedicoService, ModelMapper modelMapper) {
         this.eventoMedicoService = eventoMedicoService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
-    public List<EventoMedicoEntity> getEventosMedicos() {
-        return eventoMedicoService.getEventosMedicos();
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<EventoMedicoDTO> findAll() {
+        return eventoMedicoService.getEventosMedicos().stream()
+                .map(e -> modelMapper.map(e, EventoMedicoDTO.class))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public EventoMedicoEntity getEventoMedico(@PathVariable Long id) {
-        return eventoMedicoService.getEventoMedico(id);
+    @ResponseStatus(code = HttpStatus.OK)
+    public EventoMedicoDTODetail findOne(@PathVariable Long id) throws EntityNotFoundException {
+        return modelMapper.map(eventoMedicoService.getEventoMedico(id), EventoMedicoDTODetail.class);
     }
 
     @GetMapping("/mascota/{mascotaId}")
-    public List<EventoMedicoEntity> getEventosMedicosByMascota(@PathVariable Long mascotaId) {
-        return eventoMedicoService.getEventosMedicosByMascota(mascotaId);
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<EventoMedicoDTO> findByMascota(@PathVariable Long mascotaId) {
+        return eventoMedicoService.getEventosMedicosByMascota(mascotaId).stream()
+                .map(e -> modelMapper.map(e, EventoMedicoDTO.class))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/diagnostico/{diagnostico}")
-    public List<EventoMedicoEntity> getEventosMedicosByDiagnostico(@PathVariable String diagnostico) {
-        return eventoMedicoService.getEventosMedicosByDiagnostico(diagnostico);
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<EventoMedicoDTO> findByDiagnostico(@PathVariable String diagnostico) {
+        return eventoMedicoService.getEventosMedicosByDiagnostico(diagnostico).stream()
+                .map(e -> modelMapper.map(e, EventoMedicoDTO.class))
+                .collect(Collectors.toList());
     }
 
     @PostMapping
-    public EventoMedicoEntity createEventoMedico(@RequestBody EventoMedicoEntity eventoMedico) {
-        return eventoMedicoService.createEventoMedico(eventoMedico);
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public EventoMedicoDTODetail create(@RequestBody EventoMedicoDTO dto)
+            throws EntityNotFoundException, IllegalOperationException {
+        EventoMedicoEntity entity = modelMapper.map(dto, EventoMedicoEntity.class);
+        EventoMedicoEntity creado = eventoMedicoService.createEventoMedico(entity);
+        return modelMapper.map(creado, EventoMedicoDTODetail.class);
     }
 
     @PutMapping("/{id}")
-    public EventoMedicoEntity updateEventoMedico(@PathVariable Long id,
-            @RequestBody EventoMedicoEntity eventoMedico) {
-        return eventoMedicoService.updateEventoMedico(id, eventoMedico);
+    @ResponseStatus(code = HttpStatus.OK)
+    public EventoMedicoDTODetail update(@PathVariable Long id, @RequestBody EventoMedicoDTO dto)
+            throws EntityNotFoundException, IllegalOperationException {
+        EventoMedicoEntity entity = modelMapper.map(dto, EventoMedicoEntity.class);
+        EventoMedicoEntity actualizado = eventoMedicoService.updateEventoMedico(id, entity);
+        return modelMapper.map(actualizado, EventoMedicoDTODetail.class);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteEventoMedico(@PathVariable Long id) {
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) throws EntityNotFoundException {
         eventoMedicoService.deleteEventoMedico(id);
     }
 }
