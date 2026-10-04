@@ -1,0 +1,708 @@
+{
+  "info": {
+    "name": "Veterinario - Pet Adoption",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Setup",
+      "item": [
+        {
+          "name": "Setup: crear refugio base",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Refugio para Veterinarios {{$timestamp}}\",\n  \"ciudad\": \"Bogota\",\n  \"direccion\": \"Calle 1 # 2-3\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"refugio@correo.com\",\n  \"descripcion\": \"Refugio de prueba\",\n  \"fechaRegistro\": \"2026-01-10\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.globals.set(\"refugio_id_1\", data.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "   pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Setup: crear mascota base",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mascotas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "mascotas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Firulais\",\n  \"especie\": \"Perro\",\n  \"raza\": \"Criollo\",\n  \"edad\": 3,\n  \"sexo\": \"Macho\",\n  \"tamano\": \"Mediano\",\n  \"temperamento\": \"Amigable\",\n  \"necesidadesEspecificas\": \"Ninguna\",\n  \"requisitoEspacio\": \"Patio\",\n  \"compatibleConNinos\": true,\n  \"compatibleConMascotas\": true,\n  \"nivelActividad\": \"Alto\",\n  \"estado\": \"Disponible\",\n  \"refugio\": {\n    \"id\": {{refugio_id_1}}\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.globals.set(\"mascota_id_1\", data.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "   pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Veterinario",
+      "item": [
+        {
+          "name": "Crear un veterinario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Dra. Ana Torres\",\n  \"telefono\": \"3109876543\",\n  \"email\": \"vet@correo.com\",\n  \"especialidad\": \"Medicina general\",\n  \"disponibilidad\": \"Lunes a viernes\",\n  \"refugio\": {\n    \"id\": {{refugio_id_1}}\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.globals.set(\"veterinario_id_1\", data.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "   pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear un veterinario sin nombre",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"telefono\": \"3109876543\",\n  \"email\": \"vet@correo.com\",\n  \"especialidad\": \"Medicina general\",\n  \"disponibilidad\": \"Lunes a viernes\",\n  \"refugio\": {\n    \"id\": {{refugio_id_1}}\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 412\", function () {",
+                  "   pm.response.to.have.status(412);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"El nombre del veterinario no puede ser vacio\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear un veterinario sin especialidad",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Dra. Ana Torres\",\n  \"telefono\": \"3109876543\",\n  \"email\": \"vet@correo.com\",\n  \"especialidad\": \"\",\n  \"disponibilidad\": \"Lunes a viernes\",\n  \"refugio\": {\n    \"id\": {{refugio_id_1}}\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 412\", function () {",
+                  "   pm.response.to.have.status(412);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"La especialidad del veterinario no puede ser vacia\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear un veterinario con refugio que no existe",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Dra. Ana Torres\",\n  \"telefono\": \"3109876543\",\n  \"email\": \"vet@correo.com\",\n  \"especialidad\": \"Medicina general\",\n  \"disponibilidad\": \"Lunes a viernes\",\n  \"refugio\": {\n    \"id\": 999999\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "   pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"El refugio asociado al veterinario no existe\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear un veterinario para borrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Temporal\",\n  \"telefono\": \"3109876543\",\n  \"email\": \"vet@correo.com\",\n  \"especialidad\": \"Medicina general\",\n  \"disponibilidad\": \"Lunes a viernes\",\n  \"refugio\": {\n    \"id\": {{refugio_id_1}}\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.globals.set(\"veterinario_id_2\", data.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "   pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener todos los veterinarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Number of items > 0\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(data.length).to.greaterThan(0);",
+                  "});",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "   pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener un veterinario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios/{{veterinario_id_1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios",
+                "{{veterinario_id_1}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "   pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener un veterinario que no existe",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios",
+                "999999"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "   pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"El veterinario con el id dado no existe\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar un veterinario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios/{{veterinario_id_1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios",
+                "{{veterinario_id_1}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Dra. Ana Torres\",\n  \"telefono\": \"3109876543\",\n  \"email\": \"vet@correo.com\",\n  \"especialidad\": \"Cirugia\",\n  \"disponibilidad\": \"Lunes a viernes\",\n  \"refugio\": {\n    \"id\": {{refugio_id_1}}\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "   pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar un veterinario que no existe",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios",
+                "999999"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Dra. Ana Torres\",\n  \"telefono\": \"3109876543\",\n  \"email\": \"vet@correo.com\",\n  \"especialidad\": \"Medicina general\",\n  \"disponibilidad\": \"Lunes a viernes\",\n  \"refugio\": {\n    \"id\": {{refugio_id_1}}\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "   pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"El veterinario con el id dado no existe\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Borrar un veterinario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios/{{veterinario_id_2}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios",
+                "{{veterinario_id_2}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "   pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Borrar un veterinario que no existe",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios",
+                "999999"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "   pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"El veterinario con el id dado no existe\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Setup: crear seguimiento para prueba de borrado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seguimientos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seguimientos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"observacion\": \"Control general\",\n  \"estado\": \"Pendiente\",\n  \"fechaAsignacion\": \"2026-03-01\",\n  \"proximaCita\": \"2026-03-15\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"veterinario\": {\n    \"id\": {{veterinario_id_1}}\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.globals.set(\"seguimiento_setup_id\", data.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "   pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Borrar un veterinario con seguimientos",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/veterinarios/{{veterinario_id_1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "veterinarios",
+                "{{veterinario_id_1}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 412\", function () {",
+                  "   pm.response.to.have.status(412);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"No se puede eliminar un veterinario que tiene seguimientos asignados\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
