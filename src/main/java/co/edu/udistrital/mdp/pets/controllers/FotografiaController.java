@@ -66,8 +66,9 @@ public class FotografiaController {
             @RequestBody FotografiaDTO dto) throws EntityNotFoundException {
         requireMascota(mascotaId);
         FotografiaEntity entity = requireFotografia(mascotaId, fotografiaId);
-        modelMapper.map(dto, entity);
-        entity.setId(fotografiaId);
+        entity.setUrl(dto.getUrl());
+        entity.setPrincipal(dto.isPrincipal());
+        entity.setDescripcion(dto.getDescripcion());
         return detail(fotografiaRepository.save(entity));
     }
 
