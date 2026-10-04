@@ -2,6 +2,8 @@ package co.edu.udistrital.mdp.pets.entities;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Temporal;
@@ -32,9 +34,11 @@ public class AdopcionEntity extends BaseEntity {
 
     @PodamExclude
     @OneToOne(mappedBy = "adopcion")
+    @JsonIgnore
     private PruebaConvivenciaEntity pruebaConvivencia;
 
     @PodamExclude
     @OneToOne(mappedBy = "adopcion")
+    @JsonIgnore
     private RetornoEntity retorno;
 }
