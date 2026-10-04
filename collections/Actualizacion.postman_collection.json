@@ -252,5 +252,73 @@
       },
       "response": []
     }
+    ,
+    {
+      "name": "Actualizar actualizacion que no existe",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {",
+              "   pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"tipo\": \"MEDICA\",\n  \"descripcion\": \"No existe\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/actualizaciones/999999",
+          "host": ["{{baseUrl}}"],
+          "path": ["actualizaciones", "999999"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear actualizacion con mascota que no existe",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {",
+              "   pm.response.to.have.status(404);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"La mascota asociada a la actualización no existe\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"tipo\": \"MEDICA\",\n  \"descripcion\": \"Mascota invalida\",\n  \"mascota\": {\n    \"id\": 999999\n  }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/actualizaciones",
+          "host": ["{{baseUrl}}"],
+          "path": ["actualizaciones"]
+        }
+      },
+      "response": []
+    }
   ]
 }
