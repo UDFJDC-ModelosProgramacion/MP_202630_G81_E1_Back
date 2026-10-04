@@ -1,0 +1,199 @@
+{
+  "info": {
+    "_postman_id": "f38a7c02-5b73-4e96-9084-3c0d7e426137",
+    "name": "Notificacion - Pet Adoption",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Crear notificacion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "   pm.response.to.have.status(201);",
+              "});",
+              "",
+              "var data = pm.response.json();",
+              "pm.globals.set(\"notificacion_id_1\", data.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"RECORDATORIO\",\n  \"mensaje\": \"Su cita de seguimiento es manana\",\n  \"fecha\": \"2026-09-30\",\n  \"canal\": \"EMAIL\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"adoptante\": {\n    \"id\": {{adoptante_id_1}}\n  }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/notificaciones",
+          "host": ["{{baseUrl}}"],
+          "path": ["notificaciones"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear notificacion sin canal",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 412\", function () {",
+              "   pm.response.to.have.status(412);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"El canal de la notificación no puede ser vacío\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"RECORDATORIO\",\n  \"mensaje\": \"Sin canal\",\n  \"fecha\": \"2026-09-30\",\n  \"canal\": \"\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/notificaciones",
+          "host": ["{{baseUrl}}"],
+          "path": ["notificaciones"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener todas las notificaciones",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Number of items > 0\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(data.length).to.be.greaterThan(0);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/notificaciones",
+          "host": ["{{baseUrl}}"],
+          "path": ["notificaciones"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener una notificacion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/notificaciones/{{notificacion_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["notificaciones", "{{notificacion_id_1}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar notificacion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"ALERTA\",\n  \"mensaje\": \"Mensaje actualizado\",\n  \"fecha\": \"2026-09-30\",\n  \"canal\": \"SMS\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"adoptante\": {\n    \"id\": {{adoptante_id_1}}\n  }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/notificaciones/{{notificacion_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["notificaciones", "{{notificacion_id_1}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar notificacion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {",
+              "   pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/notificaciones/{{notificacion_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["notificaciones", "{{notificacion_id_1}}"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
