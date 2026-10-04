@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.*;
+import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.repositories.*;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -55,7 +56,7 @@ public class NotificacionServiceTest {
     }
 
     @Test
-    void testCreateNotificacion() {
+    void testCreateNotificacion() throws Exception {
         NotificacionEntity entity = factory.manufacturePojo(NotificacionEntity.class);
         entity.setMascota(mascota);
         entity.setAdoptante(adoptante);
@@ -70,13 +71,13 @@ public class NotificacionServiceTest {
     }
 
     @Test
-    void testGetNotificacion() {
+    void testGetNotificacion() throws Exception {
         NotificacionEntity entity = data.get(0);
         assertEquals(entity.getId(), notificacionService.getNotificacion(entity.getId()).getId());
     }
 
     @Test
-    void testUpdateNotificacion() {
+    void testUpdateNotificacion() throws Exception {
         NotificacionEntity entity = data.get(0);
         entity.setCanal("SMS");
         NotificacionEntity result = notificacionService.updateNotificacion(entity.getId(), entity);
@@ -84,9 +85,9 @@ public class NotificacionServiceTest {
     }
 
     @Test
-    void testDeleteNotificacion() {
+    void testDeleteNotificacion() throws Exception {
         NotificacionEntity entity = data.get(0);
         notificacionService.deleteNotificacion(entity.getId());
-        assertNull(notificacionService.getNotificacion(entity.getId()));
+        assertThrows(EntityNotFoundException.class, () -> notificacionService.getNotificacion(entity.getId()));
     }
 }
