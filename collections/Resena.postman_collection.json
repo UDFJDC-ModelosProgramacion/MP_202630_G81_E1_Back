@@ -1,0 +1,199 @@
+{
+  "info": {
+    "_postman_id": "e27f6b91-4a62-4d85-8f73-2b9c6d315026",
+    "name": "Resena - Pet Adoption",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Crear resena",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "   pm.response.to.have.status(201);",
+              "});",
+              "",
+              "var data = pm.response.json();",
+              "pm.globals.set(\"resena_id_1\", data.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"calificacion\": 5,\n  \"comentario\": \"Excelente experiencia de adopcion\",\n  \"fecha\": \"2026-09-30\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"adoptante\": {\n    \"id\": {{adoptante_id_1}}\n  }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/resenas",
+          "host": ["{{baseUrl}}"],
+          "path": ["resenas"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear resena con calificacion invalida",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 412\", function () {",
+              "   pm.response.to.have.status(412);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"La calificación de la reseña debe estar entre 1 y 5\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"calificacion\": 9,\n  \"comentario\": \"Calificacion invalida\",\n  \"fecha\": \"2026-09-30\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/resenas",
+          "host": ["{{baseUrl}}"],
+          "path": ["resenas"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener todas las resenas",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Number of items > 0\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(data.length).to.be.greaterThan(0);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/resenas",
+          "host": ["{{baseUrl}}"],
+          "path": ["resenas"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener una resena",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/resenas/{{resena_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["resenas", "{{resena_id_1}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar resena",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"calificacion\": 4,\n  \"comentario\": \"Comentario actualizado\",\n  \"fecha\": \"2026-09-30\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"adoptante\": {\n    \"id\": {{adoptante_id_1}}\n  }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/resenas/{{resena_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["resenas", "{{resena_id_1}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar resena",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {",
+              "   pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/resenas/{{resena_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["resenas", "{{resena_id_1}}"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
