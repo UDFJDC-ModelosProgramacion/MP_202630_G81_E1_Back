@@ -1,0 +1,199 @@
+{
+  "info": {
+    "_postman_id": "a49b8d13-6c84-4f07-9195-4d1e8f537248",
+    "name": "EventoMedico - Pet Adoption",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Crear evento medico",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "   pm.response.to.have.status(201);",
+              "});",
+              "",
+              "var data = pm.response.json();",
+              "pm.globals.set(\"evento_medico_id_1\", data.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"descripcion\": \"Control general\",\n  \"diagnostico\": \"Sano\",\n  \"tratamiento\": \"Ninguno\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/eventos-medicos",
+          "host": ["{{baseUrl}}"],
+          "path": ["eventos-medicos"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear evento medico sin diagnostico",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 412\", function () {",
+              "   pm.response.to.have.status(412);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"El diagnóstico del evento médico no puede ser vacío\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"descripcion\": \"Sin diagnostico\",\n  \"diagnostico\": \"\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/eventos-medicos",
+          "host": ["{{baseUrl}}"],
+          "path": ["eventos-medicos"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener todos los eventos medicos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Number of items > 0\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(data.length).to.be.greaterThan(0);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/eventos-medicos",
+          "host": ["{{baseUrl}}"],
+          "path": ["eventos-medicos"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener un evento medico",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/eventos-medicos/{{evento_medico_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["eventos-medicos", "{{evento_medico_id_1}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar evento medico",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"descripcion\": \"Seguimiento post-tratamiento\",\n  \"diagnostico\": \"En recuperacion\",\n  \"tratamiento\": \"Antibiotico\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/eventos-medicos/{{evento_medico_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["eventos-medicos", "{{evento_medico_id_1}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar evento medico",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {",
+              "   pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/eventos-medicos/{{evento_medico_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["eventos-medicos", "{{evento_medico_id_1}}"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
