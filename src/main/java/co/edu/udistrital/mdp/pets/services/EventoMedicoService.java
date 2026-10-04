@@ -6,32 +6,40 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.EventoMedicoEntity;
+import co.edu.udistrital.mdp.pets.entities.MascotaEntity;
+import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
+import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import co.edu.udistrital.mdp.pets.repositories.EventoMedicoRepository;
+import co.edu.udistrital.mdp.pets.repositories.MascotaRepository;
 
 @Service
 public class EventoMedicoService {
 
     private final EventoMedicoRepository eventoMedicoRepository;
+    private final MascotaRepository mascotaRepository;
 
-    public EventoMedicoService(EventoMedicoRepository eventoMedicoRepository) {
+    public EventoMedicoService(EventoMedicoRepository eventoMedicoRepository, MascotaRepository mascotaRepository) {
         this.eventoMedicoRepository = eventoMedicoRepository;
+        this.mascotaRepository = mascotaRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public EventoMedicoEntity createEventoMedico(EventoMedicoEntity eventoMedico) {
-        try {
-            return eventoMedicoRepository.save(eventoMedico);
-        } catch (Exception e) {
-            throw new IllegalStateException("Error al crear el evento médico.", e);
+    public EventoMedicoEntity createEventoMedico(EventoMedicoEntity eventoMedico)
+            throws EntityNotFoundException, IllegalOperationException {
+        if (eventoMedico.getDiagnostico() == null || eventoMedico.getDiagnostico().isBlank()) {
+            throw new IllegalOperationException("El diagnóstico del evento médico no puede ser vacío");
         }
+        eventoMedico.setMascota(resolverMascota(eventoMedico.getMascota()));
+        return eventoMedicoRepository.save(eventoMedico);
     }
 
     public List<EventoMedicoEntity> getEventosMedicos() {
         return eventoMedicoRepository.findAll();
     }
 
-    public EventoMedicoEntity getEventoMedico(Long id) {
-        return eventoMedicoRepository.findById(id).orElse(null);
+    public EventoMedicoEntity getEventoMedico(Long id) throws EntityNotFoundException {
+        return eventoMedicoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("El evento médico con el id dado no existe"));
     }
 
     public List<EventoMedicoEntity> getEventosMedicosByMascota(Long mascotaId) {
@@ -43,27 +51,31 @@ public class EventoMedicoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public EventoMedicoEntity updateEventoMedico(Long id, EventoMedicoEntity eventoMedico) {
-        try {
-            EventoMedicoEntity entity = getEventoMedico(id);
-
-            if (entity == null) {
-                throw new IllegalArgumentException("El evento médico no existe.");
-            }
-            eventoMedico.setId(id);
-            return eventoMedicoRepository.save(eventoMedico);
-
-        } catch (Exception e) {
-            throw new IllegalStateException("Error al actualizar el evento médico.", e);
+    public EventoMedicoEntity updateEventoMedico(Long id, EventoMedicoEntity nuevosDatos)
+            throws EntityNotFoundException, IllegalOperationException {
+        EventoMedicoEntity entity = getEventoMedico(id);
+        if (nuevosDatos.getDiagnostico() == null || nuevosDatos.getDiagnostico().isBlank()) {
+            throw new IllegalOperationException("El diagnóstico del evento médico no puede ser vacío");
         }
+        entity.setFecha(nuevosDatos.getFecha());
+        entity.setDescripcion(nuevosDatos.getDescripcion());
+        entity.setDiagnostico(nuevosDatos.getDiagnostico());
+        entity.setTratamiento(nuevosDatos.getTratamiento());
+        entity.setMascota(resolverMascota(nuevosDatos.getMascota()));
+        return eventoMedicoRepository.save(entity);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteEventoMedico(Long id) {
-        try {
-            eventoMedicoRepository.deleteById(id);
-        } catch (Exception e) {
-            throw new IllegalStateException("Error al eliminar el evento médico.", e);
+    public void deleteEventoMedico(Long id) throws EntityNotFoundException {
+        getEventoMedico(id);
+        eventoMedicoRepository.deleteById(id);
+    }
+
+    private MascotaEntity resolverMascota(MascotaEntity mascota) throws EntityNotFoundException {
+        if (mascota == null || mascota.getId() == null) {
+            throw new EntityNotFoundException("La mascota asociada al evento médico no existe");
         }
+        return mascotaRepository.findById(mascota.getId())
+                .orElseThrow(() -> new EntityNotFoundException("La mascota asociada al evento médico no existe"));
     }
 }
