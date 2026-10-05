@@ -7,20 +7,126 @@
 	},
 	"item": [
 		{
-			"name": "Obtener Fotografía por ID",
+			"name": "Preparar mascota para fotografias",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"pm.test(\"Response has fotografía data\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.have.property('id');",
-							"    pm.expect(jsonData).to.have.property('url');",
-							"    pm.expect(jsonData).to.have.property('descripcion');",
+							"pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+							"if (pm.response.code === 201) {",
+							"  var jsonData = pm.response.json();",
+							"  if (jsonData && jsonData.id) pm.collectionVariables.set(\"mascotaId\", jsonData.id.toString());",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/mascotas",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"mascotas"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombre\": \"Luna Fotografia\",\n  \"especie\": \"Perro\",\n  \"edad\": 2,\n  \"sexo\": \"Hembra\",\n  \"estado\": \"Disponible\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": [
+				{
+					"name": "Respuesta 201 Created",
+					"status": "Created",
+					"code": 201,
+					"body": "{\"id\":1,\"nombre\":\"Luna Fotografia\",\"especie\":\"Perro\"}"
+				}
+			]
+		},
+		{
+			"name": "Crear Fotografia",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+							"if (pm.response.code === 201) {",
+							"  var jsonData = pm.response.json();",
+							"  if (jsonData && jsonData.id) pm.collectionVariables.set(\"fotografiaId\", jsonData.id.toString());",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/fotografias",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"mascotas",
+						"{{mascotaId}}",
+						"fotografias"
+					]
+				},
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"url\": \"https://example.com/foto.jpg\",\n  \"principal\": true,\n  \"descripcion\": \"Foto principal\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
+			},
+			"response": [
+				{
+					"name": "Respuesta 201 Created",
+					"status": "Created",
+					"code": 201,
+					"body": "{\"id\":1,\"url\":\"https://example.com/foto.jpg\",\"principal\":true}"
+				}
+			]
+		},
+		{
+			"name": "Obtener Fotografia por ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Response has fotografia data\", function () {",
+							"  var jsonData = pm.response.json();",
+							"  pm.expect(jsonData).to.have.property(\"id\");",
+							"  pm.expect(jsonData).to.have.property(\"url\");",
+							"  pm.expect(jsonData).to.have.property(\"descripcion\");",
 							"});"
 						],
 						"type": "text/javascript"
@@ -29,34 +135,115 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
+				"header": [],
 				"url": {
 					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/fotografias/{{fotografiaId}}",
-					"host": ["{{baseUrl}}"],
-					"path": ["mascotas", "{{mascotaId}}", "fotografias", "{{fotografiaId}}"]
-				},
-				"description": "Obtiene una fotografía específica por su ID."
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"mascotas",
+						"{{mascotaId}}",
+						"fotografias",
+						"{{fotografiaId}}"
+					]
+				}
 			},
-			"response":[{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"{\"id\":1,\"url\":\"https://example.com/foto.jpg\",\"principal\":true,\"descripcion\":\"Foto principal\"}"}]
+			"response": [
+				{
+					"name": "Respuesta 200 OK",
+					"status": "OK",
+					"code": 200,
+					"body": "{\"id\":1,\"url\":\"https://example.com/foto.jpg\",\"principal\":true,\"descripcion\":\"Foto principal\"}"
+				}
+			]
 		},
 		{
-			"name": "Activar Fotografía Principal",
+			"name": "Activar Fotografia Principal",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"pm.test(\"Fotografía activada correctamente\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-							"});"
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/fotografias/{{fotografiaId}}/activar",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"mascotas",
+						"{{mascotaId}}",
+						"fotografias",
+						"{{fotografiaId}}",
+						"activar"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Respuesta 200 OK",
+					"status": "OK",
+					"code": 200,
+					"body": "{\"id\":1,\"principal\":true}"
+				}
+			]
+		},
+		{
+			"name": "Obtener Fotografias de una Mascota",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Response is an array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/fotografias",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"mascotas",
+						"{{mascotaId}}",
+						"fotografias"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Respuesta 200 OK",
+					"status": "OK",
+					"code": 200,
+					"body": "[]"
+				}
+			]
+		},
+		{
+			"name": "Actualizar Fotografia",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Fotografia actualizada\", function () { pm.expect(pm.response.json().descripcion).to.eql(\"Foto actualizada\"); });"
 						],
 						"type": "text/javascript"
 					}
@@ -71,27 +258,44 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/fotografias/{{fotografiaId}}/activar",
-					"host": ["{{baseUrl}}"],
-					"path": ["mascotas", "{{mascotaId}}", "fotografias", "{{fotografiaId}}", "activar"]
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/fotografias/{{fotografiaId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"mascotas",
+						"{{mascotaId}}",
+						"fotografias",
+						"{{fotografiaId}}"
+					]
 				},
-				"description": "Activa una fotografía como principal para una mascota específica."
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"url\": \"https://example.com/foto-actualizada.jpg\",\n  \"principal\": false,\n  \"descripcion\": \"Foto actualizada\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				}
 			},
-			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"{\"id\":1,\"principal\":true}"}]
+			"response": [
+				{
+					"name": "Respuesta 200 OK",
+					"status": "OK",
+					"code": 200,
+					"body": "{\"id\":1,\"url\":\"https://example.com/foto-actualizada.jpg\",\"principal\":false,\"descripcion\":\"Foto actualizada\"}"
+				}
+			]
 		},
 		{
-			"name": "Eliminar Fotografía",
+			"name": "Eliminar Fotografia",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 200 or 204\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-							"});",
-							"pm.test(\"Fotografía eliminada correctamente\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-							"});"
+							"pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
 						],
 						"type": "text/javascript"
 					}
@@ -99,52 +303,107 @@
 			],
 			"request": {
 				"method": "DELETE",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
+				"header": [],
 				"url": {
 					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/fotografias/{{fotografiaId}}",
-					"host": ["{{baseUrl}}"],
-					"path": ["mascotas", "{{mascotaId}}", "fotografias", "{{fotografiaId}}"]
-				},
-				"description": "Elimina una fotografía asociada a una mascota. Verifica que la mascota exista antes de eliminar."
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"mascotas",
+						"{{mascotaId}}",
+						"fotografias",
+						"{{fotografiaId}}"
+					]
+				}
 			},
-			"response": [{"name":"Respuesta 204 No Content","status":"No Content","code":204,"body":""}]
-				},
+			"response": [
 				{
-					"name": "Obtener Fotografias de una Mascota",
-			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });","pm.test(\"Response is an array\", function () { pm.expect(pm.response.json()).to.be.an('array'); });"],"type":"text/javascript"}}],
-			"request": {"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/mascotas/{{mascotaId}}/fotografias","host":["{{baseUrl}}"],"path":["mascotas","{{mascotaId}}","fotografias"]},"description":"Lista todas las fotografías de una mascota."},
-			"response":[{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"[]"}]
+					"name": "Respuesta 204 No Content",
+					"status": "No Content",
+					"code": 204,
+					"body": ""
+				}
+			]
 		},
 		{
-			"name": "Crear Fotografia",
-			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });"],"type":"text/javascript"}}],
-			"request": {"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"url\": \"https://example.com/foto.jpg\",\n  \"principal\": true,\n  \"descripcion\": \"Foto principal\"\n}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/mascotas/{{mascotaId}}/fotografias","host":["{{baseUrl}}"],"path":["mascotas","{{mascotaId}}","fotografias"]}},
-			"response":[{"name":"Respuesta 201 Created","status":"Created","code":201,"body":"{\"id\":1,\"url\":\"https://example.com/foto.jpg\",\"principal\":true}"}]
-		},
-		{
-			"name": "Actualizar Fotografia",
-			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"],"type":"text/javascript"}}],
-			"request": {"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"url\": \"https://example.com/foto-actualizada.jpg\",\n  \"principal\": false,\n  \"descripcion\": \"Foto actualizada\"\n}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/mascotas/{{mascotaId}}/fotografias/{{fotografiaId}}","host":["{{baseUrl}}"],"path":["mascotas","{{mascotaId}}","fotografias","{{fotografiaId}}"]}},
-			"response":[{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"{\"id\":1,\"principal\":false}"}]
+			"name": "Obtener Fotografia eliminada",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/fotografias/{{fotografiaId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"mascotas",
+						"{{mascotaId}}",
+						"fotografias",
+						"{{fotografiaId}}"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Respuesta 404 Not Found",
+					"status": "Not Found",
+					"code": 404,
+					"body": "{\"apiError\":{\"status\":\"NOT_FOUND\",\"message\":\"La fotografia con el id dado no existe\"}}"
+				}
+			]
 		},
 		{
 			"name": "Obtener Fotografia que no existe",
-			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"],"type":"text/javascript"}}],
-			"request": {"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/mascotas/{{mascotaId}}/fotografias/0","host":["{{baseUrl}}"],"path":["mascotas","{{mascotaId}}","fotografias","0"]}},
-			"response":[{"name":"Respuesta 404 Not Found","status":"Not Found","code":404,"body":"{\"apiError\":{\"status\":\"NOT_FOUND\",\"message\":\"La fotografía con el id dado no existe\"}}"}]
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/fotografias/0",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"mascotas",
+						"{{mascotaId}}",
+						"fotografias",
+						"0"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Respuesta 404 Not Found",
+					"status": "Not Found",
+					"code": 404,
+					"body": "{\"apiError\":{\"status\":\"NOT_FOUND\",\"message\":\"La fotografia con el id dado no existe\"}}"
+				}
+			]
 		}
 	],
 	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "http://localhost:8080",
-			"type": "string"
-		},
 		{
 			"key": "mascotaId",
 			"value": "1",

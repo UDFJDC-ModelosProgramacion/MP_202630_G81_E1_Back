@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -48,7 +47,7 @@ public class RefugioController {
         List<RefugioEntity> refugios = refugioService.getRefugios();
         return refugios.stream()
                 .map(entity -> modelMapper.map(entity, RefugioDetailDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/{id}")

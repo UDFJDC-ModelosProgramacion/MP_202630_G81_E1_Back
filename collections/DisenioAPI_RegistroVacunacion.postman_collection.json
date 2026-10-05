@@ -1,0 +1,182 @@
+{
+  "info": {
+    "_postman_id": "5610100d-e3df-498c-b36e-c59d73bb1bc1",
+    "name": "Diseno API - RegistroVacunacion",
+    "description": "Diseno del API del recurso RegistroVacunacion: operaciones findAll, findOne, create, update y delete, representaciones basica (RegistroVacunacionDTO) y detallada (RegistroVacunacionDTODetail), y codigos de estado HTTP de cada operacion.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Listar registros de vacunacion (representacion basica)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/registros-vacunacion",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registros-vacunacion"
+          ]
+        },
+        "description": "200 OK. Devuelve List<RegistroVacunacionDTO>: incluye fechaAplicacion, proximaFecha, numeroLote, observacion y las asociaciones de cardinalidad 1 (vacuna, mascota, seguimientoOrigen)."
+      },
+      "response": []
+    },
+    {
+      "name": "Consultar un registro de vacunacion (representacion detallada)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/registros-vacunacion/{{registroId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registros-vacunacion",
+            "{{registroId}}"
+          ]
+        },
+        "description": "200 OK -> RegistroVacunacionDTODetail.\n404 Not Found si el id no existe."
+      },
+      "response": []
+    },
+    {
+      "name": "Crear registro de vacunacion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fechaAplicacion\": \"2026-01-15\",\n  \"proximaFecha\": \"2027-01-15\",\n  \"numeroLote\": \"LOTE-2026-01\",\n  \"observacion\": \"Sin reacciones adversas\",\n  \"vacuna\": { \"id\": 1 },\n  \"mascota\": { \"id\": 1 }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/registros-vacunacion",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registros-vacunacion"
+          ]
+        },
+        "description": "201 Created -> RegistroVacunacionDTODetail.\n404 Not Found si la vacuna o la mascota indicadas no existen.\n412 Precondition Failed si faltan datos obligatorios o la fecha de aplicacion es futura / la proxima fecha no es posterior."
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar registro de vacunacion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fechaAplicacion\": \"2026-01-15\",\n  \"proximaFecha\": \"2027-02-01\",\n  \"numeroLote\": \"LOTE-2026-01\",\n  \"observacion\": \"Se ajusta proxima fecha\",\n  \"vacuna\": { \"id\": 1 },\n  \"mascota\": { \"id\": 1 }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/registros-vacunacion/{{registroId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registros-vacunacion",
+            "{{registroId}}"
+          ]
+        },
+        "description": "200 OK -> RegistroVacunacionDTODetail.\n404 Not Found si el registro, la vacuna o la mascota no existen.\n412 Precondition Failed si los datos no son validos."
+      },
+      "response": []
+    },
+    {
+      "name": "Eliminar registro de vacunacion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/registros-vacunacion/{{registroId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registros-vacunacion",
+            "{{registroId}}"
+          ]
+        },
+        "description": "204 No Content.\n404 Not Found si el id no existe."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "registroId",
+      "value": "1"
+    }
+  ]
+}

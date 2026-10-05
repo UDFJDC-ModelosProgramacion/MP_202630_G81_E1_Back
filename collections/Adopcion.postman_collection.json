@@ -1,0 +1,213 @@
+{
+  "info": {
+    "_postman_id": "f2e4c8a1-7b31-4d92-9c56-2e8a5b104763",
+    "name": "Adopcion - Pet Adoption",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Crear adopcion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "   pm.response.to.have.status(201);",
+              "});",
+              "",
+              "var data = pm.response.json();",
+              "pm.globals.set(\"adopcion_id_1\", data.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fechaAdopcion\": \"2026-09-30\",\n  \"estado\": \"ACTIVA\",\n  \"observacion\": \"Adopcion realizada correctamente\",\n  \"solicitud\": {\n    \"id\": {{solicitud_adopcion_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/adopciones",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adopciones"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener todas las adopciones",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Number of items > 0\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(data.length).to.be.greaterThan(0);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/adopciones",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adopciones"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener una adopcion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/adopciones/{{adopcion_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adopciones",
+            "{{adopcion_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar adopcion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fechaAdopcion\": \"2026-09-30\",\n  \"estado\": \"FINALIZADA\",\n  \"observacion\": \"Adopcion actualizada\",\n  \"solicitud\": {\n    \"id\": {{solicitud_adopcion_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/adopciones/{{adopcion_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adopciones",
+            "{{adopcion_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar adopcion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {",
+              "   pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/adopciones/{{adopcion_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "adopciones",
+            "{{adopcion_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

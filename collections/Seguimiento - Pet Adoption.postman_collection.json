@@ -1,0 +1,723 @@
+{
+  "info": {
+    "_postman_id": "c1c1837c-a224-4e77-9c54-df3f527ec0bd",
+    "name": "Seguimiento - Pet Adoption",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58564721",
+    "_collection_link": "https://go.postman.co/collection/58564721-c1c1837c-a224-4e77-9c54-df3f527ec0bd?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Crear un seguimiento",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "var data = pm.response.json();",
+              "pm.globals.set(\"seguimiento_id_1\", data.id);",
+              "pm.test(\"Status code is 201\", function () {",
+              "   pm.response.to.have.status(201);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"observacion\": \"Control general\",\n  \"estado\": \"Pendiente\",\n  \"fechaAsignacion\": \"2026-03-01\",\n  \"proximaCita\": \"2026-03-15\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"veterinario\": {\n    \"id\": {{veterinario_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear un seguimiento sin fecha de asignacion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 412\", function () {",
+              "   pm.response.to.have.status(412);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"La fecha de asignacion del seguimiento no puede ser nula\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"observacion\": \"Control general\",\n  \"estado\": \"Pendiente\",\n  \"proximaCita\": \"2026-03-15\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"veterinario\": {\n    \"id\": {{veterinario_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear un seguimiento con proxima cita anterior",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 412\", function () {",
+              "   pm.response.to.have.status(412);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"La proxima cita no puede ser anterior a la fecha de asignacion\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"observacion\": \"Control general\",\n  \"estado\": \"Pendiente\",\n  \"fechaAsignacion\": \"2026-03-01\",\n  \"proximaCita\": \"2026-02-01\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"veterinario\": {\n    \"id\": {{veterinario_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear un seguimiento con mascota que no existe",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {",
+              "   pm.response.to.have.status(404);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"La mascota asociada al seguimiento no existe\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"observacion\": \"Control general\",\n  \"estado\": \"Pendiente\",\n  \"fechaAsignacion\": \"2026-03-01\",\n  \"proximaCita\": \"2026-03-15\",\n  \"mascota\": {\n    \"id\": 999999\n  },\n  \"veterinario\": {\n    \"id\": {{veterinario_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear un seguimiento con veterinario que no existe",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {",
+              "   pm.response.to.have.status(404);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"El veterinario asociado al seguimiento no existe\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"observacion\": \"Control general\",\n  \"estado\": \"Pendiente\",\n  \"fechaAsignacion\": \"2026-03-01\",\n  \"proximaCita\": \"2026-03-15\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"veterinario\": {\n    \"id\": 999999\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear un seguimiento para borrar",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "var data = pm.response.json();",
+              "pm.globals.set(\"seguimiento_id_2\", data.id);",
+              "pm.test(\"Status code is 201\", function () {",
+              "   pm.response.to.have.status(201);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"observacion\": \"Control general\",\n  \"estado\": \"Pendiente\",\n  \"fechaAsignacion\": \"2026-03-01\",\n  \"proximaCita\": \"2026-03-15\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"veterinario\": {\n    \"id\": {{veterinario_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener todos los seguimientos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Number of items > 0\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(data.length).to.greaterThan(0);",
+              "});",
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener un seguimiento",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos/{{seguimiento_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos",
+            "{{seguimiento_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener un seguimiento que no existe",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {",
+              "   pm.response.to.have.status(404);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"El seguimiento con el id dado no existe\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos/999999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos",
+            "999999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar un seguimiento",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"observacion\": \"Control general\",\n  \"estado\": \"En curso\",\n  \"fechaAsignacion\": \"2026-03-01\",\n  \"proximaCita\": \"2026-03-15\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"veterinario\": {\n    \"id\": {{veterinario_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos/{{seguimiento_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos",
+            "{{seguimiento_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar un seguimiento que no existe",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {",
+              "   pm.response.to.have.status(404);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"El seguimiento con el id dado no existe\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"observacion\": \"Control general\",\n  \"estado\": \"Pendiente\",\n  \"fechaAsignacion\": \"2026-03-01\",\n  \"proximaCita\": \"2026-03-15\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"veterinario\": {\n    \"id\": {{veterinario_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos/999999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos",
+            "999999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar un seguimiento",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {",
+              "   pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos/{{seguimiento_id_2}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos",
+            "{{seguimiento_id_2}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar un seguimiento que no existe",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {",
+              "   pm.response.to.have.status(404);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"El seguimiento con el id dado no existe\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos/999999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos",
+            "999999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Marcar un seguimiento como completado",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"observacion\": \"Control general\",\n  \"estado\": \"Completado\",\n  \"fechaAsignacion\": \"2026-03-01\",\n  \"proximaCita\": \"2026-03-15\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"veterinario\": {\n    \"id\": {{veterinario_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos/{{seguimiento_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos",
+            "{{seguimiento_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar un seguimiento completado",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 412\", function () {",
+              "   pm.response.to.have.status(412);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"No se puede modificar un seguimiento que ya esta completado\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"observacion\": \"Control general\",\n  \"estado\": \"En curso\",\n  \"fechaAsignacion\": \"2026-03-01\",\n  \"proximaCita\": \"2026-03-15\",\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  },\n  \"veterinario\": {\n    \"id\": {{veterinario_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos/{{seguimiento_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos",
+            "{{seguimiento_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar un seguimiento completado",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 412\", function () {",
+              "   pm.response.to.have.status(412);",
+              "});",
+              "",
+              "pm.test(\"Get expected error message\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(JSON.stringify(data)).to.include(\"No se puede eliminar un seguimiento que ya esta completado\");",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/seguimientos/{{seguimiento_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "seguimientos",
+            "{{seguimiento_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

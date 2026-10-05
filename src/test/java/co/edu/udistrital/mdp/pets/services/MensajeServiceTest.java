@@ -69,25 +69,27 @@ class MensajeServiceTest {
     @Test
     void eliminarMensajeDeletesUnreadMessageOfAdoptante() {
         AdoptanteEntity adoptante = new AdoptanteEntity();
+        adoptante.setId(1L);
         MensajeEntity message = new MensajeEntity();
+        message.setId(2L);
         message.setAdoptante(adoptante);
         message.setLeido(false);
-        when(mensajeRepository.existsById(2L)).thenReturn(true);
         when(mensajeRepository.findById(2L)).thenReturn(Optional.of(message));
         when(adoptanteRepository.findById(1L)).thenReturn(Optional.of(adoptante));
 
         service.eliminarMensaje(2L, 1L);
 
-        verify(mensajeRepository).deleteById(2L);
+        verify(mensajeRepository).delete(message);
     }
 
     @Test
     void eliminarMensajeRejectsReadMessage() {
         AdoptanteEntity adoptante = new AdoptanteEntity();
+        adoptante.setId(1L);
         MensajeEntity message = new MensajeEntity();
+        message.setId(2L);
         message.setAdoptante(adoptante);
         message.setLeido(true);
-        when(mensajeRepository.existsById(2L)).thenReturn(true);
         when(mensajeRepository.findById(2L)).thenReturn(Optional.of(message));
         when(adoptanteRepository.findById(1L)).thenReturn(Optional.of(adoptante));
 
@@ -97,9 +99,10 @@ class MensajeServiceTest {
     @Test
     void marcarMensajeComoLeidoUpdatesMessage() {
         AdoptanteEntity adoptante = new AdoptanteEntity();
+        adoptante.setId(1L);
         MensajeEntity message = new MensajeEntity();
+        message.setId(2L);
         message.setAdoptante(adoptante);
-        when(mensajeRepository.existsById(2L)).thenReturn(true);
         when(mensajeRepository.findById(2L)).thenReturn(Optional.of(message));
         when(adoptanteRepository.findById(1L)).thenReturn(Optional.of(adoptante));
 
@@ -112,10 +115,11 @@ class MensajeServiceTest {
     @Test
     void marcarMensajeComoNoLeidoUpdatesMessage() {
         AdoptanteEntity adoptante = new AdoptanteEntity();
+        adoptante.setId(1L);
         MensajeEntity message = new MensajeEntity();
+        message.setId(2L);
         message.setAdoptante(adoptante);
         message.setLeido(true);
-        when(mensajeRepository.existsById(2L)).thenReturn(true);
         when(mensajeRepository.findById(2L)).thenReturn(Optional.of(message));
         when(adoptanteRepository.findById(1L)).thenReturn(Optional.of(adoptante));
 
@@ -128,13 +132,18 @@ class MensajeServiceTest {
     @Test
     void editarMensajeSavesUnreadMessageOfAdoptante() {
         AdoptanteEntity adoptante = new AdoptanteEntity();
+        adoptante.setId(1L);
+        MensajeEntity storedMessage = new MensajeEntity();
+        storedMessage.setId(2L);
+        storedMessage.setAdoptante(adoptante);
+        storedMessage.setLeido(false);
+
         MensajeEntity message = new MensajeEntity();
         message.setId(2L);
         message.setAdoptante(adoptante);
         message.setLeido(false);
-        when(mensajeRepository.existsById(2L)).thenReturn(true);
-        when(mensajeRepository.findById(2L)).thenReturn(Optional.of(message));
-        when(adoptanteRepository.existsById(1L)).thenReturn(true);
+
+        when(mensajeRepository.findById(2L)).thenReturn(Optional.of(storedMessage));
         when(adoptanteRepository.findById(1L)).thenReturn(Optional.of(adoptante));
 
         service.editarMensaje(message, 1L);
@@ -144,11 +153,20 @@ class MensajeServiceTest {
 
     @Test
     void editarMensajeRejectsReadMessage() {
+        AdoptanteEntity adoptante = new AdoptanteEntity();
+        adoptante.setId(1L);
+        MensajeEntity storedMessage = new MensajeEntity();
+        storedMessage.setId(2L);
+        storedMessage.setAdoptante(adoptante);
+        storedMessage.setLeido(true);
+
         MensajeEntity message = new MensajeEntity();
         message.setId(2L);
+        message.setAdoptante(adoptante);
         message.setLeido(true);
-        when(mensajeRepository.existsById(2L)).thenReturn(true);
-        when(adoptanteRepository.existsById(1L)).thenReturn(true);
+
+        when(mensajeRepository.findById(2L)).thenReturn(Optional.of(storedMessage));
+        when(adoptanteRepository.findById(1L)).thenReturn(Optional.of(adoptante));
 
         assertThrows(RuntimeException.class, () -> service.editarMensaje(message, 1L));
     }

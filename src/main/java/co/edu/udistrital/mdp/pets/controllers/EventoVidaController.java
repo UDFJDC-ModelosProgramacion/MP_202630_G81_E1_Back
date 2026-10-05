@@ -87,8 +87,9 @@ public class EventoVidaController {
             @RequestBody EventoVidaDTO dto) throws EntityNotFoundException, IllegalOperationException {
         MascotaEntity mascota = requireMascota(mascotaId);
         EventoVidaEntity entity = requireEvent(mascotaId, eventoVidaId);
-        modelMapper.map(dto, entity);
-        entity.setId(eventoVidaId);
+        entity.setTipo(dto.getTipo());
+        entity.setFecha(dto.getFecha());
+        entity.setDescripcion(dto.getDescripcion());
         entity.setMascota(mascota);
         validate(entity);
         return detail(eventoVidaRepository.save(entity));
