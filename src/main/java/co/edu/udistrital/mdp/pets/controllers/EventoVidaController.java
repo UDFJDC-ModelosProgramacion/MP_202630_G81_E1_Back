@@ -2,7 +2,6 @@ package co.edu.udistrital.mdp.pets.controllers;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -128,6 +127,6 @@ public class EventoVidaController {
 
     private List<EventoVidaDTODetail> details(List<EventoVidaEntity> entities) {
         return entities.stream().map(entity -> modelMapper.map(entity, EventoVidaDTODetail.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

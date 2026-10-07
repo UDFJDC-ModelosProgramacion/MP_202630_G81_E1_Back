@@ -23,7 +23,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
  * (@ManyToOne hacia Mascota y Veterinario) se mapean bien.
  */
 @DataJpaTest
-public class SeguimientoEntityTest {
+class SeguimientoEntityTest {
 
     @Autowired
     private TestEntityManager entityManager;

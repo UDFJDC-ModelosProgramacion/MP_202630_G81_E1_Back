@@ -23,7 +23,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @SpringBootTest
 @Transactional
-public class RetornoServiceTest {
+class RetornoServiceTest {
 
     @Autowired
     private RetornoService retornoService;
