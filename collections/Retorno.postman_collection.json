@@ -1,10 +1,41 @@
 {
   "info": {
     "_postman_id": "c9d41e76-5b23-48a2-91f6-3e107c8524ad",
-    "name": "Retorno - Pet Adoption",
+    "name": "Retorno",
+    "description": "Colección autocontenida: crea y limpia los datos relacionados para probar el CRUD y las consultas por readopción y adopción.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
+    {
+      "name": "Preparar refugio de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(201);","pm.collectionVariables.set(\"retorno_refugio_id\",pm.response.json().id);","pm.globals.set(\"retorno_refugio_id\",pm.response.json().id);"]}}],
+      "request": {"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"nombre\":\"Retorno {{$guid}}\",\"ciudad\":\"Bogota\",\"direccion\":\"Calle 1\",\"telefono\":\"3001234567\",\"email\":\"retorno.{{$guid}}@example.com\",\"descripcion\":\"Refugio de prueba\",\"fechaRegistro\":\"2026-10-04\"}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/refugios","host":["{{baseUrl}}"],"path":["refugios"]}},
+      "response":[]
+    },
+    {
+      "name": "Preparar adoptante de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(201);","pm.collectionVariables.set(\"adoptante_id_1\",pm.response.json().id);","pm.globals.set(\"adoptante_id_1\",pm.response.json().id);"]}}],
+      "request": {"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"nombre\":\"Adoptante {{$guid}}\",\"telefono\":\"3001234567\",\"email\":\"retorno.adoptante.{{$guid}}@example.com\",\"direccion\":\"Calle 1\",\"ciudad\":\"Bogota\"}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/adoptantes","host":["{{baseUrl}}"],"path":["adoptantes"]}},
+      "response":[]
+    },
+    {
+      "name": "Preparar mascota de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(201);","pm.collectionVariables.set(\"mascota_id_1\",pm.response.json().id);","pm.globals.set(\"mascota_id_1\",pm.response.json().id);"]}}],
+      "request": {"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"nombre\":\"Mascota {{$guid}}\",\"especie\":\"Perro\",\"raza\":\"Criollo\",\"edad\":3,\"sexo\":\"Macho\",\"estado\":\"Disponible\",\"refugio\":{\"id\":{{retorno_refugio_id}}}}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/mascotas","host":["{{baseUrl}}"],"path":["mascotas"]}},
+      "response":[]
+    },
+    {
+      "name": "Preparar solicitud de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(200);","pm.collectionVariables.set(\"solicitud_adopcion_id_1\",pm.response.json().id);","pm.globals.set(\"solicitud_adopcion_id_1\",pm.response.json().id);"]}}],
+      "request": {"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"fecha\":\"2026-10-04\",\"estado\":\"PENDIENTE\",\"tipoSolicitud\":\"ADOPCION\",\"observacion\":\"Solicitud creada por la colección de retornos\",\"adoptante\":{\"id\":{{adoptante_id_1}}},\"mascota\":{\"id\":{{mascota_id_1}}}}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/solicitudes-adopcion","host":["{{baseUrl}}"],"path":["solicitudes-adopcion"]}},
+      "response":[]
+    },
+    {
+      "name": "Preparar adopción de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(200);","pm.collectionVariables.set(\"adopcion_id_1\",pm.response.json().id);","pm.globals.set(\"adopcion_id_1\",pm.response.json().id);"]}}],
+      "request": {"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"fechaAdopcion\":\"2026-10-04\",\"estado\":\"ACTIVA\",\"observacion\":\"Adopción creada por la colección de retornos\",\"solicitud\":{\"id\":{{solicitud_adopcion_id_1}}}}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/adopciones","host":["{{baseUrl}}"],"path":["adopciones"]}},
+      "response":[]
+    },
     {
       "name": "Crear retorno",
       "event": [
@@ -13,11 +44,13 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test(\"Status code is 201\", function () {",
-              "   pm.response.to.have.status(201);",
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
               "});",
               "",
               "var data = pm.response.json();",
+              "pm.expect(data.id, \"La respuesta debe incluir el id creado\").to.exist;",
+              "pm.collectionVariables.set(\"retorno_id_1\", data.id);",
               "pm.globals.set(\"retorno_id_1\", data.id);"
             ]
           }
@@ -48,6 +81,56 @@
           "path": [
             "retornos"
           ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Filtrar retornos compatibles con readopción",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);",
+              "pm.expect(pm.response.json()).to.be.an(\"array\");"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/retornos/compatible/true",
+          "host": ["{{baseUrl}}"],
+          "path": ["retornos", "compatible", "true"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar retorno por adopción",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);",
+              "pm.expect(pm.response.json()).to.be.an(\"object\").and.not.empty;"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/retornos/adopcion/{{adopcion_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["retornos", "adopcion", "{{adopcion_id_1}}"]
         }
       },
       "response": []
@@ -138,7 +221,8 @@
             "exec": [
               "pm.test(\"Status code is 200\", function () {",
               "   pm.response.to.have.status(200);",
-              "});"
+              "});",
+              "pm.expect(pm.response.json().id).to.eql(Number(pm.variables.get(\"retorno_id_1\")));"
             ]
           }
         }
@@ -181,8 +265,8 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test(\"Status code is 204\", function () {",
-              "   pm.response.to.have.status(204);",
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
               "});"
             ]
           }
@@ -208,6 +292,36 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Limpiar adopción de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(200);"]}}],
+      "request": {"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/adopciones/{{adopcion_id_1}}","host":["{{baseUrl}}"],"path":["adopciones","{{adopcion_id_1}}"]}},
+      "response":[]
+    },
+    {
+      "name": "Limpiar solicitud de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(200);"]}}],
+      "request": {"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/solicitudes-adopcion/{{solicitud_adopcion_id_1}}","host":["{{baseUrl}}"],"path":["solicitudes-adopcion","{{solicitud_adopcion_id_1}}"]}},
+      "response":[]
+    },
+    {
+      "name": "Limpiar mascota de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(204);"]}}],
+      "request": {"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/mascotas/{{mascota_id_1}}","host":["{{baseUrl}}"],"path":["mascotas","{{mascota_id_1}}"]}},
+      "response":[]
+    },
+    {
+      "name": "Limpiar adoptante de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(204);"]}}],
+      "request": {"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/adoptantes/{{adoptante_id_1}}","host":["{{baseUrl}}"],"path":["adoptantes","{{adoptante_id_1}}"]}},
+      "response":[]
+    },
+    {
+      "name": "Limpiar refugio de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(204);"]}}],
+      "request": {"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/refugios/{{retorno_refugio_id}}","host":["{{baseUrl}}"],"path":["refugios","{{retorno_refugio_id}}"]}},
+      "response":[]
     }
   ]
 }

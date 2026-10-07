@@ -2,6 +2,9 @@ package co.edu.udistrital.mdp.pets.entities;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -31,14 +34,17 @@ public class SolicitudAdopcionEntity extends BaseEntity {
 
     @PodamExclude
     @ManyToOne
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "solicitudesAdopcion", "mensajes" })
     private AdoptanteEntity adoptante;
 
     @PodamExclude
     @ManyToOne
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "refugio", "seguimientos" })
     private MascotaEntity mascota;
 
     @PodamExclude
     @OneToOne(mappedBy = "solicitud")
+    @JsonIgnore
     private AdopcionEntity adopcion;
 
 }
