@@ -7,21 +7,114 @@
   },
   "item": [
     {
-      "name": "Listar registros de vacunacion (representacion basica)",
+      "name": "[Setup] Crear vacuna",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set(\"vacunaNombre\", \"VacunaReg \" + Date.now());"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set(\"vacunaId\", pm.response.json().id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/vacunas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "vacunas"
+          ]
+        },
+        "description": "",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"{{vacunaNombre}}\",\n  \"descripcion\": \"Vacuna de prueba\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[Setup] Crear mascota",
       "event": [
         {
           "listen": "test",
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set(\"mascotaId\", pm.response.json().id);"
             ]
           }
         }
       ],
       "request": {
-        "method": "GET",
-        "header": [],
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/mascotas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "mascotas"
+          ]
+        },
+        "description": "AJUSTAR el body a lo que exige tu API de Mascota (copialo del POST de la coleccion de Mascota).",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Firulais\",\n  \"especie\": \"Perro\",\n  \"raza\": \"Criollo\",\n  \"edad\": 3,\n  \"sexo\": \"Macho\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear registro de vacunacion",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set(\"registroId\", pm.response.json().id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/registros-vacunacion",
           "host": [
@@ -31,7 +124,11 @@
             "registros-vacunacion"
           ]
         },
-        "description": "200 OK. Devuelve List<RegistroVacunacionDTO>: incluye fechaAplicacion, proximaFecha, numeroLote, observacion y las asociaciones de cardinalidad 1 (vacuna, mascota, seguimientoOrigen)."
+        "description": "201 Created -> RegistroVacunacionDTODetail.\n404 Not Found si la vacuna o la mascota indicadas no existen.\n412 Precondition Failed si faltan datos obligatorios o la fecha de aplicacion es futura / la proxima fecha no es posterior.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fechaAplicacion\": \"2026-01-15\",\n  \"proximaFecha\": \"2027-01-15\",\n  \"numeroLote\": \"LOTE-2026-01\",\n  \"observacion\": \"Sin reacciones adversas\",\n  \"vacuna\": {\n    \"id\": {{vacunaId}}\n  },\n  \"mascota\": {\n    \"id\": {{mascotaId}}\n  }\n}"
+        }
       },
       "response": []
     },
@@ -66,44 +163,6 @@
       "response": []
     },
     {
-      "name": "Crear registro de vacunacion",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"fechaAplicacion\": \"2026-01-15\",\n  \"proximaFecha\": \"2027-01-15\",\n  \"numeroLote\": \"LOTE-2026-01\",\n  \"observacion\": \"Sin reacciones adversas\",\n  \"vacuna\": { \"id\": 1 },\n  \"mascota\": { \"id\": 1 }\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/registros-vacunacion",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "registros-vacunacion"
-          ]
-        },
-        "description": "201 Created -> RegistroVacunacionDTODetail.\n404 Not Found si la vacuna o la mascota indicadas no existen.\n412 Precondition Failed si faltan datos obligatorios o la fecha de aplicacion es futura / la proxima fecha no es posterior."
-      },
-      "response": []
-    },
-    {
       "name": "Actualizar registro de vacunacion",
       "event": [
         {
@@ -124,10 +183,6 @@
             "value": "application/json"
           }
         ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"fechaAplicacion\": \"2026-01-15\",\n  \"proximaFecha\": \"2027-02-01\",\n  \"numeroLote\": \"LOTE-2026-01\",\n  \"observacion\": \"Se ajusta proxima fecha\",\n  \"vacuna\": { \"id\": 1 },\n  \"mascota\": { \"id\": 1 }\n}"
-        },
         "url": {
           "raw": "{{baseUrl}}/registros-vacunacion/{{registroId}}",
           "host": [
@@ -138,7 +193,40 @@
             "{{registroId}}"
           ]
         },
-        "description": "200 OK -> RegistroVacunacionDTODetail.\n404 Not Found si el registro, la vacuna o la mascota no existen.\n412 Precondition Failed si los datos no son validos."
+        "description": "200 OK -> RegistroVacunacionDTODetail.\n404 Not Found si el registro, la vacuna o la mascota no existen.\n412 Precondition Failed si los datos no son validos.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fechaAplicacion\": \"2026-01-15\",\n  \"proximaFecha\": \"2027-02-01\",\n  \"numeroLote\": \"LOTE-2026-01\",\n  \"observacion\": \"Se ajusta proxima fecha\",\n  \"vacuna\": {\n    \"id\": {{vacunaId}}\n  },\n  \"mascota\": {\n    \"id\": {{mascotaId}}\n  }\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar registros de vacunacion (representacion basica)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/registros-vacunacion",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registros-vacunacion"
+          ]
+        },
+        "description": "200 OK. Devuelve List<RegistroVacunacionDTO>: incluye fechaAplicacion, proximaFecha, numeroLote, observacion y las asociaciones vacuna y mascota."
       },
       "response": []
     },
@@ -171,12 +259,84 @@
         "description": "204 No Content.\n404 Not Found si el id no existe."
       },
       "response": []
+    },
+    {
+      "name": "[Teardown] Eliminar mascota",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Mascota eliminada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 204]); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/mascotas/{{mascotaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "mascotas",
+            "{{mascotaId}}"
+          ]
+        },
+        "description": ""
+      },
+      "response": []
+    },
+    {
+      "name": "[Teardown] Eliminar vacuna",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/vacunas/{{vacunaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "vacunas",
+            "{{vacunaId}}"
+          ]
+        },
+        "description": ""
+      },
+      "response": []
     }
   ],
   "variable": [
     {
       "key": "registroId",
       "value": "1"
+    },
+    {
+      "key": "vacunaId",
+      "value": "1"
+    },
+    {
+      "key": "mascotaId",
+      "value": "1"
+    },
+    {
+      "key": "vacunaNombre",
+      "value": "VacunaReg"
     }
   ]
 }
