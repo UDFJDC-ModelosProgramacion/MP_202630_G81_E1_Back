@@ -16,195 +16,174 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 @DataJpaTest
 @Transactional
-public class RetornoEntityTest {
+class RetornoEntityTest {
 
-    @Autowired
-    private TestEntityManager entityManager;
+        @Autowired
+        private TestEntityManager entityManager;
 
-    private final PodamFactory factory = new PodamFactoryImpl();
+        private final PodamFactory factory = new PodamFactoryImpl();
 
-    private final List<RetornoEntity> data = new ArrayList<>();
+        private final List<RetornoEntity> data = new ArrayList<>();
 
-    private AdopcionEntity adopcion;
+        private AdopcionEntity adopcion;
 
-    @BeforeEach
-    void setUp() {
-        clearData();
-        insertData();
-    }
-
-    private void clearData() {
-        entityManager.getEntityManager().createQuery("delete from RetornoEntity").executeUpdate();
-        entityManager.getEntityManager().createQuery("delete from AdopcionEntity").executeUpdate();
-        entityManager.getEntityManager().createQuery("delete from SolicitudAdopcionEntity").executeUpdate();
-        entityManager.getEntityManager().createQuery("delete from AdoptanteEntity").executeUpdate();
-        entityManager.getEntityManager().createQuery("delete from MascotaEntity").executeUpdate();
-    }
-
-    private void insertData() {
-
-        // Adopción independiente para testCreateRetorno
-        AdoptanteEntity adoptante = factory.manufacturePojo(AdoptanteEntity.class);
-        MascotaEntity mascota = factory.manufacturePojo(MascotaEntity.class);
-
-        entityManager.persist(adoptante);
-        entityManager.persist(mascota);
-
-        SolicitudAdopcionEntity solicitud = factory.manufacturePojo(SolicitudAdopcionEntity.class);
-        solicitud.setAdoptante(adoptante);
-        solicitud.setMascota(mascota);
-
-        entityManager.persist(solicitud);
-
-        adopcion = factory.manufacturePojo(AdopcionEntity.class);
-        adopcion.setSolicitud(solicitud);
-
-        entityManager.persist(adopcion);
-
-        // Cada retorno tendrá una adopción diferente
-        for (int i = 0; i < 3; i++) {
-
-            AdoptanteEntity nuevoAdoptante = factory.manufacturePojo(AdoptanteEntity.class);
-            MascotaEntity nuevaMascota = factory.manufacturePojo(MascotaEntity.class);
-
-            entityManager.persist(nuevoAdoptante);
-            entityManager.persist(nuevaMascota);
-
-            SolicitudAdopcionEntity nuevaSolicitud =
-                    factory.manufacturePojo(SolicitudAdopcionEntity.class);
-
-            nuevaSolicitud.setAdoptante(nuevoAdoptante);
-            nuevaSolicitud.setMascota(nuevaMascota);
-
-            entityManager.persist(nuevaSolicitud);
-
-            AdopcionEntity nuevaAdopcion =
-                    factory.manufacturePojo(AdopcionEntity.class);
-
-            nuevaAdopcion.setSolicitud(nuevaSolicitud);
-
-            entityManager.persist(nuevaAdopcion);
-
-            RetornoEntity entity =
-                    factory.manufacturePojo(RetornoEntity.class);
-
-            entity.setAdopcion(nuevaAdopcion);
-
-            entityManager.persist(entity);
-            data.add(entity);
+        @BeforeEach
+        void setUp() {
+                clearData();
+                insertData();
         }
-    }
 
-    @Test
-    void testCreateRetorno() {
+        private void clearData() {
+                entityManager.getEntityManager().createQuery("delete from RetornoEntity").executeUpdate();
+                entityManager.getEntityManager().createQuery("delete from AdopcionEntity").executeUpdate();
+                entityManager.getEntityManager().createQuery("delete from SolicitudAdopcionEntity").executeUpdate();
+                entityManager.getEntityManager().createQuery("delete from AdoptanteEntity").executeUpdate();
+                entityManager.getEntityManager().createQuery("delete from MascotaEntity").executeUpdate();
+        }
 
-        AdoptanteEntity adoptante =
-                factory.manufacturePojo(AdoptanteEntity.class);
+        private void insertData() {
 
-        MascotaEntity mascota =
-                factory.manufacturePojo(MascotaEntity.class);
+                // Adopción independiente para testCreateRetorno
+                AdoptanteEntity adoptante = factory.manufacturePojo(AdoptanteEntity.class);
+                MascotaEntity mascota = factory.manufacturePojo(MascotaEntity.class);
 
-        entityManager.persist(adoptante);
-        entityManager.persist(mascota);
+                entityManager.persist(adoptante);
+                entityManager.persist(mascota);
 
-        SolicitudAdopcionEntity solicitud =
-                factory.manufacturePojo(SolicitudAdopcionEntity.class);
+                SolicitudAdopcionEntity solicitud = factory.manufacturePojo(SolicitudAdopcionEntity.class);
+                solicitud.setAdoptante(adoptante);
+                solicitud.setMascota(mascota);
 
-        solicitud.setAdoptante(adoptante);
-        solicitud.setMascota(mascota);
+                entityManager.persist(solicitud);
 
-        entityManager.persist(solicitud);
+                adopcion = factory.manufacturePojo(AdopcionEntity.class);
+                adopcion.setSolicitud(solicitud);
 
-        AdopcionEntity nuevaAdopcion =
-                factory.manufacturePojo(AdopcionEntity.class);
+                entityManager.persist(adopcion);
 
-        nuevaAdopcion.setSolicitud(solicitud);
+                // Cada retorno tendrá una adopción diferente
+                for (int i = 0; i < 3; i++) {
 
-        entityManager.persist(nuevaAdopcion);
+                        AdoptanteEntity nuevoAdoptante = factory.manufacturePojo(AdoptanteEntity.class);
+                        MascotaEntity nuevaMascota = factory.manufacturePojo(MascotaEntity.class);
 
-        RetornoEntity entity =
-                factory.manufacturePojo(RetornoEntity.class);
+                        entityManager.persist(nuevoAdoptante);
+                        entityManager.persist(nuevaMascota);
 
-        entity.setAdopcion(nuevaAdopcion);
+                        SolicitudAdopcionEntity nuevaSolicitud = factory.manufacturePojo(SolicitudAdopcionEntity.class);
 
-        RetornoEntity result =
-                entityManager.persistFlushFind(entity);
+                        nuevaSolicitud.setAdoptante(nuevoAdoptante);
+                        nuevaSolicitud.setMascota(nuevaMascota);
 
-        assertNotNull(result);
-        assertEquals(entity.getMotivo(), result.getMotivo());
-        assertEquals(entity.getDescripcion(), result.getDescripcion());
-        assertEquals(
-                entity.getCompatibleReAdopcion(),
-                result.getCompatibleReAdopcion()
-        );
-    }
+                        entityManager.persist(nuevaSolicitud);
 
-    @Test
-    void testGetRetorno() {
+                        AdopcionEntity nuevaAdopcion = factory.manufacturePojo(AdopcionEntity.class);
 
-        RetornoEntity entity = data.get(0);
+                        nuevaAdopcion.setSolicitud(nuevaSolicitud);
 
-        RetornoEntity result =
-                entityManager.find(
-                        RetornoEntity.class,
-                        entity.getId()
-                );
+                        entityManager.persist(nuevaAdopcion);
 
-        assertNotNull(result);
-        assertEquals(entity.getMotivo(), result.getMotivo());
-    }
+                        RetornoEntity entity = factory.manufacturePojo(RetornoEntity.class);
 
-    @Test
-    void testUpdateRetorno() {
+                        entity.setAdopcion(nuevaAdopcion);
 
-        RetornoEntity entity = data.get(0);
+                        entityManager.persist(entity);
+                        data.add(entity);
+                }
+        }
 
-        RetornoEntity newData =
-                factory.manufacturePojo(RetornoEntity.class);
+        @Test
+        void testCreateRetorno() {
 
-        entity.setMotivo(newData.getMotivo());
-        entity.setDescripcion(newData.getDescripcion());
-        entity.setCompatibleReAdopcion(
-                newData.getCompatibleReAdopcion()
-        );
+                AdoptanteEntity adoptante = factory.manufacturePojo(AdoptanteEntity.class);
 
-        entityManager.merge(entity);
+                MascotaEntity mascota = factory.manufacturePojo(MascotaEntity.class);
 
-        RetornoEntity result =
-                entityManager.find(
-                        RetornoEntity.class,
-                        entity.getId()
-                );
+                entityManager.persist(adoptante);
+                entityManager.persist(mascota);
 
-        assertEquals(
-                newData.getMotivo(),
-                result.getMotivo()
-        );
+                SolicitudAdopcionEntity solicitud = factory.manufacturePojo(SolicitudAdopcionEntity.class);
 
-        assertEquals(
-                newData.getDescripcion(),
-                result.getDescripcion()
-        );
+                solicitud.setAdoptante(adoptante);
+                solicitud.setMascota(mascota);
 
-        assertEquals(
-                newData.getCompatibleReAdopcion(),
-                result.getCompatibleReAdopcion()
-        );
-    }
+                entityManager.persist(solicitud);
 
-    @Test
-    void testDeleteRetorno() {
+                AdopcionEntity nuevaAdopcion = factory.manufacturePojo(AdopcionEntity.class);
 
-        RetornoEntity entity = data.get(0);
+                nuevaAdopcion.setSolicitud(solicitud);
 
-        entityManager.remove(entity);
+                entityManager.persist(nuevaAdopcion);
 
-        RetornoEntity deleted =
-                entityManager.find(
-                        RetornoEntity.class,
-                        entity.getId()
-                );
+                RetornoEntity entity = factory.manufacturePojo(RetornoEntity.class);
 
-        assertNull(deleted);
-    }
+                entity.setAdopcion(nuevaAdopcion);
+
+                RetornoEntity result = entityManager.persistFlushFind(entity);
+
+                assertNotNull(result);
+                assertEquals(entity.getMotivo(), result.getMotivo());
+                assertEquals(entity.getDescripcion(), result.getDescripcion());
+                assertEquals(
+                                entity.getCompatibleReAdopcion(),
+                                result.getCompatibleReAdopcion());
+        }
+
+        @Test
+        void testGetRetorno() {
+
+                RetornoEntity entity = data.get(0);
+
+                RetornoEntity result = entityManager.find(
+                                RetornoEntity.class,
+                                entity.getId());
+
+                assertNotNull(result);
+                assertEquals(entity.getMotivo(), result.getMotivo());
+        }
+
+        @Test
+        void testUpdateRetorno() {
+
+                RetornoEntity entity = data.get(0);
+
+                RetornoEntity newData = factory.manufacturePojo(RetornoEntity.class);
+
+                entity.setMotivo(newData.getMotivo());
+                entity.setDescripcion(newData.getDescripcion());
+                entity.setCompatibleReAdopcion(
+                                newData.getCompatibleReAdopcion());
+
+                entityManager.merge(entity);
+
+                RetornoEntity result = entityManager.find(
+                                RetornoEntity.class,
+                                entity.getId());
+
+                assertEquals(
+                                newData.getMotivo(),
+                                result.getMotivo());
+
+                assertEquals(
+                                newData.getDescripcion(),
+                                result.getDescripcion());
+
+                assertEquals(
+                                newData.getCompatibleReAdopcion(),
+                                result.getCompatibleReAdopcion());
+        }
+
+        @Test
+        void testDeleteRetorno() {
+
+                RetornoEntity entity = data.get(0);
+
+                entityManager.remove(entity);
+
+                RetornoEntity deleted = entityManager.find(
+                                RetornoEntity.class,
+                                entity.getId());
+
+                assertNull(deleted);
+        }
 }

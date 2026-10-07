@@ -21,7 +21,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @EntityScan(basePackageClasses = FotografiaTestEntity.class)
 @Transactional
-public class FotografiaEntityTest {
+class FotografiaEntityTest {
 
     @Autowired
     private TestEntityManager entityManager;
