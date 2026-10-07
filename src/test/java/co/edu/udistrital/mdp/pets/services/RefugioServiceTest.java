@@ -36,7 +36,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(RefugioService.class)
-public class RefugioServiceTest {
+class RefugioServiceTest {
 
     @Autowired
     private RefugioService refugioService;

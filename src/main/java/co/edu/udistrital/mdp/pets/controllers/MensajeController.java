@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -48,7 +47,7 @@ public class MensajeController {
     public List<MensajeDTODetail> findAll(@PathVariable Long adoptanteId) throws EntityNotFoundException {
         requireAdoptante(adoptanteId);
         return mensajeRepository.findByAdoptanteId(adoptanteId).stream()
-                .map(entity -> modelMapper.map(entity, MensajeDTODetail.class)).collect(Collectors.toList());
+                .map(entity -> modelMapper.map(entity, MensajeDTODetail.class)).toList();
     }
 
     @GetMapping("/{mensajeId}")
@@ -77,8 +76,10 @@ public class MensajeController {
         if (entity.isLeido()) {
             throw new IllegalOperationException("El mensaje leído no puede ser editado");
         }
-        modelMapper.map(dto, entity);
-        entity.setId(mensajeId);
+        entity.setFecha(dto.getFecha());
+        entity.setAsunto(dto.getAsunto());
+        entity.setContenido(dto.getContenido());
+        entity.setLeido(dto.isLeido());
         entity.setAdoptante(requireAdoptante(adoptanteId));
         if (dto.getMascotaId() != null) {
             entity.setMascota(requireMascota(dto.getMascotaId()));

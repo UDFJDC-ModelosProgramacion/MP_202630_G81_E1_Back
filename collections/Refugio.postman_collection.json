@@ -1,0 +1,616 @@
+{
+  "info": {
+    "name": "Refugio - Pet Adoption",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Setup",
+      "item": [
+        {
+          "name": "Setup: crear refugio para prueba de borrado con mascotas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Refugio Setup Mascotas {{$timestamp}}\",\n  \"ciudad\": \"Bogota\",\n  \"direccion\": \"Calle 1 # 2-3\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"refugio@correo.com\",\n  \"descripcion\": \"Refugio de prueba\",\n  \"fechaRegistro\": \"2026-01-10\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.globals.set(\"refugio_setup_id\", data.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "   pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Setup: crear mascota en ese refugio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/mascotas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "mascotas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Mascota Setup\",\n  \"especie\": \"Perro\",\n  \"raza\": \"Criollo\",\n  \"edad\": 3,\n  \"sexo\": \"Macho\",\n  \"tamano\": \"Mediano\",\n  \"temperamento\": \"Amigable\",\n  \"necesidadesEspecificas\": \"Ninguna\",\n  \"requisitoEspacio\": \"Patio\",\n  \"compatibleConNinos\": true,\n  \"compatibleConMascotas\": true,\n  \"nivelActividad\": \"Alto\",\n  \"estado\": \"Disponible\",\n  \"refugio\": {\n    \"id\": {{refugio_setup_id}}\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.globals.set(\"mascota_setup_id\", data.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "   pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Refugio",
+      "item": [
+        {
+          "name": "Crear un refugio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Refugio Esperanza {{$timestamp}}\",\n  \"ciudad\": \"Bogota\",\n  \"direccion\": \"Calle 1 # 2-3\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"refugio@correo.com\",\n  \"descripcion\": \"Refugio de prueba\",\n  \"fechaRegistro\": \"2026-01-10\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.globals.set(\"refugio_id_1\", data.id);",
+                  "pm.globals.set(\"refugio_nombre_1\", data.nombre);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "   pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear un refugio con nombre repetido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"{{refugio_nombre_1}}\",\n  \"ciudad\": \"Bogota\",\n  \"direccion\": \"Calle 1 # 2-3\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"refugio@correo.com\",\n  \"descripcion\": \"Refugio de prueba\",\n  \"fechaRegistro\": \"2026-01-10\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 412\", function () {",
+                  "   pm.response.to.have.status(412);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"Ya existe un refugio con ese nombre\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear un refugio con nombre vacio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"ciudad\": \"Bogota\",\n  \"direccion\": \"Calle 1 # 2-3\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"refugio@correo.com\",\n  \"descripcion\": \"Refugio de prueba\",\n  \"fechaRegistro\": \"2026-01-10\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 412\", function () {",
+                  "   pm.response.to.have.status(412);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"El nombre del refugio no puede ser vacio\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear un refugio para borrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Refugio Temporal {{$timestamp}}\",\n  \"ciudad\": \"Bogota\",\n  \"direccion\": \"Calle 1 # 2-3\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"refugio@correo.com\",\n  \"descripcion\": \"Refugio de prueba\",\n  \"fechaRegistro\": \"2026-01-10\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var data = pm.response.json();",
+                  "pm.globals.set(\"refugio_id_2\", data.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "   pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener todos los refugios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Number of items > 0\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(data.length).to.greaterThan(0);",
+                  "});",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "   pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener un refugio",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios/{{refugio_id_1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios",
+                "{{refugio_id_1}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "   pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener un refugio que no existe",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios",
+                "999999"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "   pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"El refugio con el id dado no existe\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar un refugio",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios/{{refugio_id_1}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios",
+                "{{refugio_id_1}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Refugio Esperanza Actualizado {{$timestamp}}\",\n  \"ciudad\": \"Bogota\",\n  \"direccion\": \"Calle 1 # 2-3\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"refugio@correo.com\",\n  \"descripcion\": \"Refugio de prueba\",\n  \"fechaRegistro\": \"2026-01-10\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "   pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar un refugio que no existe",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios",
+                "999999"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Cualquiera {{$timestamp}}\",\n  \"ciudad\": \"Bogota\",\n  \"direccion\": \"Calle 1 # 2-3\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"refugio@correo.com\",\n  \"descripcion\": \"Refugio de prueba\",\n  \"fechaRegistro\": \"2026-01-10\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "   pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"El refugio con el id dado no existe\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Borrar un refugio con mascotas",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios/{{refugio_setup_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios",
+                "{{refugio_setup_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 412\", function () {",
+                  "   pm.response.to.have.status(412);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"No se puede eliminar un refugio que tiene mascotas registradas\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Borrar un refugio",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios/{{refugio_id_2}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios",
+                "{{refugio_id_2}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "   pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Borrar un refugio que no existe",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/refugios/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "refugios",
+                "999999"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "   pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Get expected error message\", function () {",
+                  "   var data = pm.response.json();",
+                  "   pm.expect(JSON.stringify(data)).to.include(\"El refugio con el id dado no existe\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

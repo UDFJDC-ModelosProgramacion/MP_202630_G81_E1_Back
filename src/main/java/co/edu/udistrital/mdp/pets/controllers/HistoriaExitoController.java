@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -43,7 +42,7 @@ public class HistoriaExitoController {
     public List<HistoriaExitoDTODetail> findAll(@PathVariable Long mascotaId) throws EntityNotFoundException {
         requireMascota(mascotaId);
         return historiaRepository.findByMascotaId(mascotaId).stream()
-                .map(entity -> modelMapper.map(entity, HistoriaExitoDTODetail.class)).collect(Collectors.toList());
+                .map(entity -> modelMapper.map(entity, HistoriaExitoDTODetail.class)).toList();
     }
 
     @GetMapping("/{historiaExitoId}")
@@ -69,8 +68,9 @@ public class HistoriaExitoController {
         MascotaEntity mascota = requireMascota(mascotaId);
         requireActive(mascota);
         HistoriaExitoEntity entity = requireHistoria(mascotaId, historiaExitoId);
-        modelMapper.map(dto, entity);
-        entity.setId(historiaExitoId);
+        entity.setTitulo(dto.getTitulo());
+        entity.setDescripcion(dto.getDescripcion());
+        entity.setFecha(dto.getFecha());
         entity.setMascota(mascota);
         return detail(historiaRepository.save(entity));
     }

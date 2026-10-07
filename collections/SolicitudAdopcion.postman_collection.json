@@ -1,0 +1,491 @@
+{
+  "info": {
+    "_postman_id": "8b7c4e91-2a13-4d6e-9f31-7a8b2c5d1041",
+    "name": "Solicitud de adopción",
+    "description": "CRUD y filtros de solicitudes de adopción. La ejecución ordenada prepara un refugio, un adoptante y una mascota de prueba, por lo que no requiere IDs previos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Preparar refugio de prueba",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "var data = pm.response.json();",
+              "pm.expect(data.id, \"El refugio debe incluir el id creado\").to.exist;",
+              "pm.collectionVariables.set(\"solicitud_refugio_id\", data.id);",
+              "pm.globals.set(\"solicitud_refugio_id\", data.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Refugio Solicitud {{$guid}}\",\n  \"ciudad\": \"Bogota\",\n  \"direccion\": \"Calle 1 # 2-3\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"solicitud.refugio.{{$guid}}@example.com\",\n  \"descripcion\": \"Refugio creado por la colección de solicitudes\",\n  \"fechaRegistro\": \"2026-10-04\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/refugios",
+          "host": ["{{baseUrl}}"],
+          "path": ["refugios"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Preparar adoptante de prueba",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "var data = pm.response.json();",
+              "pm.expect(data.id, \"El adoptante debe incluir el id creado\").to.exist;",
+              "pm.collectionVariables.set(\"adoptante_id_1\", data.id);",
+              "pm.globals.set(\"adoptante_id_1\", data.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Adoptante Solicitud {{$guid}}\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"solicitud.adoptante.{{$guid}}@example.com\",\n  \"direccion\": \"Calle 1 # 2-3\",\n  \"ciudad\": \"Bogota\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/adoptantes",
+          "host": ["{{baseUrl}}"],
+          "path": ["adoptantes"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Preparar mascota de prueba",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "var data = pm.response.json();",
+              "pm.expect(data.id, \"La mascota debe incluir el id creado\").to.exist;",
+              "pm.collectionVariables.set(\"mascota_id_1\", data.id);",
+              "pm.globals.set(\"mascota_id_1\", data.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Mascota Solicitud {{$guid}}\",\n  \"especie\": \"Perro\",\n  \"raza\": \"Criollo\",\n  \"edad\": 3,\n  \"sexo\": \"Macho\",\n  \"estado\": \"Disponible\",\n  \"refugio\": {\n    \"id\": {{solicitud_refugio_id}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/mascotas",
+          "host": ["{{baseUrl}}"],
+          "path": ["mascotas"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear solicitud de adopción",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var data = pm.response.json();",
+              "pm.expect(data.id, \"La respuesta debe incluir el id creado\").to.exist;",
+              "pm.collectionVariables.set(\"solicitud_adopcion_id_1\", data.id);",
+              "pm.globals.set(\"solicitud_adopcion_id_1\", data.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"estado\": \"PENDIENTE\",\n  \"tipoSolicitud\": \"ADOPCION\",\n  \"observacion\": \"Solicitud de adopcion de prueba\",\n  \"adoptante\": {\n    \"id\": {{adoptante_id_1}}\n  },\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/solicitudes-adopcion",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "solicitudes-adopcion"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Filtrar solicitudes por estado",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);",
+              "pm.expect(pm.response.json()).to.be.an(\"array\");"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/solicitudes-adopcion/estado/PENDIENTE",
+          "host": ["{{baseUrl}}"],
+          "path": ["solicitudes-adopcion", "estado", "PENDIENTE"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Filtrar solicitudes por adoptante",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);",
+              "pm.expect(pm.response.json()).to.be.an(\"array\");"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/solicitudes-adopcion/adoptante/{{adoptante_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["solicitudes-adopcion", "adoptante", "{{adoptante_id_1}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Filtrar solicitudes por mascota",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.response.to.have.status(200);",
+              "pm.expect(pm.response.json()).to.be.an(\"array\");"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/solicitudes-adopcion/mascota/{{mascota_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["solicitudes-adopcion", "mascota", "{{mascota_id_1}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener todas las solicitudes",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Number of items > 0\", function () {",
+              "   var data = pm.response.json();",
+              "   pm.expect(data.length).to.be.greaterThan(0);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/solicitudes-adopcion",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "solicitudes-adopcion"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener una solicitud",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});",
+              "pm.expect(pm.response.json()).to.be.an(\"object\").and.not.empty;"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/solicitudes-adopcion/{{solicitud_adopcion_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "solicitudes-adopcion",
+            "{{solicitud_adopcion_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar solicitud",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});",
+              "pm.expect(pm.response.json().id).to.eql(Number(pm.variables.get(\"solicitud_adopcion_id_1\")));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"estado\": \"APROBADA\",\n  \"tipoSolicitud\": \"ADOPCION\",\n  \"observacion\": \"Solicitud aprobada\",\n  \"adoptante\": {\n    \"id\": {{adoptante_id_1}}\n  },\n  \"mascota\": {\n    \"id\": {{mascota_id_1}}\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/solicitudes-adopcion/{{solicitud_adopcion_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "solicitudes-adopcion",
+            "{{solicitud_adopcion_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar solicitud",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "   pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/solicitudes-adopcion/{{solicitud_adopcion_id_1}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "solicitudes-adopcion",
+            "{{solicitud_adopcion_id_1}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Limpiar mascota de prueba",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.response.to.have.status(204);"]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/mascotas/{{mascota_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["mascotas", "{{mascota_id_1}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Limpiar adoptante de prueba",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.response.to.have.status(204);"]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/adoptantes/{{adoptante_id_1}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["adoptantes", "{{adoptante_id_1}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Limpiar refugio de prueba",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.response.to.have.status(204);"]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/refugios/{{solicitud_refugio_id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["refugios", "{{solicitud_refugio_id}}"]
+        }
+      },
+      "response": []
+    }
+  ]
+}

@@ -7,6 +7,135 @@
 	},
 	"item": [
 		{
+			"name": "Preparar refugio para pruebas",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.response.to.have.status(201);",
+							"pm.collectionVariables.set('mensajeRefugioId', pm.response.json().id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombre\": \"Refugio Mensajes {{$guid}}\",\n  \"ciudad\": \"Bogota\",\n  \"direccion\": \"Calle 1 2-3\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"{{$guid}}@example.com\",\n  \"descripcion\": \"Refugio para pruebas de Mensajes\",\n  \"fechaRegistro\": \"2026-01-10\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/refugios",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"refugios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Preparar mascota para pruebas",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.response.to.have.status(201);",
+							"pm.collectionVariables.set('mascotaId', pm.response.json().id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombre\": \"Firulais Mensajes {{$guid}}\",\n  \"especie\": \"Perro\",\n  \"raza\": \"Criollo\",\n  \"edad\": 3,\n  \"sexo\": \"Macho\",\n  \"tamano\": \"Mediano\",\n  \"temperamento\": \"Amigable\",\n  \"necesidadesEspecificas\": \"Ninguna\",\n  \"requisitoEspacio\": \"Patio\",\n  \"compatibleConNinos\": true,\n  \"compatibleConMascotas\": true,\n  \"nivelActividad\": \"Alto\",\n  \"estado\": \"Disponible\",\n  \"refugio\": {\"id\": {{mensajeRefugioId}}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/mascotas",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"mascotas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Preparar adoptante para pruebas",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.response.to.have.status(201);",
+							"pm.collectionVariables.set('adoptanteId', pm.response.json().id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombre\": \"Adoptante Mensajes\",\n  \"telefono\": \"3001234567\",\n  \"email\": \"mensajes-{{$guid}}@example.com\",\n  \"direccion\": \"Calle 1 2-3\",\n  \"ciudad\": \"Bogota\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/adoptantes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"adoptantes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Obtener Todos los Mensajes de un Adoptante",
 			"event": [
 				{
@@ -35,12 +164,25 @@
 				],
 				"url": {
 					"raw": "{{baseUrl}}/adoptantes/{{adoptanteId}}/mensajes",
-					"host": ["{{baseUrl}}"],
-					"path": ["adoptantes", "{{adoptanteId}}", "mensajes"]
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"adoptantes",
+						"{{adoptanteId}}",
+						"mensajes"
+					]
 				},
 				"description": "Obtiene todos los mensajes asociados a un adoptante específico. El adoptante debe existir."
 			},
-			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"[]"}]
+			"response": [
+				{
+					"name": "Respuesta 200 OK",
+					"status": "OK",
+					"code": 200,
+					"body": "[]"
+				}
+			]
 		},
 		{
 			"name": "Obtener Mensajes por Mascota",
@@ -71,12 +213,117 @@
 				],
 				"url": {
 					"raw": "{{baseUrl}}/mascotas/{{mascotaId}}/mensajes",
-					"host": ["{{baseUrl}}"],
-					"path": ["mascotas", "{{mascotaId}}", "mensajes"]
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"mascotas",
+						"{{mascotaId}}",
+						"mensajes"
+					]
 				},
 				"description": "Obtiene todos los mensajes asociados a una mascota específica. La mascota debe existir."
 			},
-			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"[]"}]
+			"response": [
+				{
+					"name": "Respuesta 200 OK",
+					"status": "OK",
+					"code": 200,
+					"body": "[]"
+				}
+			]
+		},
+		{
+			"name": "Crear Mensaje",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"    pm.collectionVariables.set('mensajeId', pm.response.json().id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"asunto\": \"Consulta sobre adopción\",\n  \"contenido\": \"Hola\",\n  \"fecha\": \"2024-04-10\",\n  \"leido\": false,\n  \"mascotaId\": {{mascotaId}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/adoptantes/{{adoptanteId}}/mensajes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"adoptantes",
+						"{{adoptanteId}}",
+						"mensajes"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Respuesta 201 Created",
+					"status": "Created",
+					"code": 201,
+					"body": "{\"id\":1,\"asunto\":\"Consulta sobre adopción\",\"leido\":false}"
+				}
+			]
+		},
+		{
+			"name": "Obtener Mensaje por ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/adoptantes/{{adoptanteId}}/mensajes/{{mensajeId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"adoptantes",
+						"{{adoptanteId}}",
+						"mensajes",
+						"{{mensajeId}}"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Respuesta 200 OK",
+					"status": "OK",
+					"code": 200,
+					"body": "{\"id\":1,\"asunto\":\"Consulta sobre adopción\",\"contenido\":\"Hola\",\"leido\":false}"
+				}
+			]
 		},
 		{
 			"name": "Editar Mensaje",
@@ -115,12 +362,26 @@
 				},
 				"url": {
 					"raw": "{{baseUrl}}/adoptantes/{{adoptanteId}}/mensajes/{{mensajeId}}",
-					"host": ["{{baseUrl}}"],
-					"path": ["adoptantes", "{{adoptanteId}}", "mensajes", "{{mensajeId}}"]
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"adoptantes",
+						"{{adoptanteId}}",
+						"mensajes",
+						"{{mensajeId}}"
+					]
 				},
 				"description": "Edita el contenido de un mensaje. El mensaje debe pertenecer al adoptante indicado y no debe haber sido leído."
 			},
-			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"{\"id\":1,\"asunto\":\"Consulta sobre adopción\",\"contenido\":\"Hola\",\"leido\":false}"}]
+			"response": [
+				{
+					"name": "Respuesta 200 OK",
+					"status": "OK",
+					"code": 200,
+					"body": "{\"id\":1,\"asunto\":\"Consulta sobre adopción\",\"contenido\":\"Hola\",\"leido\":false}"
+				}
+			]
 		},
 		{
 			"name": "Marcar Mensaje como Leído",
@@ -150,12 +411,27 @@
 				],
 				"url": {
 					"raw": "{{baseUrl}}/adoptantes/{{adoptanteId}}/mensajes/{{mensajeId}}/leido",
-					"host": ["{{baseUrl}}"],
-					"path": ["adoptantes", "{{adoptanteId}}", "mensajes", "{{mensajeId}}", "leido"]
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"adoptantes",
+						"{{adoptanteId}}",
+						"mensajes",
+						"{{mensajeId}}",
+						"leido"
+					]
 				},
 				"description": "Marca un mensaje como leído. El mensaje debe pertenecer al adoptante indicado."
 			},
-			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"{\"id\":1,\"leido\":true}"}]
+			"response": [
+				{
+					"name": "Respuesta 200 OK",
+					"status": "OK",
+					"code": 200,
+					"body": "{\"id\":1,\"leido\":true}"
+				}
+			]
 		},
 		{
 			"name": "Marcar Mensaje como No Leído",
@@ -185,12 +461,27 @@
 				],
 				"url": {
 					"raw": "{{baseUrl}}/adoptantes/{{adoptanteId}}/mensajes/{{mensajeId}}/no-leido",
-					"host": ["{{baseUrl}}"],
-					"path": ["adoptantes", "{{adoptanteId}}", "mensajes", "{{mensajeId}}", "no-leido"]
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"adoptantes",
+						"{{adoptanteId}}",
+						"mensajes",
+						"{{mensajeId}}",
+						"no-leido"
+					]
 				},
 				"description": "Marca un mensaje como no leído. El mensaje debe pertenecer al adoptante indicado."
 			},
-			"response": [{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"{\"id\":1,\"leido\":false}"}]
+			"response": [
+				{
+					"name": "Respuesta 200 OK",
+					"status": "OK",
+					"code": 200,
+					"body": "{\"id\":1,\"leido\":false}"
+				}
+			]
 		},
 		{
 			"name": "Eliminar Mensaje",
@@ -220,38 +511,67 @@
 				],
 				"url": {
 					"raw": "{{baseUrl}}/adoptantes/{{adoptanteId}}/mensajes/{{mensajeId}}",
-					"host": ["{{baseUrl}}"],
-					"path": ["adoptantes", "{{adoptanteId}}", "mensajes", "{{mensajeId}}"]
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"adoptantes",
+						"{{adoptanteId}}",
+						"mensajes",
+						"{{mensajeId}}"
+					]
 				},
 				"description": "Elimina un mensaje. El mensaje debe pertenecer al adoptante indicado y no debe haber sido leído previamente."
 			},
-			"response": [{"name":"Respuesta 204 No Content","status":"No Content","code":204,"body":""}]
-				},
+			"response": [
 				{
-					"name": "Obtener Mensaje por ID",
-			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"],"type":"text/javascript"}}],
-			"request": {"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/adoptantes/{{adoptanteId}}/mensajes/{{mensajeId}}","host":["{{baseUrl}}"],"path":["adoptantes","{{adoptanteId}}","mensajes","{{mensajeId}}"]}},
-			"response":[{"name":"Respuesta 200 OK","status":"OK","code":200,"body":"{\"id\":1,\"asunto\":\"Consulta sobre adopción\",\"contenido\":\"Hola\",\"leido\":false}"}]
-		},
-		{
-			"name": "Crear Mensaje",
-			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });"],"type":"text/javascript"}}],
-			"request": {"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"asunto\": \"Consulta sobre adopción\",\n  \"contenido\": \"Hola\",\n  \"fecha\": \"2024-04-10\",\n  \"leido\": false,\n  \"mascotaId\": {{mascotaId}}\n}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/adoptantes/{{adoptanteId}}/mensajes","host":["{{baseUrl}}"],"path":["adoptantes","{{adoptanteId}}","mensajes"]}},
-			"response":[{"name":"Respuesta 201 Created","status":"Created","code":201,"body":"{\"id\":1,\"asunto\":\"Consulta sobre adopción\",\"leido\":false}"}]
+					"name": "Respuesta 204 No Content",
+					"status": "No Content",
+					"code": 204,
+					"body": ""
+				}
+			]
 		},
 		{
 			"name": "Obtener Mensaje que no existe",
-			"event": [{"listen":"test","script":{"exec":["pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"],"type":"text/javascript"}}],
-			"request": {"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/adoptantes/{{adoptanteId}}/mensajes/0","host":["{{baseUrl}}"],"path":["adoptantes","{{adoptanteId}}","mensajes","0"]}},
-			"response":[{"name":"Respuesta 404 Not Found","status":"Not Found","code":404,"body":"{\"apiError\":{\"status\":\"NOT_FOUND\",\"message\":\"El mensaje con el id dado no existe\"}}"}]
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/adoptantes/{{adoptanteId}}/mensajes/{{mensajeId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"adoptantes",
+						"{{adoptanteId}}",
+						"mensajes",
+						"{{mensajeId}}"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Respuesta 404 Not Found",
+					"status": "Not Found",
+					"code": 404,
+					"body": "{\"apiError\":{\"status\":\"NOT_FOUND\",\"message\":\"El mensaje con el id dado no existe\"}}"
+				}
+			]
 		}
 	],
 	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "http://localhost:8080",
-			"type": "string"
-		},
 		{
 			"key": "adoptanteId",
 			"value": "1",
