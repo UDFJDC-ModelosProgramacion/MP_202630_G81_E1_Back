@@ -225,4 +225,59 @@ class RegistroVacunacionServiceTest {
 		assertThrows(EntityNotFoundException.class,
 				() -> registroVacunacionService.deleteRegistroVacunacion(0L));
 	}
+
+	@Test
+	void testCreateRegistroVacunacionConNumeroLoteNulo() {
+		RegistroVacunacionEntity nuevo = nuevoRegistroValido();
+		nuevo.setNumeroLote(null);
+
+		assertThrows(IllegalOperationException.class,
+				() -> registroVacunacionService.createRegistroVacunacion(nuevo));
+	}
+
+	@Test
+	void testCreateRegistroVacunacionSinProximaFecha() throws IllegalOperationException, EntityNotFoundException {
+		RegistroVacunacionEntity nuevo = nuevoRegistroValido();
+		nuevo.setProximaFecha(null);
+
+		RegistroVacunacionEntity creado = registroVacunacionService.createRegistroVacunacion(nuevo);
+
+		assertEquals(nuevo.getNumeroLote(), creado.getNumeroLote());
+	}
+
+	@Test
+	void testCreateRegistroVacunacionSinVacuna() {
+		RegistroVacunacionEntity nuevo = nuevoRegistroValido();
+		nuevo.setVacuna(null);
+
+		assertThrows(IllegalOperationException.class,
+				() -> registroVacunacionService.createRegistroVacunacion(nuevo));
+	}
+
+	@Test
+	void testCreateRegistroVacunacionConVacunaSinId() {
+		RegistroVacunacionEntity nuevo = nuevoRegistroValido();
+		nuevo.setVacuna(new VacunaEntity());
+
+		assertThrows(IllegalOperationException.class,
+				() -> registroVacunacionService.createRegistroVacunacion(nuevo));
+	}
+
+	@Test
+	void testCreateRegistroVacunacionSinMascota() {
+		RegistroVacunacionEntity nuevo = nuevoRegistroValido();
+		nuevo.setMascota(null);
+
+		assertThrows(IllegalOperationException.class,
+				() -> registroVacunacionService.createRegistroVacunacion(nuevo));
+	}
+
+	@Test
+	void testCreateRegistroVacunacionConMascotaSinId() {
+		RegistroVacunacionEntity nuevo = nuevoRegistroValido();
+		nuevo.setMascota(new MascotaEntity());
+
+		assertThrows(IllegalOperationException.class,
+				() -> registroVacunacionService.createRegistroVacunacion(nuevo));
+	}
 }

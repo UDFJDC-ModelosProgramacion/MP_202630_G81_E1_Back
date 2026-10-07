@@ -89,4 +89,45 @@ class NotificacionServiceTest {
         notificacionService.deleteNotificacion(entity.getId());
         assertNull(notificacionService.getNotificacion(entity.getId()));
     }
+
+    @Test
+    void testGetNotificacionesByCanal() {
+        NotificacionEntity entity = data.get(0);
+        List<NotificacionEntity> result = notificacionService.getNotificacionesByCanal(entity.getCanal());
+        assertFalse(result.isEmpty());
+        result.forEach(n -> assertEquals(entity.getCanal(), n.getCanal()));
+    }
+
+    @Test
+    void testGetNotificacionesByMascota() {
+        List<NotificacionEntity> result = notificacionService.getNotificacionesByMascota(mascota.getId());
+        assertEquals(3, result.size());
+    }
+
+    @Test
+    void testGetNotificacionesByAdoptante() {
+        List<NotificacionEntity> result = notificacionService.getNotificacionesByAdoptante(adoptante.getId());
+        assertEquals(3, result.size());
+    }
+
+    @Test
+    void testGetNotificacionNoExistente() {
+        assertNull(notificacionService.getNotificacion(0L));
+    }
+
+    @Test
+    void testCreateNotificacionNula() {
+        assertThrows(IllegalStateException.class, () -> notificacionService.createNotificacion(null));
+    }
+
+    @Test
+    void testUpdateNotificacionNoExistente() {
+        NotificacionEntity entity = factory.manufacturePojo(NotificacionEntity.class);
+        assertThrows(IllegalStateException.class, () -> notificacionService.updateNotificacion(0L, entity));
+    }
+
+    @Test
+    void testDeleteNotificacionConIdNulo() {
+        assertThrows(IllegalStateException.class, () -> notificacionService.deleteNotificacion(null));
+    }
 }
