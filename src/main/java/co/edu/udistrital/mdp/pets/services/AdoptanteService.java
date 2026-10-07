@@ -18,6 +18,8 @@ import co.edu.udistrital.mdp.pets.repositories.AdoptanteRepository;
 @Service
 public class AdoptanteService {
 
+	private static final String ADOPTANTE_NO_ENCONTRADO = "El adoptante con el id dado no fue encontrado";
+
 	private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
 
 	private final AdoptanteRepository adoptanteRepository;
@@ -42,7 +44,7 @@ public class AdoptanteService {
 	public AdoptanteEntity getAdoptante(Long id) throws EntityNotFoundException {
 		Optional<AdoptanteEntity> adoptante = adoptanteRepository.findById(id);
 		if (adoptante.isEmpty()) {
-			throw new EntityNotFoundException("El adoptante con el id dado no fue encontrado");
+			throw new EntityNotFoundException(ADOPTANTE_NO_ENCONTRADO);
 		}
 		return adoptante.get();
 	}
@@ -52,7 +54,7 @@ public class AdoptanteService {
 			throws EntityNotFoundException, IllegalOperationException {
 		Optional<AdoptanteEntity> existente = adoptanteRepository.findById(id);
 		if (existente.isEmpty()) {
-			throw new EntityNotFoundException("El adoptante con el id dado no fue encontrado");
+			throw new EntityNotFoundException(ADOPTANTE_NO_ENCONTRADO);
 		}
 		validarDatosBasicos(adoptante);
 		validarEmailUnico(adoptante, id);
@@ -64,7 +66,7 @@ public class AdoptanteService {
 	public void deleteAdoptante(Long id) throws EntityNotFoundException, IllegalOperationException {
 		Optional<AdoptanteEntity> adoptante = adoptanteRepository.findById(id);
 		if (adoptante.isEmpty()) {
-			throw new EntityNotFoundException("El adoptante con el id dado no fue encontrado");
+			throw new EntityNotFoundException(ADOPTANTE_NO_ENCONTRADO);
 		}
 		if (!adoptante.get().getSolicitudesAdopcion().isEmpty()) {
 			throw new IllegalOperationException(

@@ -24,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RegistroVacunacionService {
 
+	private static final String REGISTRO_NO_ENCONTRADO = "El registro de vacunación con el id dado no fue encontrado";
+
     private final RegistroVacunacionRepository registroVacunacionRepository;
     private final VacunaRepository vacunaRepository;
     private final MascotaRepository mascotaRepository;
@@ -45,7 +47,7 @@ public class RegistroVacunacionService {
 	public RegistroVacunacionEntity getRegistroVacunacion(Long id) throws EntityNotFoundException {
 		Optional<RegistroVacunacionEntity> registro = registroVacunacionRepository.findById(id);
 		if (registro.isEmpty()) {
-			throw new EntityNotFoundException("El registro de vacunación con el id dado no fue encontrado");
+			throw new EntityNotFoundException(REGISTRO_NO_ENCONTRADO);
 		}
 		return registro.get();
 	}
@@ -55,7 +57,7 @@ public class RegistroVacunacionService {
 			throws EntityNotFoundException, IllegalOperationException {
 		Optional<RegistroVacunacionEntity> existente = registroVacunacionRepository.findById(id);
 		if (existente.isEmpty()) {
-			throw new EntityNotFoundException("El registro de vacunación con el id dado no fue encontrado");
+			throw new EntityNotFoundException(REGISTRO_NO_ENCONTRADO);
 		}
 		validarDatosBasicos(registro);
 		validarVacunaYMascota(registro);
@@ -67,7 +69,7 @@ public class RegistroVacunacionService {
 	public void deleteRegistroVacunacion(Long id) throws EntityNotFoundException {
 		Optional<RegistroVacunacionEntity> registro = registroVacunacionRepository.findById(id);
 		if (registro.isEmpty()) {
-			throw new EntityNotFoundException("El registro de vacunación con el id dado no fue encontrado");
+			throw new EntityNotFoundException(REGISTRO_NO_ENCONTRADO);
 		}
 		registroVacunacionRepository.deleteById(id);
 	}
