@@ -33,7 +33,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 @DataJpaTest
 @Transactional
 @Import(VeterinarioService.class)
-public class VeterinarioServiceTest {
+class VeterinarioServiceTest {
 
     @Autowired
     private VeterinarioService veterinarioService;
