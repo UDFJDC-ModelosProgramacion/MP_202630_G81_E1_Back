@@ -7,22 +7,36 @@
   },
   "item": [
     {
-      "name": "Listar vacunas (representacion basica)",
+      "name": "Crear vacuna",
       "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set(\"vacunaNombre\", \"Antirrabica \" + Date.now());"
+            ]
+          }
+        },
         {
           "listen": "test",
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-              "pm.test(\"Respuesta es un arreglo\", function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+              "pm.collectionVariables.set(\"vacunaId\", pm.response.json().id);"
             ]
           }
         }
       ],
       "request": {
-        "method": "GET",
-        "header": [],
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/vacunas",
           "host": [
@@ -32,7 +46,11 @@
             "vacunas"
           ]
         },
-        "description": "200 OK. Devuelve List<VacunaDTO>: id, nombre, descripcion (sin la coleccion de registros de vacunacion)."
+        "description": "201 Created -> VacunaDTODetail.\n412 Precondition Failed si el nombre viene vacio o ya existe una vacuna con ese nombre.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"{{vacunaNombre}}\",\n  \"descripcion\": \"Vacuna anual contra la rabia\"\n}"
+        }
       },
       "response": []
     },
@@ -67,44 +85,6 @@
       "response": []
     },
     {
-      "name": "Crear vacuna",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"nombre\": \"Antirrabica\",\n  \"descripcion\": \"Vacuna anual contra la rabia\"\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/vacunas",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "vacunas"
-          ]
-        },
-        "description": "201 Created -> VacunaDTODetail.\n412 Precondition Failed si el nombre viene vacio o ya existe una vacuna con ese nombre."
-      },
-      "response": []
-    },
-    {
       "name": "Actualizar vacuna",
       "event": [
         {
@@ -125,10 +105,6 @@
             "value": "application/json"
           }
         ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"nombre\": \"Antirrabica\",\n  \"descripcion\": \"Vacuna anual contra la rabia - refuerzo\"\n}"
-        },
         "url": {
           "raw": "{{baseUrl}}/vacunas/{{vacunaId}}",
           "host": [
@@ -139,7 +115,41 @@
             "{{vacunaId}}"
           ]
         },
-        "description": "200 OK -> VacunaDTODetail.\n404 Not Found si el id no existe.\n412 Precondition Failed si el nombre es invalido o esta duplicado."
+        "description": "200 OK -> VacunaDTODetail.\n404 Not Found si el id no existe.\n412 Precondition Failed si el nombre es invalido o esta duplicado.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"{{vacunaNombre}}\",\n  \"descripcion\": \"Vacuna anual contra la rabia - refuerzo\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar vacunas (representacion basica)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Respuesta es un arreglo\", function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/vacunas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "vacunas"
+          ]
+        },
+        "description": "200 OK. Devuelve List<VacunaDTO>: id, nombre, descripcion (sin la coleccion de registros de vacunacion)."
       },
       "response": []
     },
@@ -178,6 +188,10 @@
     {
       "key": "vacunaId",
       "value": "1"
+    },
+    {
+      "key": "vacunaNombre",
+      "value": "Antirrabica"
     }
   ]
 }

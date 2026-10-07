@@ -77,8 +77,10 @@ public class MensajeController {
         if (entity.isLeido()) {
             throw new IllegalOperationException("El mensaje leído no puede ser editado");
         }
-        modelMapper.map(dto, entity);
-        entity.setId(mensajeId);
+        entity.setFecha(dto.getFecha());
+        entity.setAsunto(dto.getAsunto());
+        entity.setContenido(dto.getContenido());
+        entity.setLeido(dto.isLeido());
         entity.setAdoptante(requireAdoptante(adoptanteId));
         if (dto.getMascotaId() != null) {
             entity.setMascota(requireMascota(dto.getMascotaId()));
