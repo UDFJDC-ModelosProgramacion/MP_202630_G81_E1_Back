@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.MascotaEntity;
 import co.edu.udistrital.mdp.pets.entities.RefugioEntity;
@@ -34,9 +33,8 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
  * @Import(SeguimientoService.class).
  */
 @DataJpaTest
-@Transactional
 @Import(SeguimientoService.class)
-public class SeguimientoServiceTest {
+class SeguimientoServiceTest {
 
     @Autowired
     private SeguimientoService seguimientoService;
