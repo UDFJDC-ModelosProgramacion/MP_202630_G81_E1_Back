@@ -1,0 +1,263 @@
+{
+  "info": {
+    "_postman_id": "f38a7c02-5b73-4e96-9084-3c0d7e426137",
+    "name": "Notificacion",
+    "description": "Colección autocontenida: crea y limpia los datos relacionados para probar el CRUD y las consultas por canal, mascota y adoptante.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Preparar refugio de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(201);","pm.collectionVariables.set(\"notificacion_refugio_id\",pm.response.json().id);","pm.globals.set(\"notificacion_refugio_id\",pm.response.json().id);"]}}],
+      "request": {"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"nombre\":\"Notificacion {{$guid}}\",\"ciudad\":\"Bogota\",\"direccion\":\"Calle 1\",\"telefono\":\"3001234567\",\"email\":\"notificacion.{{$guid}}@example.com\",\"descripcion\":\"Refugio de prueba\",\"fechaRegistro\":\"2026-10-04\"}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/refugios","host":["{{baseUrl}}"],"path":["refugios"]}},
+      "response":[]
+    },
+    {
+      "name": "Preparar adoptante de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(201);","pm.collectionVariables.set(\"adoptanteId\",pm.response.json().id);","pm.globals.set(\"adoptanteId\",pm.response.json().id);"]}}],
+      "request": {"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"nombre\":\"Adoptante {{$guid}}\",\"telefono\":\"3001234567\",\"email\":\"notificacion.adoptante.{{$guid}}@example.com\",\"direccion\":\"Calle 1\",\"ciudad\":\"Bogota\"}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/adoptantes","host":["{{baseUrl}}"],"path":["adoptantes"]}},
+      "response":[]
+    },
+    {
+      "name": "Preparar mascota de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(201);","pm.collectionVariables.set(\"mascotaId\",pm.response.json().id);","pm.globals.set(\"mascotaId\",pm.response.json().id);"]}}],
+      "request": {"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"nombre\":\"Mascota {{$guid}}\",\"especie\":\"Perro\",\"raza\":\"Criollo\",\"edad\":3,\"sexo\":\"Macho\",\"estado\":\"Disponible\",\"refugio\":{\"id\":{{notificacion_refugio_id}}}}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/mascotas","host":["{{baseUrl}}"],"path":["mascotas"]}},
+      "response":[]
+    },
+    {
+      "name": "Crear notificacion",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+        "var data = pm.response.json();",
+        "pm.expect(data.id, \"La respuesta debe incluir el id creado\").to.exist;",
+        "pm.collectionVariables.set(\"notificacionId\", data.id);",
+        "pm.globals.set(\"notificacionId\", data.id);"
+      ]}}],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"RECORDATORIO\",\n  \"mensaje\": \"Su cita de seguimiento es manana\",\n  \"fecha\": \"2026-09-30\",\n  \"canal\": \"EMAIL\",\n  \"mascota\": { \"id\": {{mascotaId}} },\n  \"adoptante\": { \"id\": {{adoptanteId}} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/notificaciones", "host": ["{{baseUrl}}"], "path": ["notificaciones"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear notificacion sin canal",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 412\", function () { pm.response.to.have.status(412); });",
+        "pm.test(\"Get expected error message\", function () {",
+        "   var data = pm.response.json();",
+        "   pm.expect(JSON.stringify(data)).to.include(\"El canal de la notificación no puede ser vacío\");",
+        "});"
+      ]}}],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"RECORDATORIO\",\n  \"mensaje\": \"Sin canal\",\n  \"fecha\": \"2026-09-30\",\n  \"canal\": \"\",\n  \"mascota\": { \"id\": {{mascotaId}} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/notificaciones", "host": ["{{baseUrl}}"], "path": ["notificaciones"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear notificacion con mascota que no existe",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+        "pm.test(\"Get expected error message\", function () {",
+        "   var data = pm.response.json();",
+        "   pm.expect(JSON.stringify(data)).to.include(\"La mascota asociada a la notificación no existe\");",
+        "});"
+      ]}}],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"RECORDATORIO\",\n  \"mensaje\": \"Mascota invalida\",\n  \"fecha\": \"2026-09-30\",\n  \"canal\": \"EMAIL\",\n  \"mascota\": { \"id\": 999999 }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/notificaciones", "host": ["{{baseUrl}}"], "path": ["notificaciones"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Filtrar notificaciones por canal",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.response.to.have.status(200);",
+        "pm.expect(pm.response.json()).to.be.an(\"array\");"
+      ]}}],
+      "request": {
+        "method": "GET", "header": [],
+        "url": { "raw": "{{baseUrl}}/notificaciones/canal/EMAIL", "host": ["{{baseUrl}}"], "path": ["notificaciones", "canal", "EMAIL"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar notificaciones por mascota",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.response.to.have.status(200);",
+        "pm.expect(pm.response.json()).to.be.an(\"array\");"
+      ]}}],
+      "request": {
+        "method": "GET", "header": [],
+        "url": { "raw": "{{baseUrl}}/notificaciones/mascota/{{mascotaId}}", "host": ["{{baseUrl}}"], "path": ["notificaciones", "mascota", "{{mascotaId}}"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar notificaciones por adoptante",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.response.to.have.status(200);",
+        "pm.expect(pm.response.json()).to.be.an(\"array\");"
+      ]}}],
+      "request": {
+        "method": "GET", "header": [],
+        "url": { "raw": "{{baseUrl}}/notificaciones/adoptante/{{adoptanteId}}", "host": ["{{baseUrl}}"], "path": ["notificaciones", "adoptante", "{{adoptanteId}}"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener todas las notificaciones",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+        "pm.test(\"Number of items > 0\", function () { pm.expect(pm.response.json().length).to.be.greaterThan(0); });"
+      ]}}],
+      "request": {
+        "method": "GET", "header": [],
+        "url": { "raw": "{{baseUrl}}/notificaciones", "host": ["{{baseUrl}}"], "path": ["notificaciones"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener una notificacion",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+        "pm.expect(pm.response.json().id).to.eql(Number(pm.variables.get(\"notificacionId\")));"
+      ]}}],
+      "request": {
+        "method": "GET", "header": [],
+        "url": { "raw": "{{baseUrl}}/notificaciones/{{notificacionId}}", "host": ["{{baseUrl}}"], "path": ["notificaciones", "{{notificacionId}}"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener una notificacion que no existe",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+        "pm.test(\"Get expected error message\", function () {",
+        "   var data = pm.response.json();",
+        "   pm.expect(JSON.stringify(data)).to.include(\"La notificación con el id dado no existe\");",
+        "});"
+      ]}}],
+      "request": {
+        "method": "GET", "header": [],
+        "url": { "raw": "{{baseUrl}}/notificaciones/999999", "host": ["{{baseUrl}}"], "path": ["notificaciones", "999999"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar notificacion",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+      ]}}],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"ALERTA\",\n  \"mensaje\": \"Mensaje actualizado\",\n  \"fecha\": \"2026-09-30\",\n  \"canal\": \"SMS\",\n  \"mascota\": { \"id\": {{mascotaId}} },\n  \"adoptante\": { \"id\": {{adoptanteId}} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/notificaciones/{{notificacionId}}", "host": ["{{baseUrl}}"], "path": ["notificaciones", "{{notificacionId}}"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar notificacion sin canal",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 412\", function () { pm.response.to.have.status(412); });"
+      ]}}],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"ALERTA\",\n  \"mensaje\": \"Invalida\",\n  \"fecha\": \"2026-09-30\",\n  \"canal\": \"\",\n  \"mascota\": { \"id\": {{mascotaId}} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/notificaciones/{{notificacionId}}", "host": ["{{baseUrl}}"], "path": ["notificaciones", "{{notificacionId}}"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar notificacion que no existe",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+      ]}}],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo\": \"ALERTA\",\n  \"mensaje\": \"No existe\",\n  \"fecha\": \"2026-09-30\",\n  \"canal\": \"SMS\",\n  \"mascota\": { \"id\": {{mascotaId}} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/notificaciones/999999", "host": ["{{baseUrl}}"], "path": ["notificaciones", "999999"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar notificacion",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+      ]}}],
+      "request": {
+        "method": "DELETE", "header": [],
+        "url": { "raw": "{{baseUrl}}/notificaciones/{{notificacionId}}", "host": ["{{baseUrl}}"], "path": ["notificaciones", "{{notificacionId}}"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar notificacion que no existe",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+      ]}}],
+      "request": {
+        "method": "DELETE", "header": [],
+        "url": { "raw": "{{baseUrl}}/notificaciones/999999", "host": ["{{baseUrl}}"], "path": ["notificaciones", "999999"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Limpiar mascota de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(204);"]}}],
+      "request": {"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/mascotas/{{mascotaId}}","host":["{{baseUrl}}"],"path":["mascotas","{{mascotaId}}"]}},
+      "response":[]
+    },
+    {
+      "name": "Limpiar adoptante de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(204);"]}}],
+      "request": {"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/adoptantes/{{adoptanteId}}","host":["{{baseUrl}}"],"path":["adoptantes","{{adoptanteId}}"]}},
+      "response":[]
+    },
+    {
+      "name": "Limpiar refugio de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(204);"]}}],
+      "request": {"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/refugios/{{notificacion_refugio_id}}","host":["{{baseUrl}}"],"path":["refugios","{{notificacion_refugio_id}}"]}},
+      "response":[]
+    }
+  ],
+  "variable": [
+    { "key": "notificacion_refugio_id", "value": "", "type": "string" },
+    { "key": "adoptanteId", "value": "", "type": "string" },
+    { "key": "mascotaId", "value": "", "type": "string" },
+    { "key": "notificacionId", "value": "", "type": "string" }
+  ]
+}
