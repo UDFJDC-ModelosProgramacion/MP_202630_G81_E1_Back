@@ -33,7 +33,7 @@ public class RefugioService {
      * - El nombre del refugio no puede ser nulo ni vacio.
      * - No pueden existir dos refugios con el mismo nombre.
      */
-    @Transactional
+    @Transactional(rollbackFor = IllegalOperationException.class)
     public RefugioEntity createRefugio(RefugioEntity refugio) throws IllegalOperationException {
         validarNombre(refugio);
         if (refugioRepository.findByNombre(refugio.getNombre()) != null) {
@@ -47,8 +47,12 @@ public class RefugioService {
         return refugioRepository.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = EntityNotFoundException.class)
     public RefugioEntity getRefugio(Long id) throws EntityNotFoundException {
+        return buscarRefugio(id);
+    }
+
+    private RefugioEntity buscarRefugio(Long id) throws EntityNotFoundException {
         RefugioEntity refugio = refugioRepository.findById(id).orElse(null);
         if (refugio == null) {
             throw new EntityNotFoundException("El refugio con el id dado no existe");
@@ -62,10 +66,10 @@ public class RefugioService {
      * - El nombre no puede quedar vacio.
      * - El nuevo nombre no puede coincidir con el de otro refugio distinto.
      */
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
     public RefugioEntity updateRefugio(Long id, RefugioEntity refugio)
             throws EntityNotFoundException, IllegalOperationException {
-        getRefugio(id);
+        buscarRefugio(id);
         validarNombre(refugio);
 
         RefugioEntity existente = refugioRepository.findByNombre(refugio.getNombre());
@@ -81,9 +85,9 @@ public class RefugioService {
      * - El refugio debe existir.
      * - No se puede eliminar un refugio que tenga mascotas registradas.
      */
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
     public void deleteRefugio(Long id) throws EntityNotFoundException, IllegalOperationException {
-        RefugioEntity refugio = getRefugio(id);
+        RefugioEntity refugio = buscarRefugio(id);
         if (refugio.getMascotas() != null && !refugio.getMascotas().isEmpty()) {
             throw new IllegalOperationException("No se puede eliminar un refugio que tiene mascotas registradas");
         }
