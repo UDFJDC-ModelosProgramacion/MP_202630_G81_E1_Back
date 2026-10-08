@@ -184,4 +184,34 @@ class VacunaServiceTest {
     entityManager.clear();
     assertThrows(IllegalOperationException.class, () -> vacunaService.deleteVacuna(vacuna.getId()));
 }
+
+	@Test
+	void testCreateVacunaConNombreNulo() {
+		VacunaEntity nueva = factory.manufacturePojo(VacunaEntity.class);
+		nueva.setNombre(null);
+
+		assertThrows(IllegalOperationException.class, () -> vacunaService.createVacuna(nueva));
+	}
+
+	@Test
+	void testUpdateVacunaConNombreNulo() {
+		VacunaEntity vacuna = vacunaList.get(0);
+		VacunaEntity nuevosDatos = factory.manufacturePojo(VacunaEntity.class);
+		nuevosDatos.setNombre(null);
+
+		assertThrows(IllegalOperationException.class,
+				() -> vacunaService.updateVacuna(vacuna.getId(), nuevosDatos));
+	}
+
+	@Test
+	void testUpdateVacunaConSuPropioNombre() throws EntityNotFoundException, IllegalOperationException {
+		VacunaEntity vacuna = vacunaList.get(0);
+		VacunaEntity nuevosDatos = factory.manufacturePojo(VacunaEntity.class);
+		nuevosDatos.setNombre(vacuna.getNombre());
+
+		VacunaEntity actualizada = vacunaService.updateVacuna(vacuna.getId(), nuevosDatos);
+
+		assertEquals(vacuna.getId(), actualizada.getId());
+		assertEquals(vacuna.getNombre(), actualizada.getNombre());
+	}
 }

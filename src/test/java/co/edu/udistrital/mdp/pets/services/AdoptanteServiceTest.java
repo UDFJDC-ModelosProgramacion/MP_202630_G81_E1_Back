@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.AdoptanteEntity;
+import co.edu.udistrital.mdp.pets.entities.SolicitudAdopcionEntity;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -176,4 +177,47 @@ class AdoptanteServiceTest {
 	}
 
 	// Pendiente: prueba de "no se puede eliminar con solicitudes asociadas una vez SolicitudAdopcionEntity deje de ser un placeholder temporal.
+
+	@Test
+	void testCreateAdoptanteConNombreNulo() {
+		AdoptanteEntity nuevo = factory.manufacturePojo(AdoptanteEntity.class);
+		nuevo.setNombre(null);
+		nuevo.setEmail("nulo" + System.nanoTime() + "@correo.com");
+
+		assertThrows(IllegalOperationException.class, () -> adoptanteService.createAdoptante(nuevo));
+	}
+
+	@Test
+	void testCreateAdoptanteConEmailNulo() {
+		AdoptanteEntity nuevo = factory.manufacturePojo(AdoptanteEntity.class);
+		nuevo.setNombre("Camila Rios");
+		nuevo.setEmail(null);
+
+		assertThrows(IllegalOperationException.class, () -> adoptanteService.createAdoptante(nuevo));
+	}
+
+	@Test
+	void testUpdateAdoptanteConSuPropioEmail() throws EntityNotFoundException, IllegalOperationException {
+		AdoptanteEntity adoptante = adoptanteList.get(0);
+		AdoptanteEntity nuevosDatos = factory.manufacturePojo(AdoptanteEntity.class);
+		nuevosDatos.setNombre("Mismo Email");
+		nuevosDatos.setEmail(adoptante.getEmail());
+
+		AdoptanteEntity actualizado = adoptanteService.updateAdoptante(adoptante.getId(), nuevosDatos);
+
+		assertEquals(adoptante.getId(), actualizado.getId());
+		assertEquals("Mismo Email", actualizado.getNombre());
+	}
+
+	@Test
+	void testDeleteAdoptanteConSolicitudesAsociadas() {
+		AdoptanteEntity adoptante = adoptanteList.get(0);
+		SolicitudAdopcionEntity solicitud = factory.manufacturePojo(SolicitudAdopcionEntity.class);
+		solicitud.setAdoptante(adoptante);
+		entityManager.persist(solicitud);
+		entityManager.flush();
+		entityManager.clear();
+
+		assertThrows(IllegalOperationException.class, () -> adoptanteService.deleteAdoptante(adoptante.getId()));
+	}
 }
