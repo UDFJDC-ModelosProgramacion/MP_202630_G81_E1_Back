@@ -16,6 +16,14 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class EventoVidaService {
 
+    private static final String ADOPTANTE_NO_EXISTE_LOG = "Adoptante with id {} does not exist";
+    private static final String ADOPTANTE_NO_EXISTE = "Adoptante with id %d does not exist";
+    private static final String TIPO_EVENTO_VACIO_LOG = "tipoEvento is null or empty";
+    private static final String TIPO_EVENTO_VACIO = "tipoEvento cannot be null or empty";
+    private static final String TIPO_EVENTO_INVALIDO_LOG = "Invalid tipoEvento: {}";
+    private static final String TIPO_EVENTO_INVALIDO = "Invalid tipoEvento: %s";
+    private static final String ERROR_OBTENER_LOG = "Error fetching EventoVida entities: {}";
+
     private List<String> validEventTypes = List.of("Nacimiento", "Vacunación", "Enfermedad", "Adopción", "Muerte");
     private final AdoptanteRepository adoptanteRepository;
     private final EventoVidaRepository eventoVidaRepository;
@@ -31,14 +39,14 @@ public class EventoVidaService {
         try {
             // Check if the adoptante exists before fetching events
             if(!adoptanteRepository.existsById(id)){
-                log.warn("Adoptante with id {} does not exist", id);
-                throw new IllegalArgumentException("Adoptante with id " + id + " does not exist");
+                log.warn(ADOPTANTE_NO_EXISTE_LOG, id);
+                throw new IllegalArgumentException(String.format(ADOPTANTE_NO_EXISTE, id));
             }
 
             log.info("Fetching all EventoVida entities");
             return eventoVidaRepository.findByMascotaId(id);
         } catch (Exception e) {
-            log.error("Error fetching EventoVida entities: {}", e.getMessage());
+            log.error(ERROR_OBTENER_LOG, e.getMessage());
             throw e; // Rethrow the exception or handle it as needed
         }
     }
@@ -49,24 +57,24 @@ public class EventoVidaService {
         try {
             // Check if the adoptante exists before fetching events
             if(!adoptanteRepository.existsById(id)){
-                log.warn("Adoptante with id {} does not exist", id);
-                throw new IllegalArgumentException("Adoptante with id " + id + " does not exist");
+                log.warn(ADOPTANTE_NO_EXISTE_LOG, id);
+                throw new IllegalArgumentException(String.format(ADOPTANTE_NO_EXISTE, id));
             }
             // Validate tipoEvento parameter
             if (tipoEvento == null || tipoEvento.isEmpty()) {
-                log.warn("tipoEvento is null or empty");
-                throw new IllegalArgumentException("tipoEvento cannot be null or empty");
+                log.warn(TIPO_EVENTO_VACIO_LOG);
+                throw new IllegalArgumentException(TIPO_EVENTO_VACIO);
             }
             // Validate if tipoEvento is one of the valid event types
             if (!validEventTypes.contains(tipoEvento)) {
-                log.warn("Invalid tipoEvento: {}", tipoEvento);
-                throw new IllegalArgumentException("Invalid tipoEvento: " + tipoEvento);
+                log.warn(TIPO_EVENTO_INVALIDO_LOG, tipoEvento);
+                throw new IllegalArgumentException(String.format(TIPO_EVENTO_INVALIDO, tipoEvento));
             }
 
             log.info("Fetching EventoVida entities by mascotaId: {} and tipoEvento: {}", id, tipoEvento);
             return eventoVidaRepository.findByMascotaIdAndTipo(id, tipoEvento);
         } catch (Exception e) {
-            log.error("Error fetching EventoVida entities: {}", e.getMessage());
+            log.error(ERROR_OBTENER_LOG, e.getMessage());
             throw e; // Rethrow the exception or handle it as needed
         }
     }
@@ -77,24 +85,24 @@ public class EventoVidaService {
         try {
             // Check if the adoptante exists before fetching events
             if(!adoptanteRepository.existsById(id)){
-                log.warn("Adoptante with id {} does not exist", id);
-                throw new IllegalArgumentException("Adoptante with id " + id + " does not exist");
+                log.warn(ADOPTANTE_NO_EXISTE_LOG, id);
+                throw new IllegalArgumentException(String.format(ADOPTANTE_NO_EXISTE, id));
             }
             // Validate tipoEvento parameter
             if (tipoEvento == null || tipoEvento.isEmpty()) {
-                log.warn("tipoEvento is null or empty");
-                throw new IllegalArgumentException("tipoEvento cannot be null or empty");
+                log.warn(TIPO_EVENTO_VACIO_LOG);
+                throw new IllegalArgumentException(TIPO_EVENTO_VACIO);
             }
             // Validate if tipoEvento is one of the valid event types
             if (!validEventTypes.contains(tipoEvento)) {
-                log.warn("Invalid tipoEvento: {}", tipoEvento);
-                throw new IllegalArgumentException("Invalid tipoEvento: " + tipoEvento);
+                log.warn(TIPO_EVENTO_INVALIDO_LOG, tipoEvento);
+                throw new IllegalArgumentException(String.format(TIPO_EVENTO_INVALIDO, tipoEvento));
             }
 
             log.info("Fetching EventoVida entities by mascotaId: {}, tipoEvento: {}, fechaInicio: {}, fechaFin: {}", id, tipoEvento, fechaInicio, fechaFin);
             return eventoVidaRepository.findByMascotaIdAndTipoAndFechaBetween(id, tipoEvento, fechaInicio, fechaFin);
         } catch (Exception e) {
-            log.error("Error fetching EventoVida entities: {}", e.getMessage());
+            log.error(ERROR_OBTENER_LOG, e.getMessage());
             throw e; // Rethrow the exception or handle it as needed
         }
     }
@@ -105,25 +113,25 @@ public class EventoVidaService {
         try {
             // Check if the adoptante exists before fetching events
             if(!adoptanteRepository.existsById(id)){
-                log.warn("Adoptante with id {} does not exist", id);
-                throw new IllegalArgumentException("Adoptante with id " + id + " does not exist");
+                log.warn(ADOPTANTE_NO_EXISTE_LOG, id);
+                throw new IllegalArgumentException(String.format(ADOPTANTE_NO_EXISTE, id));
             }
             // Validate tipoEvento parameter
             if (tipoEvento == null || tipoEvento.isEmpty()) {
-                log.warn("tipoEvento is null or empty");
-                throw new IllegalArgumentException("tipoEvento cannot be null or empty");
+                log.warn(TIPO_EVENTO_VACIO_LOG);
+                throw new IllegalArgumentException(TIPO_EVENTO_VACIO);
             }
             // Validate if tipoEvento is one of the valid event types
             if (!validEventTypes.contains(tipoEvento)) {
-                log.warn("Invalid tipoEvento: {}", tipoEvento);
-                throw new IllegalArgumentException("Invalid tipoEvento: " + tipoEvento);
+                log.warn(TIPO_EVENTO_INVALIDO_LOG, tipoEvento);
+                throw new IllegalArgumentException(String.format(TIPO_EVENTO_INVALIDO, tipoEvento));
             }
 
 
             log.info("Fetching EventoVida entities by mascotaId: {}, tipoEvento: {}, fechaInicio: {}", id, tipoEvento, fechaInicio);
             return eventoVidaRepository.findByMascotaIdAndTipoAndFechaAfter(id, tipoEvento, fechaInicio);
         } catch (Exception e) {
-            log.error("Error fetching EventoVida entities: {}", e.getMessage());
+            log.error(ERROR_OBTENER_LOG, e.getMessage());
             throw e; // Rethrow the exception or handle it as needed
         }
     }
@@ -134,13 +142,13 @@ public class EventoVidaService {
         try {
             // Validate tipoEvento parameter
             if (eventoVida.getTipo() == null || eventoVida.getTipo().isEmpty()) {
-                log.warn("tipoEvento is null or empty");
-                throw new IllegalArgumentException("tipoEvento cannot be null or empty");
+                log.warn(TIPO_EVENTO_VACIO_LOG);
+                throw new IllegalArgumentException(TIPO_EVENTO_VACIO);
             }
             // Validate if tipoEvento is one of the valid event types
             if (!validEventTypes.contains(eventoVida.getTipo())) {
-                log.warn("Invalid tipoEvento: {}", eventoVida.getTipo());
-                throw new IllegalArgumentException("Invalid tipoEvento: " + eventoVida.getTipo());
+                log.warn(TIPO_EVENTO_INVALIDO_LOG, eventoVida.getTipo());
+                throw new IllegalArgumentException(String.format(TIPO_EVENTO_INVALIDO, eventoVida.getTipo()));
             }
             // Validate fechaEvento parameter
             if(eventoVida.getFecha() == null){
@@ -166,13 +174,13 @@ public class EventoVidaService {
         try {
             // Validate tipoEvento parameter
             if (eventoVida.getTipo() == null || eventoVida.getTipo().isEmpty()) {
-                log.warn("tipoEvento is null or empty");
-                throw new IllegalArgumentException("tipoEvento cannot be null or empty");
+                log.warn(TIPO_EVENTO_VACIO_LOG);
+                throw new IllegalArgumentException(TIPO_EVENTO_VACIO);
             }
             // Validate if tipoEvento is one of the valid event types
             if (!validEventTypes.contains(eventoVida.getTipo())) {
-                log.warn("Invalid tipoEvento: {}", eventoVida.getTipo());
-                throw new IllegalArgumentException("Invalid tipoEvento: " + eventoVida.getTipo());
+                log.warn(TIPO_EVENTO_INVALIDO_LOG, eventoVida.getTipo());
+                throw new IllegalArgumentException(String.format(TIPO_EVENTO_INVALIDO, eventoVida.getTipo()));
             }
             // Validate fechaEvento parameter
             if(eventoVida.getFecha() == null){

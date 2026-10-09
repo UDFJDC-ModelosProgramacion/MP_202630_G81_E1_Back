@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,7 @@ public class NotificacionController {
     public List<NotificacionDTO> findAll() {
         return notificacionService.getNotificaciones().stream()
                 .map(e -> modelMapper.map(e, NotificacionDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/{id}")
@@ -44,7 +43,7 @@ public class NotificacionController {
     public List<NotificacionDTO> findByCanal(@PathVariable String canal) {
         return notificacionService.getNotificacionesByCanal(canal).stream()
                 .map(e -> modelMapper.map(e, NotificacionDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/mascota/{mascotaId}")
@@ -52,7 +51,7 @@ public class NotificacionController {
     public List<NotificacionDTO> findByMascota(@PathVariable Long mascotaId) {
         return notificacionService.getNotificacionesByMascota(mascotaId).stream()
                 .map(e -> modelMapper.map(e, NotificacionDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/adoptante/{adoptanteId}")
@@ -60,7 +59,7 @@ public class NotificacionController {
     public List<NotificacionDTO> findByAdoptante(@PathVariable Long adoptanteId) {
         return notificacionService.getNotificacionesByAdoptante(adoptanteId).stream()
                 .map(e -> modelMapper.map(e, NotificacionDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @PostMapping

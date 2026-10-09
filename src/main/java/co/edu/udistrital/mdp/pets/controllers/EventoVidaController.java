@@ -45,7 +45,7 @@ public class EventoVidaController {
     public List<EventoVidaDTODetail> findAll(@PathVariable Long mascotaId,
             @RequestParam(required = false) String tipo,
             @RequestParam(required = false) Date fechaInicio,
-            @RequestParam(required = false) Date fechaFin) throws EntityNotFoundException, IllegalOperationException {
+            @RequestParam(required = false) Date fechaFin) throws EntityNotFoundException {
         requireMascota(mascotaId);
         if (tipo == null) {
             return details(eventoVidaRepository.findByMascotaId(mascotaId));
@@ -96,8 +96,7 @@ public class EventoVidaController {
 
     @DeleteMapping("/{eventoVidaId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long mascotaId, @PathVariable Long eventoVidaId)
-            throws EntityNotFoundException {
+    public void delete(@PathVariable Long mascotaId, @PathVariable Long eventoVidaId) {
         requireEvent(mascotaId, eventoVidaId);
         eventoVidaRepository.deleteById(eventoVidaId);
     }
@@ -107,7 +106,7 @@ public class EventoVidaController {
                 .orElseThrow(() -> new EntityNotFoundException("La mascota con el id dado no existe"));
     }
 
-    private EventoVidaEntity requireEvent(Long mascotaId, Long id) throws EntityNotFoundException {
+    private EventoVidaEntity requireEvent(Long mascotaId, Long id) {
         return eventoVidaRepository.findByMascotaIdAndId(mascotaId, id);
     }
 
