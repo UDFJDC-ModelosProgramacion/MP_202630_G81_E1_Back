@@ -1,0 +1,238 @@
+{
+  "info": {
+    "_postman_id": "a49b8d13-6c84-4f07-9195-4d1e8f537248",
+    "name": "EventoMedico",
+    "description": "Colección autocontenida: crea y limpia los datos relacionados para probar el CRUD y las consultas por mascota y diagnóstico.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Preparar refugio de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(201);","pm.collectionVariables.set(\"eventomedico_refugio_id\",pm.response.json().id);","pm.globals.set(\"eventomedico_refugio_id\",pm.response.json().id);"]}}],
+      "request": {"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"nombre\":\"EventoMedico {{$guid}}\",\"ciudad\":\"Bogota\",\"direccion\":\"Calle 1\",\"telefono\":\"3001234567\",\"email\":\"eventomedico.{{$guid}}@example.com\",\"descripcion\":\"Refugio de prueba\",\"fechaRegistro\":\"2026-10-04\"}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/refugios","host":["{{baseUrl}}"],"path":["refugios"]}},
+      "response":[]
+    },
+    {
+      "name": "Preparar mascota de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(201);","pm.collectionVariables.set(\"mascotaId\",pm.response.json().id);","pm.globals.set(\"mascotaId\",pm.response.json().id);"]}}],
+      "request": {"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"nombre\":\"Mascota {{$guid}}\",\"especie\":\"Perro\",\"raza\":\"Criollo\",\"edad\":3,\"sexo\":\"Macho\",\"estado\":\"Disponible\",\"refugio\":{\"id\":{{eventomedico_refugio_id}}}}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{baseUrl}}/mascotas","host":["{{baseUrl}}"],"path":["mascotas"]}},
+      "response":[]
+    },
+    {
+      "name": "Crear evento medico",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+        "var data = pm.response.json();",
+        "pm.expect(data.id, \"La respuesta debe incluir el id creado\").to.exist;",
+        "pm.collectionVariables.set(\"eventoMedicoId\", data.id);",
+        "pm.globals.set(\"eventoMedicoId\", data.id);"
+      ]}}],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"descripcion\": \"Control general\",\n  \"diagnostico\": \"Sano\",\n  \"tratamiento\": \"Ninguno\",\n  \"mascota\": { \"id\": {{mascotaId}} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/eventos-medicos", "host": ["{{baseUrl}}"], "path": ["eventos-medicos"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear evento medico sin diagnostico",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 412\", function () { pm.response.to.have.status(412); });",
+        "pm.test(\"Get expected error message\", function () {",
+        "   var data = pm.response.json();",
+        "   pm.expect(JSON.stringify(data)).to.include(\"El diagnóstico del evento médico no puede ser vacío\");",
+        "});"
+      ]}}],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"descripcion\": \"Sin diagnostico\",\n  \"diagnostico\": \"\",\n  \"mascota\": { \"id\": {{mascotaId}} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/eventos-medicos", "host": ["{{baseUrl}}"], "path": ["eventos-medicos"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear evento medico con mascota que no existe",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+        "pm.test(\"Get expected error message\", function () {",
+        "   var data = pm.response.json();",
+        "   pm.expect(JSON.stringify(data)).to.include(\"La mascota asociada al evento médico no existe\");",
+        "});"
+      ]}}],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"descripcion\": \"Mascota invalida\",\n  \"diagnostico\": \"Prueba\",\n  \"mascota\": { \"id\": 999999 }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/eventos-medicos", "host": ["{{baseUrl}}"], "path": ["eventos-medicos"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar eventos medicos por mascota",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.response.to.have.status(200);",
+        "pm.expect(pm.response.json()).to.be.an(\"array\");"
+      ]}}],
+      "request": {
+        "method": "GET", "header": [],
+        "url": { "raw": "{{baseUrl}}/eventos-medicos/mascota/{{mascotaId}}", "host": ["{{baseUrl}}"], "path": ["eventos-medicos", "mascota", "{{mascotaId}}"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar eventos medicos por diagnostico",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.response.to.have.status(200);",
+        "pm.expect(pm.response.json()).to.be.an(\"array\");"
+      ]}}],
+      "request": {
+        "method": "GET", "header": [],
+        "url": { "raw": "{{baseUrl}}/eventos-medicos/diagnostico/Sano", "host": ["{{baseUrl}}"], "path": ["eventos-medicos", "diagnostico", "Sano"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener todos los eventos medicos",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+        "pm.test(\"Number of items > 0\", function () { pm.expect(pm.response.json().length).to.be.greaterThan(0); });"
+      ]}}],
+      "request": {
+        "method": "GET", "header": [],
+        "url": { "raw": "{{baseUrl}}/eventos-medicos", "host": ["{{baseUrl}}"], "path": ["eventos-medicos"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener un evento medico",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+        "pm.expect(pm.response.json().id).to.eql(Number(pm.variables.get(\"eventoMedicoId\")));"
+      ]}}],
+      "request": {
+        "method": "GET", "header": [],
+        "url": { "raw": "{{baseUrl}}/eventos-medicos/{{eventoMedicoId}}", "host": ["{{baseUrl}}"], "path": ["eventos-medicos", "{{eventoMedicoId}}"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener un evento medico que no existe",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+        "pm.test(\"Get expected error message\", function () {",
+        "   var data = pm.response.json();",
+        "   pm.expect(JSON.stringify(data)).to.include(\"El evento médico con el id dado no existe\");",
+        "});"
+      ]}}],
+      "request": {
+        "method": "GET", "header": [],
+        "url": { "raw": "{{baseUrl}}/eventos-medicos/999999", "host": ["{{baseUrl}}"], "path": ["eventos-medicos", "999999"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar evento medico",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+      ]}}],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"descripcion\": \"Seguimiento post-tratamiento\",\n  \"diagnostico\": \"En recuperacion\",\n  \"tratamiento\": \"Antibiotico\",\n  \"mascota\": { \"id\": {{mascotaId}} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/eventos-medicos/{{eventoMedicoId}}", "host": ["{{baseUrl}}"], "path": ["eventos-medicos", "{{eventoMedicoId}}"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar evento medico sin diagnostico",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 412\", function () { pm.response.to.have.status(412); });"
+      ]}}],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"descripcion\": \"Invalido\",\n  \"diagnostico\": \"\",\n  \"mascota\": { \"id\": {{mascotaId}} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/eventos-medicos/{{eventoMedicoId}}", "host": ["{{baseUrl}}"], "path": ["eventos-medicos", "{{eventoMedicoId}}"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar evento medico que no existe",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+      ]}}],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fecha\": \"2026-09-30\",\n  \"descripcion\": \"No existe\",\n  \"diagnostico\": \"Prueba\",\n  \"mascota\": { \"id\": {{mascotaId}} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": { "raw": "{{baseUrl}}/eventos-medicos/999999", "host": ["{{baseUrl}}"], "path": ["eventos-medicos", "999999"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar evento medico",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+      ]}}],
+      "request": {
+        "method": "DELETE", "header": [],
+        "url": { "raw": "{{baseUrl}}/eventos-medicos/{{eventoMedicoId}}", "host": ["{{baseUrl}}"], "path": ["eventos-medicos", "{{eventoMedicoId}}"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Borrar evento medico que no existe",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":[
+        "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+      ]}}],
+      "request": {
+        "method": "DELETE", "header": [],
+        "url": { "raw": "{{baseUrl}}/eventos-medicos/999999", "host": ["{{baseUrl}}"], "path": ["eventos-medicos", "999999"] }
+      },
+      "response": []
+    },
+    {
+      "name": "Limpiar mascota de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(204);"]}}],
+      "request": {"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/mascotas/{{mascotaId}}","host":["{{baseUrl}}"],"path":["mascotas","{{mascotaId}}"]}},
+      "response":[]
+    },
+    {
+      "name": "Limpiar refugio de prueba",
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.response.to.have.status(204);"]}}],
+      "request": {"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/refugios/{{eventomedico_refugio_id}}","host":["{{baseUrl}}"],"path":["refugios","{{eventomedico_refugio_id}}"]}},
+      "response":[]
+    }
+  ],
+  "variable": [
+    { "key": "eventomedico_refugio_id", "value": "", "type": "string" },
+    { "key": "mascotaId", "value": "", "type": "string" },
+    { "key": "eventoMedicoId", "value": "", "type": "string" }
+  ]
+}

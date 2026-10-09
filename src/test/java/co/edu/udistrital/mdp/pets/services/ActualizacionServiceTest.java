@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.*;
+import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.repositories.*;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -55,7 +56,7 @@ class ActualizacionServiceTest {
     }
 
     @Test
-    void testCreateActualizacion() {
+    void testCreateActualizacion() throws Exception {
         ActualizacionEntity entity = factory.manufacturePojo(ActualizacionEntity.class);
         entity.setMascota(mascota);
         entity.setAdoptante(adoptante);
@@ -70,13 +71,13 @@ class ActualizacionServiceTest {
     }
 
     @Test
-    void testGetActualizacion() {
+    void testGetActualizacion() throws Exception {
         ActualizacionEntity entity = data.get(0);
         assertEquals(entity.getId(), actualizacionService.getActualizacion(entity.getId()).getId());
     }
 
     @Test
-    void testUpdateActualizacion() {
+    void testUpdateActualizacion() throws Exception {
         ActualizacionEntity entity = data.get(0);
         entity.setTipo("MEDICA");
         ActualizacionEntity result = actualizacionService.updateActualizacion(entity.getId(), entity);
@@ -84,9 +85,9 @@ class ActualizacionServiceTest {
     }
 
     @Test
-    void testDeleteActualizacion() {
+    void testDeleteActualizacion() throws Exception {
         ActualizacionEntity entity = data.get(0);
         actualizacionService.deleteActualizacion(entity.getId());
-        assertNull(actualizacionService.getActualizacion(entity.getId()));
+        assertThrows(EntityNotFoundException.class, () -> actualizacionService.getActualizacion(entity.getId()));
     }
 }

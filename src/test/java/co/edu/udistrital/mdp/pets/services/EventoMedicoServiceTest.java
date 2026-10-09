@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.*;
+import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.repositories.*;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -48,7 +49,7 @@ class EventoMedicoServiceTest {
     }
 
     @Test
-    void testCreateEventoMedico() {
+    void testCreateEventoMedico() throws Exception {
         EventoMedicoEntity entity = factory.manufacturePojo(EventoMedicoEntity.class);
         entity.setMascota(mascota);
         EventoMedicoEntity result = eventoMedicoService.createEventoMedico(entity);
@@ -62,13 +63,13 @@ class EventoMedicoServiceTest {
     }
 
     @Test
-    void testGetEventoMedico() {
+    void testGetEventoMedico() throws Exception {
         EventoMedicoEntity entity = data.get(0);
         assertEquals(entity.getId(), eventoMedicoService.getEventoMedico(entity.getId()).getId());
     }
 
     @Test
-    void testUpdateEventoMedico() {
+    void testUpdateEventoMedico() throws Exception {
         EventoMedicoEntity entity = data.get(0);
         entity.setTratamiento("Antibiótico");
         EventoMedicoEntity result = eventoMedicoService.updateEventoMedico(entity.getId(), entity);
@@ -76,9 +77,9 @@ class EventoMedicoServiceTest {
     }
 
     @Test
-    void testDeleteEventoMedico() {
+    void testDeleteEventoMedico() throws Exception {
         EventoMedicoEntity entity = data.get(0);
         eventoMedicoService.deleteEventoMedico(entity.getId());
-        assertNull(eventoMedicoService.getEventoMedico(entity.getId()));
+        assertThrows(EntityNotFoundException.class, () -> eventoMedicoService.getEventoMedico(entity.getId()));
     }
 }

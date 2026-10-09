@@ -40,7 +40,7 @@ public class MascotaService {
      * - Si se especifica un estado, debe ser uno de los valores validos.
      * - Si se asocia un refugio, este debe existir.
      */
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
     public MascotaEntity createMascota(MascotaEntity mascota)
             throws EntityNotFoundException, IllegalOperationException {
         validarDatosBasicos(mascota);
@@ -53,8 +53,12 @@ public class MascotaService {
         return mascotaRepository.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = EntityNotFoundException.class)
     public MascotaEntity getMascota(Long id) throws EntityNotFoundException {
+        return buscarMascota(id);
+    }
+
+    private MascotaEntity buscarMascota(Long id) throws EntityNotFoundException {
         MascotaEntity mascota = mascotaRepository.findById(id).orElse(null);
         if (mascota == null) {
             throw new EntityNotFoundException("La mascota con el id dado no existe");
@@ -65,10 +69,10 @@ public class MascotaService {
     /**
      * Se validan las mismas reglas que en la creacion, sobre una mascota existente.
      */
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
     public MascotaEntity updateMascota(Long id, MascotaEntity mascota)
             throws EntityNotFoundException, IllegalOperationException {
-        getMascota(id);
+        buscarMascota(id);
         validarDatosBasicos(mascota);
         asociarRefugioSiAplica(mascota);
         mascota.setId(id);
@@ -81,9 +85,9 @@ public class MascotaService {
      * - No se puede eliminar una mascota que tenga seguimientos veterinarios registrados
      *   (se conserva su historial medico).
      */
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
     public void deleteMascota(Long id) throws EntityNotFoundException, IllegalOperationException {
-        MascotaEntity mascota = getMascota(id);
+        MascotaEntity mascota = buscarMascota(id);
         if (mascota.getSeguimientos() != null && !mascota.getSeguimientos().isEmpty()) {
             throw new IllegalOperationException(
                     "No se puede eliminar una mascota que tiene seguimientos veterinarios registrados");

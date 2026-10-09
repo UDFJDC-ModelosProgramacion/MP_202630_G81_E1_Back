@@ -17,6 +17,8 @@ import co.edu.udistrital.mdp.pets.repositories.VacunaRepository;
 @Service
 public class VacunaService {
 
+	private static final String VACUNA_NO_ENCONTRADA = "La vacuna con el id dado no fue encontrada";
+
 	private final VacunaRepository vacunaRepository;
 
 	public VacunaService(VacunaRepository vacunaRepository) {
@@ -43,7 +45,7 @@ public class VacunaService {
 	public VacunaEntity getVacuna(Long id) throws EntityNotFoundException {
 		Optional<VacunaEntity> vacuna = vacunaRepository.findById(id);
 		if (vacuna.isEmpty()) {
-			throw new EntityNotFoundException("La vacuna con el id dado no fue encontrada");
+			throw new EntityNotFoundException(VACUNA_NO_ENCONTRADA);
 		}
 		return vacuna.get();
 	}
@@ -53,7 +55,7 @@ public class VacunaService {
 			throws EntityNotFoundException, IllegalOperationException {
 		Optional<VacunaEntity> existente = vacunaRepository.findById(id);
 		if (existente.isEmpty()) {
-			throw new EntityNotFoundException("La vacuna con el id dado no fue encontrada");
+			throw new EntityNotFoundException(VACUNA_NO_ENCONTRADA);
 		}
 		if (vacuna.getNombre() == null || vacuna.getNombre().isBlank()) {
 			throw new IllegalOperationException("El nombre de la vacuna no puede estar vacío");
@@ -70,7 +72,7 @@ public class VacunaService {
 	public void deleteVacuna(Long id) throws EntityNotFoundException, IllegalOperationException {
 		Optional<VacunaEntity> vacuna = vacunaRepository.findById(id);
 		if (vacuna.isEmpty()) {
-			throw new EntityNotFoundException("La vacuna con el id dado no fue encontrada");
+			throw new EntityNotFoundException(VACUNA_NO_ENCONTRADA);
 		}
 		if (!vacuna.get().getRegistrosVacunacion().isEmpty()) {
 			throw new IllegalOperationException(

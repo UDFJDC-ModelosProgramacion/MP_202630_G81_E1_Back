@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.*;
+import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
 import co.edu.udistrital.mdp.pets.repositories.*;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -50,15 +51,17 @@ class ResenaServiceTest {
             ResenaEntity entity = factory.manufacturePojo(ResenaEntity.class);
             entity.setMascota(mascota);
             entity.setAdoptante(adoptante);
+            entity.setCalificacion(3);
             data.add(resenaRepository.save(entity));
         }
     }
 
     @Test
-    void testCreateResena() {
+    void testCreateResena() throws Exception {
         ResenaEntity entity = factory.manufacturePojo(ResenaEntity.class);
         entity.setMascota(mascota);
         entity.setAdoptante(adoptante);
+        entity.setCalificacion(4);
         ResenaEntity result = resenaService.createResena(entity);
         assertNotNull(result);
         assertEquals(entity.getComentario(), result.getComentario());
@@ -70,23 +73,24 @@ class ResenaServiceTest {
     }
 
     @Test
-    void testGetResena() {
+    void testGetResena() throws Exception {
         ResenaEntity entity = data.get(0);
         assertEquals(entity.getId(), resenaService.getResena(entity.getId()).getId());
     }
 
     @Test
-    void testUpdateResena() {
+    void testUpdateResena() throws Exception {
         ResenaEntity entity = data.get(0);
+        entity.setCalificacion(5);
         entity.setComentario("Excelente experiencia");
         ResenaEntity result = resenaService.updateResena(entity.getId(), entity);
         assertEquals("Excelente experiencia", result.getComentario());
     }
 
     @Test
-    void testDeleteResena() {
+    void testDeleteResena() throws Exception {
         ResenaEntity entity = data.get(0);
         resenaService.deleteResena(entity.getId());
-        assertNull(resenaService.getResena(entity.getId()));
+        assertThrows(EntityNotFoundException.class, () -> resenaService.getResena(entity.getId()));
     }
 }
