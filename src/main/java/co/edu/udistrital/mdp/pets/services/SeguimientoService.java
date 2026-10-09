@@ -44,7 +44,7 @@ public class SeguimientoService {
      * - La mascota asociada debe existir.
      * - El veterinario asociado debe existir.
      */
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
     public SeguimientoEntity createSeguimiento(SeguimientoEntity seguimiento)
             throws EntityNotFoundException, IllegalOperationException {
         validarFechas(seguimiento);
@@ -58,8 +58,12 @@ public class SeguimientoService {
         return seguimientoRepository.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = EntityNotFoundException.class)
     public SeguimientoEntity getSeguimiento(Long id) throws EntityNotFoundException {
+        return buscarSeguimiento(id);
+    }
+
+    private SeguimientoEntity buscarSeguimiento(Long id) throws EntityNotFoundException {
         SeguimientoEntity seguimiento = seguimientoRepository.findById(id).orElse(null);
         if (seguimiento == null) {
             throw new EntityNotFoundException("El seguimiento con el id dado no existe");
@@ -73,10 +77,10 @@ public class SeguimientoService {
      * - No se puede modificar un seguimiento que ya esta en estado "Completado".
      * - Las mismas reglas de fechas y de existencia de mascota/veterinario que en la creacion.
      */
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
     public SeguimientoEntity updateSeguimiento(Long id, SeguimientoEntity seguimiento)
             throws EntityNotFoundException, IllegalOperationException {
-        SeguimientoEntity actual = getSeguimiento(id);
+        SeguimientoEntity actual = buscarSeguimiento(id);
         if (ESTADO_COMPLETADO.equalsIgnoreCase(actual.getEstado())) {
             throw new IllegalOperationException("No se puede modificar un seguimiento que ya esta completado");
         }
@@ -93,9 +97,9 @@ public class SeguimientoService {
      * - No se puede eliminar un seguimiento que ya este en estado "Completado"
      *   (se conserva el historial medico de la mascota).
      */
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
     public void deleteSeguimiento(Long id) throws EntityNotFoundException, IllegalOperationException {
-        SeguimientoEntity seguimiento = getSeguimiento(id);
+        SeguimientoEntity seguimiento = buscarSeguimiento(id);
         if (ESTADO_COMPLETADO.equalsIgnoreCase(seguimiento.getEstado())) {
             throw new IllegalOperationException("No se puede eliminar un seguimiento que ya esta completado");
         }

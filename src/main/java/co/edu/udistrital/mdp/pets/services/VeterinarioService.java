@@ -34,7 +34,7 @@ public class VeterinarioService {
      * - El nombre y la especialidad no pueden ser vacios.
      * - Si se asocia un refugio, este debe existir.
      */
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
     public VeterinarioEntity createVeterinario(VeterinarioEntity veterinario)
             throws EntityNotFoundException, IllegalOperationException {
         validarDatosBasicos(veterinario);
@@ -47,8 +47,12 @@ public class VeterinarioService {
         return veterinarioRepository.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = EntityNotFoundException.class)
     public VeterinarioEntity getVeterinario(Long id) throws EntityNotFoundException {
+        return buscarVeterinario(id);
+    }
+
+    private VeterinarioEntity buscarVeterinario(Long id) throws EntityNotFoundException {
         VeterinarioEntity veterinario = veterinarioRepository.findById(id).orElse(null);
         if (veterinario == null) {
             throw new EntityNotFoundException("El veterinario con el id dado no existe");
@@ -59,10 +63,10 @@ public class VeterinarioService {
     /**
      * Se validan las mismas reglas que en la creacion, sobre un veterinario existente.
      */
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
     public VeterinarioEntity updateVeterinario(Long id, VeterinarioEntity veterinario)
             throws EntityNotFoundException, IllegalOperationException {
-        getVeterinario(id);
+        buscarVeterinario(id);
         validarDatosBasicos(veterinario);
         asociarRefugioSiAplica(veterinario);
         veterinario.setId(id);
@@ -75,9 +79,9 @@ public class VeterinarioService {
      * - No se puede eliminar un veterinario que tenga seguimientos asignados
      *   (se conserva el historial de atenciones).
      */
-    @Transactional
+    @Transactional(rollbackFor = {EntityNotFoundException.class, IllegalOperationException.class})
     public void deleteVeterinario(Long id) throws EntityNotFoundException, IllegalOperationException {
-        VeterinarioEntity veterinario = getVeterinario(id);
+        VeterinarioEntity veterinario = buscarVeterinario(id);
         if (veterinario.getSeguimientos() != null && !veterinario.getSeguimientos().isEmpty()) {
             throw new IllegalOperationException("No se puede eliminar un veterinario que tiene seguimientos asignados");
         }
