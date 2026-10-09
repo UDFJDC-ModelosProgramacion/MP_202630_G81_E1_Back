@@ -39,7 +39,7 @@ public class FotografiaService {
         fotografiaRepository.deleteById(idFotografia);
         }catch(Exception e) {
             log.error("Error al eliminar la fotografía con ID: {}", idFotografia, e);
-            throw new RuntimeException("Error al eliminar la fotografía con ID: " + idFotografia, e);
+            throw new FotografiaException("Error al eliminar la fotografía con ID: " + idFotografia, e);
         }
     }
 
@@ -56,7 +56,7 @@ public class FotografiaService {
             return fotografiaRepository.findById(id);
         }catch(Exception e) {
             log.error("Error al obtener la fotografía con ID: {}", id, e);
-            throw new RuntimeException("Error al obtener la fotografía con ID: " + id, e);
+            throw new FotografiaException("Error al obtener la fotografía con ID: " + id, e);
         }
     }
 
@@ -73,8 +73,19 @@ public class FotografiaService {
         }
         }catch(Exception e) {
             log.error("Error al activar la fotografía con ID: {}", idFotografia, e);
-            throw new RuntimeException("Error al activar la fotografía con ID: " + idFotografia, e);
+            throw new FotografiaException("Error al activar la fotografía con ID: " + idFotografia, e);
         }
     }
 
+    /**
+     * Excepción específica para errores relacionados con fotografías.
+     */
+    public static class FotografiaException extends RuntimeException {
+
+        private static final long serialVersionUID = 1L;
+
+        public FotografiaException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
 }

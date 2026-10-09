@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -31,7 +30,7 @@ public class EventoMedicoController {
     public List<EventoMedicoDTO> findAll() {
         return eventoMedicoService.getEventosMedicos().stream()
                 .map(e -> modelMapper.map(e, EventoMedicoDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/{id}")
@@ -45,7 +44,7 @@ public class EventoMedicoController {
     public List<EventoMedicoDTO> findByMascota(@PathVariable Long mascotaId) {
         return eventoMedicoService.getEventosMedicosByMascota(mascotaId).stream()
                 .map(e -> modelMapper.map(e, EventoMedicoDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/diagnostico/{diagnostico}")
@@ -53,7 +52,7 @@ public class EventoMedicoController {
     public List<EventoMedicoDTO> findByDiagnostico(@PathVariable String diagnostico) {
         return eventoMedicoService.getEventosMedicosByDiagnostico(diagnostico).stream()
                 .map(e -> modelMapper.map(e, EventoMedicoDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @PostMapping

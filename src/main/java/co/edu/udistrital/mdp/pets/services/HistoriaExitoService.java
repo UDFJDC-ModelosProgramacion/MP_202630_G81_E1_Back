@@ -21,6 +21,9 @@ public class HistoriaExitoService {
     private static final String MASCOTA_INACTIVA =
             "La mascota con ID: %d se encuentra inactiva";
 
+    private static final String HISTORIA_NO_EXISTE_LOG =
+            "La historia de éxito con ID: {} no existe";
+
     private static final String HISTORIA_NO_EXISTE =
             "La historia de éxito con ID asociada a la mascota seleccionada: %d no existe";
 
@@ -60,7 +63,7 @@ public class HistoriaExitoService {
 
             if (historiaExito == null) {
                 log.warn(
-                        "La historia de éxito con ID: {} no existe",
+                        HISTORIA_NO_EXISTE_LOG,
                         idHistoriaExito);
 
                 throw new HistoriaExitoException(
@@ -140,7 +143,7 @@ public class HistoriaExitoService {
 
             if (historiaExitoSubmit == null) {
                 log.warn(
-                        "La historia de éxito con ID: {} no existe",
+                        HISTORIA_NO_EXISTE_LOG,
                         historiaExito.getId());
 
                 throw new HistoriaExitoException(
@@ -200,7 +203,7 @@ public class HistoriaExitoService {
             }
 
             log.warn(
-                    "La historia de éxito con ID: {} no existe",
+                    HISTORIA_NO_EXISTE_LOG,
                     idHistoriaExito);
 
             throw new HistoriaExitoException(

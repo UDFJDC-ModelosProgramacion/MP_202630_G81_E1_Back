@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -31,7 +30,7 @@ public class ResenaController {
     public List<ResenaDTO> findAll() {
         return resenaService.getResenas().stream()
                 .map(e -> modelMapper.map(e, ResenaDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/{id}")
@@ -45,7 +44,7 @@ public class ResenaController {
     public List<ResenaDTO> findByMascota(@PathVariable Long mascotaId) {
         return resenaService.getResenasByMascota(mascotaId).stream()
                 .map(e -> modelMapper.map(e, ResenaDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/adoptante/{adoptanteId}")
@@ -53,7 +52,7 @@ public class ResenaController {
     public List<ResenaDTO> findByAdoptante(@PathVariable Long adoptanteId) {
         return resenaService.getResenasByAdoptante(adoptanteId).stream()
                 .map(e -> modelMapper.map(e, ResenaDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/calificacion/{calificacion}")
@@ -61,7 +60,7 @@ public class ResenaController {
     public List<ResenaDTO> findByCalificacion(@PathVariable Integer calificacion) {
         return resenaService.getResenasByCalificacion(calificacion).stream()
                 .map(e -> modelMapper.map(e, ResenaDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @PostMapping

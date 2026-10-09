@@ -1,7 +1,6 @@
 package co.edu.udistrital.mdp.pets.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -31,7 +30,7 @@ public class ActualizacionController {
     public List<ActualizacionDTO> findAll() {
         return actualizacionService.getActualizaciones().stream()
                 .map(e -> modelMapper.map(e, ActualizacionDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/{id}")
@@ -45,7 +44,7 @@ public class ActualizacionController {
     public List<ActualizacionDTO> findByTipo(@PathVariable String tipo) {
         return actualizacionService.getActualizacionesByTipo(tipo).stream()
                 .map(e -> modelMapper.map(e, ActualizacionDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/mascota/{mascotaId}")
@@ -53,7 +52,7 @@ public class ActualizacionController {
     public List<ActualizacionDTO> findByMascota(@PathVariable Long mascotaId) {
         return actualizacionService.getActualizacionesByMascota(mascotaId).stream()
                 .map(e -> modelMapper.map(e, ActualizacionDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/adoptante/{adoptanteId}")
@@ -61,7 +60,7 @@ public class ActualizacionController {
     public List<ActualizacionDTO> findByAdoptante(@PathVariable Long adoptanteId) {
         return actualizacionService.getActualizacionesByAdoptante(adoptanteId).stream()
                 .map(e -> modelMapper.map(e, ActualizacionDTO.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @PostMapping
