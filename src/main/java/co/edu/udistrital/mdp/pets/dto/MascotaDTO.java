@@ -10,9 +10,6 @@ import lombok.Data;
 @Data
 public class MascotaDTO {
 
-    @Data
-public class MascotaDTO {
-
     private Long id;
     private String nombre;
     private String especie;
@@ -28,5 +25,6 @@ public class MascotaDTO {
     private String nivelActividad;
     private String estado;
     private RefugioDTO refugio;
+    
 }
-}
+
