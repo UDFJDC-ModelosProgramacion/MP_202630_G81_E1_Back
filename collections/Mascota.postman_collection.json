@@ -138,7 +138,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "var data = pm.response.json();",
-                  "pm.globals.set(\"mascota_id_1\", data.id);",
+                  "pm.globals.set(\"mascota_id_1\", data.id); pm.collectionVariables.set(\"mascota_id_1\", data.id);",
                   "pm.test(\"Status code is 201\", function () {",
                   "   pm.response.to.have.status(201);",
                   "});"

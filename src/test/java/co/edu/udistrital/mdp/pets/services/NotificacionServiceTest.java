@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.udistrital.mdp.pets.entities.*;
 import co.edu.udistrital.mdp.pets.exceptions.EntityNotFoundException;
+import co.edu.udistrital.mdp.pets.exceptions.IllegalOperationException;
 import co.edu.udistrital.mdp.pets.repositories.*;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -113,22 +114,26 @@ class NotificacionServiceTest {
 
     @Test
     void testGetNotificacionNoExistente() {
-        assertNull(notificacionService.getNotificacion(0L));
+        assertThrows(EntityNotFoundException.class, () -> notificacionService.getNotificacion(0L));
     }
 
     @Test
-    void testCreateNotificacionNula() {
-        assertThrows(IllegalStateException.class, () -> notificacionService.createNotificacion(null));
+    void testCreateNotificacionSinCanal() {
+        NotificacionEntity entity = factory.manufacturePojo(NotificacionEntity.class);
+        entity.setMascota(mascota);
+        entity.setAdoptante(adoptante);
+        entity.setCanal(null);
+        assertThrows(IllegalOperationException.class, () -> notificacionService.createNotificacion(entity));
     }
 
     @Test
     void testUpdateNotificacionNoExistente() {
         NotificacionEntity entity = factory.manufacturePojo(NotificacionEntity.class);
-        assertThrows(IllegalStateException.class, () -> notificacionService.updateNotificacion(0L, entity));
+        assertThrows(EntityNotFoundException.class, () -> notificacionService.updateNotificacion(0L, entity));
     }
 
     @Test
-    void testDeleteNotificacionConIdNulo() {
-        assertThrows(IllegalStateException.class, () -> notificacionService.deleteNotificacion(null));
+    void testDeleteNotificacionNoExistente() {
+        assertThrows(EntityNotFoundException.class, () -> notificacionService.deleteNotificacion(0L));
     }
 }
