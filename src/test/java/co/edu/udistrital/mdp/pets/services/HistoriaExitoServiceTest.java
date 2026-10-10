@@ -1,8 +1,10 @@
 package co.edu.udistrital.mdp.pets.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -65,6 +67,35 @@ class HistoriaExitoServiceTest {
     }
 
     @Test
+    void crearHistoriaExitoRejectsMissingMascota() {
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.empty());
+
+        HistoriaExitoService.HistoriaExitoException exception = assertThrows(
+                HistoriaExitoService.HistoriaExitoException.class,
+                () -> service.crearHistoriaExito(1L, "Título", "Descripción"));
+
+        assertEquals("La mascota con ID: 1 no existe", exception.getMessage());
+        verifyNoInteractions(historiaExitoRepository);
+    }
+
+    @Test
+    void crearHistoriaExitoWrapsRepositoryFailure() {
+        MascotaEntity mascota = new MascotaEntity();
+        mascota.setEstado("Disponible");
+        RuntimeException failure = new IllegalStateException("database failure");
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
+        when(historiaExitoRepository.save(any(HistoriaExitoEntity.class))).thenThrow(failure);
+
+        HistoriaExitoService.HistoriaExitoException exception = assertThrows(
+                HistoriaExitoService.HistoriaExitoException.class,
+                () -> service.crearHistoriaExito(1L, "Título", "Descripción"));
+
+        assertEquals("Error al crear la historia de éxito para la mascota con ID: 1",
+                exception.getMessage());
+        assertSame(failure, exception.getCause());
+    }
+
+    @Test
     void eliminarHistoriaExitoDeletesAssociatedHistory() {
         MascotaEntity mascota = new MascotaEntity();
         mascota.setEstado("Disponible");
@@ -91,6 +122,24 @@ class HistoriaExitoServiceTest {
     }
 
     @Test
+    void eliminarHistoriaExitoWrapsRepositoryFailure() {
+        MascotaEntity mascota = new MascotaEntity();
+        mascota.setEstado("Disponible");
+        HistoriaExitoEntity history = new HistoriaExitoEntity();
+        RuntimeException failure = new IllegalStateException("database failure");
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
+        when(historiaExitoRepository.findByMascotaIdAndId(1L, 2L)).thenReturn(history);
+        doThrow(failure).when(historiaExitoRepository).deleteById(2L);
+
+        HistoriaExitoService.HistoriaExitoException exception = assertThrows(
+                HistoriaExitoService.HistoriaExitoException.class,
+                () -> service.eliminarHistoriaExito(2L, 1L));
+
+        assertEquals("Error al eliminar la historia de éxito con ID: 2", exception.getMessage());
+        assertSame(failure, exception.getCause());
+    }
+
+    @Test
     void actualizarHistoriaExitoSavesAssociatedHistory() {
         MascotaEntity mascota = new MascotaEntity();
         mascota.setEstado("Disponible");
@@ -103,6 +152,47 @@ class HistoriaExitoServiceTest {
         service.actualizarHistoriaExito(submitted, 1L);
 
         verify(historiaExitoRepository).save(stored);
+    }
+
+    @Test
+    void actualizarHistoriaExitoRejectsMissingHistory() {
+        MascotaEntity mascota = new MascotaEntity();
+        mascota.setEstado("Disponible");
+        HistoriaExitoEntity submitted = new HistoriaExitoEntity();
+        submitted.setId(2L);
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
+        when(historiaExitoRepository.findByMascotaIdAndId(1L, 2L)).thenReturn(null);
+
+        HistoriaExitoService.HistoriaExitoException exception = assertThrows(
+                HistoriaExitoService.HistoriaExitoException.class,
+                () -> service.actualizarHistoriaExito(submitted, 1L));
+
+        assertEquals(
+                "La historia de éxito con ID asociada a la mascota seleccionada: 2 no existe",
+                exception.getMessage());
+        verify(historiaExitoRepository, never()).save(any(HistoriaExitoEntity.class));
+    }
+
+    @Test
+    void actualizarHistoriaExitoWrapsRepositoryFailure() {
+        MascotaEntity mascota = new MascotaEntity();
+        mascota.setEstado("Disponible");
+        HistoriaExitoEntity submitted = new HistoriaExitoEntity();
+        submitted.setId(2L);
+        HistoriaExitoEntity stored = new HistoriaExitoEntity();
+        RuntimeException failure = new IllegalStateException("database failure");
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
+        when(historiaExitoRepository.findByMascotaIdAndId(1L, 2L)).thenReturn(stored);
+        when(historiaExitoRepository.save(stored)).thenThrow(failure);
+
+        HistoriaExitoService.HistoriaExitoException exception = assertThrows(
+                HistoriaExitoService.HistoriaExitoException.class,
+                () -> service.actualizarHistoriaExito(submitted, 1L));
+
+        assertEquals(
+                "Error al actualizar la historia de éxito con ID: 2 para la mascota con ID: 1",
+                exception.getMessage());
+        assertSame(failure, exception.getCause());
     }
 
     @Test
@@ -128,6 +218,24 @@ class HistoriaExitoServiceTest {
     }
 
     @Test
+    void obtenerHistoriaExitoByIdAndIdMascotaWrapsRepositoryFailure() {
+        MascotaEntity mascota = new MascotaEntity();
+        mascota.setEstado("Disponible");
+        RuntimeException failure = new IllegalStateException("database failure");
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
+        when(historiaExitoRepository.findByMascotaIdAndId(1L, 2L)).thenThrow(failure);
+
+        HistoriaExitoService.HistoriaExitoException exception = assertThrows(
+                HistoriaExitoService.HistoriaExitoException.class,
+                () -> service.obtenerHistoriaExitoByIdAndIdMascota(2L, 1L));
+
+        assertEquals(
+                "Error al obtener la historia de éxito con ID: 2 para la mascota con ID: 1",
+                exception.getMessage());
+        assertSame(failure, exception.getCause());
+    }
+
+    @Test
     void obtenerHistoriasExitoByIdMascotaReturnsHistories() {
         MascotaEntity mascota = new MascotaEntity();
         mascota.setEstado("Disponible");
@@ -136,5 +244,35 @@ class HistoriaExitoServiceTest {
         when(historiaExitoRepository.findByMascotaId(1L)).thenReturn(expected);
 
         assertEquals(expected, service.obtenerHistoriasExitoByIdMascota(1L));
+    }
+
+    @Test
+    void obtenerHistoriasExitoByIdMascotaRejectsMissingMascota() {
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.empty());
+
+        HistoriaExitoService.HistoriaExitoException exception = assertThrows(
+                HistoriaExitoService.HistoriaExitoException.class,
+                () -> service.obtenerHistoriasExitoByIdMascota(1L));
+
+        assertEquals("La mascota con ID: 1 no existe", exception.getMessage());
+        verifyNoInteractions(historiaExitoRepository);
+    }
+
+    @Test
+    void obtenerHistoriasExitoByIdMascotaWrapsRepositoryFailure() {
+        MascotaEntity mascota = new MascotaEntity();
+        mascota.setEstado("Disponible");
+        RuntimeException failure = new IllegalStateException("database failure");
+        when(mascotaRepository.findById(1L)).thenReturn(Optional.of(mascota));
+        when(historiaExitoRepository.findByMascotaId(1L)).thenThrow(failure);
+
+        HistoriaExitoService.HistoriaExitoException exception = assertThrows(
+                HistoriaExitoService.HistoriaExitoException.class,
+                () -> service.obtenerHistoriasExitoByIdMascota(1L));
+
+        assertEquals(
+                "Error al obtener las historias de éxito para la mascota con ID: 1",
+                exception.getMessage());
+        assertSame(failure, exception.getCause());
     }
 }
