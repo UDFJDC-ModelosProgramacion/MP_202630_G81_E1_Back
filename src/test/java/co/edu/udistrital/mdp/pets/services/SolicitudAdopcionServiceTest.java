@@ -1,106 +1,179 @@
 package co.edu.udistrital.mdp.pets.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-import co.edu.udistrital.mdp.pets.entities.AdoptanteEntity;
-import co.edu.udistrital.mdp.pets.entities.MascotaEntity;
-import co.edu.udistrital.mdp.pets.entities.SolicitudAdopcionEntity;
-import co.edu.udistrital.mdp.pets.repositories.AdoptanteRepository;
-import co.edu.udistrital.mdp.pets.repositories.MascotaRepository;
-import co.edu.udistrital.mdp.pets.repositories.SolicitudAdopcionRepository;
-import uk.co.jemos.podam.api.PodamFactory;
-import uk.co.jemos.podam.api.PodamFactoryImpl;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@Transactional
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import co.edu.udistrital.mdp.pets.entities.SolicitudAdopcionEntity;
+import co.edu.udistrital.mdp.pets.repositories.SolicitudAdopcionRepository;
+
+@ExtendWith(MockitoExtension.class)
 class SolicitudAdopcionServiceTest {
 
-    @Autowired
-    private SolicitudAdopcionService solicitudService;
+    private static final Long ID = 7L;
 
-    @Autowired
+    @Mock
     private SolicitudAdopcionRepository solicitudRepository;
 
-    @Autowired
-    private AdoptanteRepository adoptanteRepository;
-
-    @Autowired
-    private MascotaRepository mascotaRepository;
-
-    private final PodamFactory factory = new PodamFactoryImpl();
-
-    private final List<SolicitudAdopcionEntity> data = new ArrayList<>();
-
-    private AdoptanteEntity adoptante;
-    private MascotaEntity mascota;
-
-    @BeforeEach
-    void setUp() {
-
-        solicitudRepository.deleteAll();
-        adoptanteRepository.deleteAll();
-        mascotaRepository.deleteAll();
-
-        adoptante = adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
-        mascota = mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
-
-        for (int i = 0; i < 3; i++) {
-            SolicitudAdopcionEntity entity = factory.manufacturePojo(SolicitudAdopcionEntity.class);
-            entity.setAdoptante(adoptante);
-            entity.setMascota(mascota);
-            data.add(solicitudRepository.save(entity));
-        }
-    }
+    @InjectMocks
+    private SolicitudAdopcionService solicitudService;
 
     @Test
     void testCreateSolicitud() {
-        SolicitudAdopcionEntity entity = factory.manufacturePojo(SolicitudAdopcionEntity.class);
-        entity.setAdoptante(adoptante);
-        entity.setMascota(mascota);
+        SolicitudAdopcionEntity solicitud = new SolicitudAdopcionEntity();
+        when(solicitudRepository.save(solicitud)).thenReturn(solicitud);
 
-        SolicitudAdopcionEntity result = solicitudService.createSolicitud(entity);
+        assertSame(solicitud, solicitudService.createSolicitud(solicitud));
 
-        assertNotNull(result);
-        assertEquals(entity.getEstado(), result.getEstado());
+        verify(solicitudRepository).save(solicitud);
+    }
+
+    @Test
+    void testCreateSolicitudCuandoRepositorioFalla() {
+        SolicitudAdopcionEntity solicitud = new SolicitudAdopcionEntity();
+        RuntimeException causa = new RuntimeException("fallo de persistencia");
+        when(solicitudRepository.save(solicitud)).thenThrow(causa);
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> solicitudService.createSolicitud(solicitud));
+
+        assertEquals("Error al crear la solicitud de adopción.", exception.getMessage());
+        assertSame(causa, exception.getCause());
     }
 
     @Test
     void testGetSolicitudes() {
-        List<SolicitudAdopcionEntity> list = solicitudService.getSolicitudes();
-        assertEquals(3, list.size());
+        List<SolicitudAdopcionEntity> solicitudes = List.of(new SolicitudAdopcionEntity());
+        when(solicitudRepository.findAll()).thenReturn(solicitudes);
+
+        assertSame(solicitudes, solicitudService.getSolicitudes());
+
+        verify(solicitudRepository).findAll();
     }
 
     @Test
-    void testGetSolicitud() {
-        SolicitudAdopcionEntity entity = data.get(0);
-        SolicitudAdopcionEntity result = solicitudService.getSolicitud(entity.getId());
+    void testGetSolicitudExistente() {
+        SolicitudAdopcionEntity solicitud = new SolicitudAdopcionEntity();
+        when(solicitudRepository.findById(ID)).thenReturn(Optional.of(solicitud));
 
-        assertNotNull(result);
-        assertEquals(entity.getId(), result.getId());
+        assertSame(solicitud, solicitudService.getSolicitud(ID));
+
+        verify(solicitudRepository).findById(ID);
     }
 
     @Test
-    void testUpdateSolicitud() {
-        SolicitudAdopcionEntity entity = data.get(0);
-        entity.setEstado("APROBADA");
+    void testGetSolicitudInexistente() {
+        when(solicitudRepository.findById(ID)).thenReturn(Optional.empty());
 
-        SolicitudAdopcionEntity result = solicitudService.updateSolicitud(entity.getId(), entity);
+        assertNull(solicitudService.getSolicitud(ID));
 
-        assertEquals("APROBADA", result.getEstado());
+        verify(solicitudRepository).findById(ID);
+    }
+
+    @Test
+    void testGetSolicitudesByEstado() {
+        List<SolicitudAdopcionEntity> solicitudes = List.of(new SolicitudAdopcionEntity());
+        when(solicitudRepository.findByEstado("APROBADA")).thenReturn(solicitudes);
+
+        assertSame(solicitudes, solicitudService.getSolicitudesByEstado("APROBADA"));
+
+        verify(solicitudRepository).findByEstado("APROBADA");
+    }
+
+    @Test
+    void testGetSolicitudesByAdoptante() {
+        List<SolicitudAdopcionEntity> solicitudes = List.of(new SolicitudAdopcionEntity());
+        when(solicitudRepository.findByAdoptanteId(ID)).thenReturn(solicitudes);
+
+        assertSame(solicitudes, solicitudService.getSolicitudesByAdoptante(ID));
+
+        verify(solicitudRepository).findByAdoptanteId(ID);
+    }
+
+    @Test
+    void testGetSolicitudesByMascota() {
+        List<SolicitudAdopcionEntity> solicitudes = List.of(new SolicitudAdopcionEntity());
+        when(solicitudRepository.findByMascotaId(ID)).thenReturn(solicitudes);
+
+        assertSame(solicitudes, solicitudService.getSolicitudesByMascota(ID));
+
+        verify(solicitudRepository).findByMascotaId(ID);
+    }
+
+    @Test
+    void testUpdateSolicitudExistente() {
+        SolicitudAdopcionEntity existente = new SolicitudAdopcionEntity();
+        SolicitudAdopcionEntity actualizada = new SolicitudAdopcionEntity();
+        when(solicitudRepository.findById(ID)).thenReturn(Optional.of(existente));
+        when(solicitudRepository.save(actualizada)).thenReturn(actualizada);
+
+        SolicitudAdopcionEntity result = solicitudService.updateSolicitud(ID, actualizada);
+
+        assertSame(actualizada, result);
+        assertEquals(ID, actualizada.getId());
+        verify(solicitudRepository).save(actualizada);
+    }
+
+    @Test
+    void testUpdateSolicitudInexistente() {
+        SolicitudAdopcionEntity solicitud = new SolicitudAdopcionEntity();
+        when(solicitudRepository.findById(ID)).thenReturn(Optional.empty());
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> solicitudService.updateSolicitud(ID, solicitud));
+
+        assertEquals("Error al actualizar la solicitud de adopción.", exception.getMessage());
+        assertEquals("La solicitud de adopción no existe.", exception.getCause().getMessage());
+        verify(solicitudRepository).findById(ID);
+        verifyNoMoreInteractions(solicitudRepository);
+    }
+
+    @Test
+    void testUpdateSolicitudCuandoRepositorioFalla() {
+        SolicitudAdopcionEntity existente = new SolicitudAdopcionEntity();
+        SolicitudAdopcionEntity actualizada = new SolicitudAdopcionEntity();
+        RuntimeException causa = new RuntimeException("fallo de persistencia");
+        when(solicitudRepository.findById(ID)).thenReturn(Optional.of(existente));
+        when(solicitudRepository.save(actualizada)).thenThrow(causa);
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> solicitudService.updateSolicitud(ID, actualizada));
+
+        assertEquals("Error al actualizar la solicitud de adopción.", exception.getMessage());
+        assertSame(causa, exception.getCause());
+        assertEquals(ID, actualizada.getId());
     }
 
     @Test
     void testDeleteSolicitud() {
-        SolicitudAdopcionEntity entity = data.get(0);
+        solicitudService.deleteSolicitud(ID);
 
-        solicitudService.deleteSolicitud(entity.getId());
+        verify(solicitudRepository).deleteById(ID);
+    }
 
-        assertNull(solicitudService.getSolicitud(entity.getId()));
+    @Test
+    void testDeleteSolicitudCuandoRepositorioFalla() {
+        RuntimeException causa = new RuntimeException("fallo de persistencia");
+        doThrow(causa).when(solicitudRepository).deleteById(ID);
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> solicitudService.deleteSolicitud(ID));
+
+        assertEquals("Error al eliminar la solicitud de adopción.", exception.getMessage());
+        assertSame(causa, exception.getCause());
     }
 }
