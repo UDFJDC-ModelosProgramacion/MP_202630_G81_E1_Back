@@ -1,163 +1,178 @@
 package co.edu.udistrital.mdp.pets.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-import co.edu.udistrital.mdp.pets.entities.AdopcionEntity;
-import co.edu.udistrital.mdp.pets.entities.AdoptanteEntity;
-import co.edu.udistrital.mdp.pets.entities.MascotaEntity;
-import co.edu.udistrital.mdp.pets.entities.SolicitudAdopcionEntity;
-import co.edu.udistrital.mdp.pets.repositories.AdopcionRepository;
-import co.edu.udistrital.mdp.pets.repositories.AdoptanteRepository;
-import co.edu.udistrital.mdp.pets.repositories.MascotaRepository;
-import co.edu.udistrital.mdp.pets.repositories.SolicitudAdopcionRepository;
-import uk.co.jemos.podam.api.PodamFactory;
-import uk.co.jemos.podam.api.PodamFactoryImpl;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@Transactional
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import co.edu.udistrital.mdp.pets.entities.AdopcionEntity;
+import co.edu.udistrital.mdp.pets.repositories.AdopcionRepository;
+
+@ExtendWith(MockitoExtension.class)
 class AdopcionServiceTest {
 
-    @Autowired
-    private AdopcionService adopcionService;
+    private static final Long ID = 7L;
 
-    @Autowired
+    @Mock
     private AdopcionRepository adopcionRepository;
 
-    @Autowired
-    private SolicitudAdopcionRepository solicitudRepository;
-
-    @Autowired
-    private AdoptanteRepository adoptanteRepository;
-
-    @Autowired
-    private MascotaRepository mascotaRepository;
-
-    private final PodamFactory factory = new PodamFactoryImpl();
-
-    private final List<AdopcionEntity> data = new ArrayList<>();
-
-    private SolicitudAdopcionEntity solicitud;
-
-    @BeforeEach
-    void setUp() {
-
-        adopcionRepository.deleteAll();
-        solicitudRepository.deleteAll();
-        adoptanteRepository.deleteAll();
-        mascotaRepository.deleteAll();
-
-        // Solicitud independiente para testCreateAdopcion
-        AdoptanteEntity adoptante =
-                adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
-
-        MascotaEntity mascota =
-                mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
-
-        solicitud = factory.manufacturePojo(SolicitudAdopcionEntity.class);
-        solicitud.setAdoptante(adoptante);
-        solicitud.setMascota(mascota);
-
-        solicitud = solicitudRepository.save(solicitud);
-
-        // Cada adopción tendrá una solicitud diferente
-        for (int i = 0; i < 3; i++) {
-
-            AdoptanteEntity nuevoAdoptante =
-                    adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
-
-            MascotaEntity nuevaMascota =
-                    mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
-
-            SolicitudAdopcionEntity nuevaSolicitud =
-                    factory.manufacturePojo(SolicitudAdopcionEntity.class);
-
-            nuevaSolicitud.setAdoptante(nuevoAdoptante);
-            nuevaSolicitud.setMascota(nuevaMascota);
-
-            nuevaSolicitud = solicitudRepository.save(nuevaSolicitud);
-
-            AdopcionEntity entity =
-                    factory.manufacturePojo(AdopcionEntity.class);
-
-            entity.setSolicitud(nuevaSolicitud);
-
-            data.add(adopcionRepository.save(entity));
-        }
-    }
+    @InjectMocks
+    private AdopcionService adopcionService;
 
     @Test
     void testCreateAdopcion() {
+        AdopcionEntity adopcion = new AdopcionEntity();
+        when(adopcionRepository.save(adopcion)).thenReturn(adopcion);
 
-        AdoptanteEntity adoptante =
-                adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
+        assertSame(adopcion, adopcionService.createAdopcion(adopcion));
 
-        MascotaEntity mascota =
-                mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
+        verify(adopcionRepository).save(adopcion);
+    }
 
-        SolicitudAdopcionEntity nuevaSolicitud =
-                factory.manufacturePojo(SolicitudAdopcionEntity.class);
+    @Test
+    void testCreateAdopcionCuandoRepositorioFalla() {
+        AdopcionEntity adopcion = new AdopcionEntity();
+        RuntimeException causa = new RuntimeException("fallo de persistencia");
+        when(adopcionRepository.save(adopcion)).thenThrow(causa);
 
-        nuevaSolicitud.setAdoptante(adoptante);
-        nuevaSolicitud.setMascota(mascota);
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> adopcionService.createAdopcion(adopcion));
 
-        nuevaSolicitud = solicitudRepository.save(nuevaSolicitud);
-
-        AdopcionEntity entity =
-                factory.manufacturePojo(AdopcionEntity.class);
-
-        entity.setSolicitud(nuevaSolicitud);
-
-        AdopcionEntity result = adopcionService.createAdopcion(entity);
-
-        assertNotNull(result);
-        assertEquals(entity.getEstado(), result.getEstado());
+        assertEquals("Error al crear la adopción.", exception.getMessage());
+        assertSame(causa, exception.getCause());
     }
 
     @Test
     void testGetAdopciones() {
-        List<AdopcionEntity> list = adopcionService.getAdopciones();
-        assertEquals(3, list.size());
+        List<AdopcionEntity> adopciones = List.of(new AdopcionEntity());
+        when(adopcionRepository.findAll()).thenReturn(adopciones);
+
+        assertSame(adopciones, adopcionService.getAdopciones());
+
+        verify(adopcionRepository).findAll();
     }
 
     @Test
-    void testGetAdopcion() {
-        AdopcionEntity entity = data.get(0);
+    void testGetAdopcionExistente() {
+        AdopcionEntity adopcion = new AdopcionEntity();
+        when(adopcionRepository.findById(ID)).thenReturn(Optional.of(adopcion));
 
-        AdopcionEntity result = adopcionService.getAdopcion(entity.getId());
+        assertSame(adopcion, adopcionService.getAdopcion(ID));
 
-        assertNotNull(result);
-        assertEquals(entity.getId(), result.getId());
+        verify(adopcionRepository).findById(ID);
     }
 
     @Test
-    void testUpdateAdopcion() {
+    void testGetAdopcionInexistente() {
+        when(adopcionRepository.findById(ID)).thenReturn(Optional.empty());
 
-        AdopcionEntity entity = data.get(0);
-        entity.setEstado("FINALIZADA");
+        assertNull(adopcionService.getAdopcion(ID));
 
-        AdopcionEntity result =
-                adopcionService.updateAdopcion(entity.getId(), entity);
+        verify(adopcionRepository).findById(ID);
+    }
 
-        assertNotNull(result);
-        assertEquals("FINALIZADA", result.getEstado());
+    @Test
+    void testGetAdopcionesByEstado() {
+        List<AdopcionEntity> adopciones = List.of(new AdopcionEntity());
+        when(adopcionRepository.findByEstado("FINALIZADA")).thenReturn(adopciones);
+
+        assertSame(adopciones, adopcionService.getAdopcionesByEstado("FINALIZADA"));
+
+        verify(adopcionRepository).findByEstado("FINALIZADA");
+    }
+
+    @Test
+    void testGetAdopcionBySolicitudExistente() {
+        AdopcionEntity adopcion = new AdopcionEntity();
+        when(adopcionRepository.findBySolicitudId(ID)).thenReturn(Optional.of(adopcion));
+
+        assertSame(adopcion, adopcionService.getAdopcionBySolicitud(ID));
+
+        verify(adopcionRepository).findBySolicitudId(ID);
+    }
+
+    @Test
+    void testGetAdopcionBySolicitudInexistente() {
+        when(adopcionRepository.findBySolicitudId(ID)).thenReturn(Optional.empty());
+
+        assertNull(adopcionService.getAdopcionBySolicitud(ID));
+
+        verify(adopcionRepository).findBySolicitudId(ID);
+    }
+
+    @Test
+    void testUpdateAdopcionExistente() {
+        AdopcionEntity existente = new AdopcionEntity();
+        AdopcionEntity actualizada = new AdopcionEntity();
+        when(adopcionRepository.findById(ID)).thenReturn(Optional.of(existente));
+        when(adopcionRepository.save(actualizada)).thenReturn(actualizada);
+
+        AdopcionEntity result = adopcionService.updateAdopcion(ID, actualizada);
+
+        assertSame(actualizada, result);
+        assertEquals(ID, actualizada.getId());
+        verify(adopcionRepository).save(actualizada);
+    }
+
+    @Test
+    void testUpdateAdopcionInexistente() {
+        AdopcionEntity adopcion = new AdopcionEntity();
+        when(adopcionRepository.findById(ID)).thenReturn(Optional.empty());
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> adopcionService.updateAdopcion(ID, adopcion));
+
+        assertEquals("Error al actualizar la adopción.", exception.getMessage());
+        assertEquals("La adopción no existe.", exception.getCause().getMessage());
+        verify(adopcionRepository).findById(ID);
+        verifyNoMoreInteractions(adopcionRepository);
+    }
+
+    @Test
+    void testUpdateAdopcionCuandoRepositorioFalla() {
+        AdopcionEntity existente = new AdopcionEntity();
+        AdopcionEntity actualizada = new AdopcionEntity();
+        RuntimeException causa = new RuntimeException("fallo de persistencia");
+        when(adopcionRepository.findById(ID)).thenReturn(Optional.of(existente));
+        when(adopcionRepository.save(actualizada)).thenThrow(causa);
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> adopcionService.updateAdopcion(ID, actualizada));
+
+        assertEquals("Error al actualizar la adopción.", exception.getMessage());
+        assertSame(causa, exception.getCause());
+        assertEquals(ID, actualizada.getId());
     }
 
     @Test
     void testDeleteAdopcion() {
+        adopcionService.deleteAdopcion(ID);
 
-        AdopcionEntity entity = data.get(0);
+        verify(adopcionRepository).deleteById(ID);
+    }
 
-        adopcionService.deleteAdopcion(entity.getId());
+    @Test
+    void testDeleteAdopcionCuandoRepositorioFalla() {
+        RuntimeException causa = new RuntimeException("fallo de persistencia");
+        doThrow(causa).when(adopcionRepository).deleteById(ID);
 
-        AdopcionEntity deleted =
-                adopcionService.getAdopcion(entity.getId());
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> adopcionService.deleteAdopcion(ID));
 
-        assertNull(deleted);
+        assertEquals("Error al eliminar la adopción.", exception.getMessage());
+        assertSame(causa, exception.getCause());
     }
 }

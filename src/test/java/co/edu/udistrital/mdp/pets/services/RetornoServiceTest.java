@@ -1,192 +1,178 @@
 package co.edu.udistrital.mdp.pets.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-import co.edu.udistrital.mdp.pets.entities.AdopcionEntity;
-import co.edu.udistrital.mdp.pets.entities.AdoptanteEntity;
-import co.edu.udistrital.mdp.pets.entities.MascotaEntity;
-import co.edu.udistrital.mdp.pets.entities.RetornoEntity;
-import co.edu.udistrital.mdp.pets.entities.SolicitudAdopcionEntity;
-import co.edu.udistrital.mdp.pets.repositories.AdopcionRepository;
-import co.edu.udistrital.mdp.pets.repositories.AdoptanteRepository;
-import co.edu.udistrital.mdp.pets.repositories.MascotaRepository;
-import co.edu.udistrital.mdp.pets.repositories.RetornoRepository;
-import co.edu.udistrital.mdp.pets.repositories.SolicitudAdopcionRepository;
-import uk.co.jemos.podam.api.PodamFactory;
-import uk.co.jemos.podam.api.PodamFactoryImpl;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@Transactional
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import co.edu.udistrital.mdp.pets.entities.RetornoEntity;
+import co.edu.udistrital.mdp.pets.repositories.RetornoRepository;
+
+@ExtendWith(MockitoExtension.class)
 class RetornoServiceTest {
 
-    @Autowired
-    private RetornoService retornoService;
+    private static final Long ID = 7L;
 
-    @Autowired
+    @Mock
     private RetornoRepository retornoRepository;
 
-    @Autowired
-    private AdopcionRepository adopcionRepository;
-
-    @Autowired
-    private SolicitudAdopcionRepository solicitudRepository;
-
-    @Autowired
-    private AdoptanteRepository adoptanteRepository;
-
-    @Autowired
-    private MascotaRepository mascotaRepository;
-
-    private final PodamFactory factory = new PodamFactoryImpl();
-
-    private final List<RetornoEntity> data = new ArrayList<>();
-
-    private AdopcionEntity adopcion;
-
-    @BeforeEach
-    void setUp() {
-
-        retornoRepository.deleteAll();
-        adopcionRepository.deleteAll();
-        solicitudRepository.deleteAll();
-        adoptanteRepository.deleteAll();
-        mascotaRepository.deleteAll();
-
-        // Adopción independiente para testCreateRetorno
-        AdoptanteEntity adoptante =
-                adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
-
-        MascotaEntity mascota =
-                mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
-
-        SolicitudAdopcionEntity solicitud =
-                factory.manufacturePojo(SolicitudAdopcionEntity.class);
-
-        solicitud.setAdoptante(adoptante);
-        solicitud.setMascota(mascota);
-
-        solicitud = solicitudRepository.save(solicitud);
-
-        adopcion = factory.manufacturePojo(AdopcionEntity.class);
-        adopcion.setSolicitud(solicitud);
-
-        adopcion = adopcionRepository.save(adopcion);
-
-        // Cada retorno tendrá una adopción diferente
-        for (int i = 0; i < 3; i++) {
-
-            AdoptanteEntity nuevoAdoptante =
-                    adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
-
-            MascotaEntity nuevaMascota =
-                    mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
-
-            SolicitudAdopcionEntity nuevaSolicitud =
-                    factory.manufacturePojo(SolicitudAdopcionEntity.class);
-
-            nuevaSolicitud.setAdoptante(nuevoAdoptante);
-            nuevaSolicitud.setMascota(nuevaMascota);
-
-            nuevaSolicitud = solicitudRepository.save(nuevaSolicitud);
-
-            AdopcionEntity nuevaAdopcion =
-                    factory.manufacturePojo(AdopcionEntity.class);
-
-            nuevaAdopcion.setSolicitud(nuevaSolicitud);
-
-            nuevaAdopcion = adopcionRepository.save(nuevaAdopcion);
-
-            RetornoEntity entity =
-                    factory.manufacturePojo(RetornoEntity.class);
-
-            entity.setAdopcion(nuevaAdopcion);
-
-            data.add(retornoRepository.save(entity));
-        }
-    }
+    @InjectMocks
+    private RetornoService retornoService;
 
     @Test
     void testCreateRetorno() {
+        RetornoEntity retorno = new RetornoEntity();
+        when(retornoRepository.save(retorno)).thenReturn(retorno);
 
-        AdoptanteEntity adoptante =
-                adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
+        assertSame(retorno, retornoService.createRetorno(retorno));
 
-        MascotaEntity mascota =
-                mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
+        verify(retornoRepository).save(retorno);
+    }
 
-        SolicitudAdopcionEntity solicitud =
-                factory.manufacturePojo(SolicitudAdopcionEntity.class);
+    @Test
+    void testCreateRetornoCuandoRepositorioFalla() {
+        RetornoEntity retorno = new RetornoEntity();
+        RuntimeException causa = new RuntimeException("fallo de persistencia");
+        when(retornoRepository.save(retorno)).thenThrow(causa);
 
-        solicitud.setAdoptante(adoptante);
-        solicitud.setMascota(mascota);
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> retornoService.createRetorno(retorno));
 
-        solicitud = solicitudRepository.save(solicitud);
-
-        AdopcionEntity nuevaAdopcion =
-                factory.manufacturePojo(AdopcionEntity.class);
-
-        nuevaAdopcion.setSolicitud(solicitud);
-
-        nuevaAdopcion = adopcionRepository.save(nuevaAdopcion);
-
-        RetornoEntity entity =
-                factory.manufacturePojo(RetornoEntity.class);
-
-        entity.setAdopcion(nuevaAdopcion);
-
-        RetornoEntity result = retornoService.createRetorno(entity);
-
-        assertNotNull(result);
-        assertEquals(entity.getMotivo(), result.getMotivo());
+        assertEquals("Error al registrar el retorno.", exception.getMessage());
+        assertSame(causa, exception.getCause());
     }
 
     @Test
     void testGetRetornos() {
-        List<RetornoEntity> list = retornoService.getRetornos();
-        assertEquals(3, list.size());
+        List<RetornoEntity> retornos = List.of(new RetornoEntity());
+        when(retornoRepository.findAll()).thenReturn(retornos);
+
+        assertSame(retornos, retornoService.getRetornos());
+
+        verify(retornoRepository).findAll();
     }
 
     @Test
-    void testGetRetorno() {
+    void testGetRetornoExistente() {
+        RetornoEntity retorno = new RetornoEntity();
+        when(retornoRepository.findById(ID)).thenReturn(Optional.of(retorno));
 
-        RetornoEntity entity = data.get(0);
+        assertSame(retorno, retornoService.getRetorno(ID));
 
-        RetornoEntity result =
-                retornoService.getRetorno(entity.getId());
-
-        assertNotNull(result);
-        assertEquals(entity.getId(), result.getId());
+        verify(retornoRepository).findById(ID);
     }
 
     @Test
-    void testUpdateRetorno() {
+    void testGetRetornoInexistente() {
+        when(retornoRepository.findById(ID)).thenReturn(Optional.empty());
 
-        RetornoEntity entity = data.get(0);
-        entity.setMotivo("Cambio de domicilio");
+        assertNull(retornoService.getRetorno(ID));
 
-        RetornoEntity result =
-                retornoService.updateRetorno(entity.getId(), entity);
+        verify(retornoRepository).findById(ID);
+    }
 
-        assertNotNull(result);
-        assertEquals("Cambio de domicilio", result.getMotivo());
+    @Test
+    void testGetRetornosCompatibles() {
+        List<RetornoEntity> retornos = List.of(new RetornoEntity());
+        when(retornoRepository.findByCompatibleReAdopcion(true)).thenReturn(retornos);
+
+        assertSame(retornos, retornoService.getRetornosCompatibles(true));
+
+        verify(retornoRepository).findByCompatibleReAdopcion(true);
+    }
+
+    @Test
+    void testGetRetornoByAdopcionExistente() {
+        RetornoEntity retorno = new RetornoEntity();
+        when(retornoRepository.findByAdopcionId(ID)).thenReturn(Optional.of(retorno));
+
+        assertSame(retorno, retornoService.getRetornoByAdopcion(ID));
+
+        verify(retornoRepository).findByAdopcionId(ID);
+    }
+
+    @Test
+    void testGetRetornoByAdopcionInexistente() {
+        when(retornoRepository.findByAdopcionId(ID)).thenReturn(Optional.empty());
+
+        assertNull(retornoService.getRetornoByAdopcion(ID));
+
+        verify(retornoRepository).findByAdopcionId(ID);
+    }
+
+    @Test
+    void testUpdateRetornoExistente() {
+        RetornoEntity existente = new RetornoEntity();
+        RetornoEntity actualizado = new RetornoEntity();
+        when(retornoRepository.findById(ID)).thenReturn(Optional.of(existente));
+        when(retornoRepository.save(actualizado)).thenReturn(actualizado);
+
+        RetornoEntity result = retornoService.updateRetorno(ID, actualizado);
+
+        assertSame(actualizado, result);
+        assertEquals(ID, actualizado.getId());
+        verify(retornoRepository).save(actualizado);
+    }
+
+    @Test
+    void testUpdateRetornoInexistente() {
+        RetornoEntity retorno = new RetornoEntity();
+        when(retornoRepository.findById(ID)).thenReturn(Optional.empty());
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> retornoService.updateRetorno(ID, retorno));
+
+        assertEquals("Error al actualizar el retorno.", exception.getMessage());
+        assertEquals("El retorno no existe.", exception.getCause().getMessage());
+        verify(retornoRepository).findById(ID);
+        verifyNoMoreInteractions(retornoRepository);
+    }
+
+    @Test
+    void testUpdateRetornoCuandoRepositorioFalla() {
+        RetornoEntity existente = new RetornoEntity();
+        RetornoEntity actualizado = new RetornoEntity();
+        RuntimeException causa = new RuntimeException("fallo de persistencia");
+        when(retornoRepository.findById(ID)).thenReturn(Optional.of(existente));
+        when(retornoRepository.save(actualizado)).thenThrow(causa);
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> retornoService.updateRetorno(ID, actualizado));
+
+        assertEquals("Error al actualizar el retorno.", exception.getMessage());
+        assertSame(causa, exception.getCause());
+        assertEquals(ID, actualizado.getId());
     }
 
     @Test
     void testDeleteRetorno() {
+        retornoService.deleteRetorno(ID);
 
-        RetornoEntity entity = data.get(0);
+        verify(retornoRepository).deleteById(ID);
+    }
 
-        retornoService.deleteRetorno(entity.getId());
+    @Test
+    void testDeleteRetornoCuandoRepositorioFalla() {
+        RuntimeException causa = new RuntimeException("fallo de persistencia");
+        doThrow(causa).when(retornoRepository).deleteById(ID);
 
-        RetornoEntity deleted =
-                retornoService.getRetorno(entity.getId());
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> retornoService.deleteRetorno(ID));
 
-        assertNull(deleted);
+        assertEquals("Error al eliminar el retorno.", exception.getMessage());
+        assertSame(causa, exception.getCause());
     }
 }

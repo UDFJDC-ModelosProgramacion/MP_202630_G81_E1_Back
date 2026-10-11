@@ -1,192 +1,178 @@
 package co.edu.udistrital.mdp.pets.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-import co.edu.udistrital.mdp.pets.entities.AdopcionEntity;
-import co.edu.udistrital.mdp.pets.entities.AdoptanteEntity;
-import co.edu.udistrital.mdp.pets.entities.MascotaEntity;
-import co.edu.udistrital.mdp.pets.entities.PruebaConvivenciaEntity;
-import co.edu.udistrital.mdp.pets.entities.SolicitudAdopcionEntity;
-import co.edu.udistrital.mdp.pets.repositories.AdopcionRepository;
-import co.edu.udistrital.mdp.pets.repositories.AdoptanteRepository;
-import co.edu.udistrital.mdp.pets.repositories.MascotaRepository;
-import co.edu.udistrital.mdp.pets.repositories.PruebaConvivenciaRepository;
-import co.edu.udistrital.mdp.pets.repositories.SolicitudAdopcionRepository;
-import uk.co.jemos.podam.api.PodamFactory;
-import uk.co.jemos.podam.api.PodamFactoryImpl;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@Transactional
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import co.edu.udistrital.mdp.pets.entities.PruebaConvivenciaEntity;
+import co.edu.udistrital.mdp.pets.repositories.PruebaConvivenciaRepository;
+
+@ExtendWith(MockitoExtension.class)
 class PruebaConvivenciaServiceTest {
 
-    @Autowired
-    private PruebaConvivenciaService pruebaService;
+    private static final Long ID = 7L;
 
-    @Autowired
+    @Mock
     private PruebaConvivenciaRepository pruebaRepository;
 
-    @Autowired
-    private AdopcionRepository adopcionRepository;
-
-    @Autowired
-    private SolicitudAdopcionRepository solicitudRepository;
-
-    @Autowired
-    private AdoptanteRepository adoptanteRepository;
-
-    @Autowired
-    private MascotaRepository mascotaRepository;
-
-    private final PodamFactory factory = new PodamFactoryImpl();
-
-    private final List<PruebaConvivenciaEntity> data = new ArrayList<>();
-
-    private AdopcionEntity adopcion;
-
-    @BeforeEach
-    void setUp() {
-
-        pruebaRepository.deleteAll();
-        adopcionRepository.deleteAll();
-        solicitudRepository.deleteAll();
-        adoptanteRepository.deleteAll();
-        mascotaRepository.deleteAll();
-
-        // Adopción independiente para testCreatePrueba
-        AdoptanteEntity adoptante =
-                adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
-
-        MascotaEntity mascota =
-                mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
-
-        SolicitudAdopcionEntity solicitud =
-                factory.manufacturePojo(SolicitudAdopcionEntity.class);
-
-        solicitud.setAdoptante(adoptante);
-        solicitud.setMascota(mascota);
-
-        solicitud = solicitudRepository.save(solicitud);
-
-        adopcion = factory.manufacturePojo(AdopcionEntity.class);
-        adopcion.setSolicitud(solicitud);
-
-        adopcion = adopcionRepository.save(adopcion);
-
-        // Cada prueba tendrá una adopción diferente
-        for (int i = 0; i < 3; i++) {
-
-            AdoptanteEntity nuevoAdoptante =
-                    adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
-
-            MascotaEntity nuevaMascota =
-                    mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
-
-            SolicitudAdopcionEntity nuevaSolicitud =
-                    factory.manufacturePojo(SolicitudAdopcionEntity.class);
-
-            nuevaSolicitud.setAdoptante(nuevoAdoptante);
-            nuevaSolicitud.setMascota(nuevaMascota);
-
-            nuevaSolicitud = solicitudRepository.save(nuevaSolicitud);
-
-            AdopcionEntity nuevaAdopcion =
-                    factory.manufacturePojo(AdopcionEntity.class);
-
-            nuevaAdopcion.setSolicitud(nuevaSolicitud);
-
-            nuevaAdopcion = adopcionRepository.save(nuevaAdopcion);
-
-            PruebaConvivenciaEntity entity =
-                    factory.manufacturePojo(PruebaConvivenciaEntity.class);
-
-            entity.setAdopcion(nuevaAdopcion);
-
-            data.add(pruebaRepository.save(entity));
-        }
-    }
+    @InjectMocks
+    private PruebaConvivenciaService pruebaService;
 
     @Test
     void testCreatePrueba() {
+        PruebaConvivenciaEntity prueba = new PruebaConvivenciaEntity();
+        when(pruebaRepository.save(prueba)).thenReturn(prueba);
 
-        AdoptanteEntity adoptante =
-                adoptanteRepository.save(factory.manufacturePojo(AdoptanteEntity.class));
+        assertSame(prueba, pruebaService.createPrueba(prueba));
 
-        MascotaEntity mascota =
-                mascotaRepository.save(factory.manufacturePojo(MascotaEntity.class));
+        verify(pruebaRepository).save(prueba);
+    }
 
-        SolicitudAdopcionEntity solicitud =
-                factory.manufacturePojo(SolicitudAdopcionEntity.class);
+    @Test
+    void testCreatePruebaCuandoRepositorioFalla() {
+        PruebaConvivenciaEntity prueba = new PruebaConvivenciaEntity();
+        RuntimeException causa = new RuntimeException("fallo de persistencia");
+        when(pruebaRepository.save(prueba)).thenThrow(causa);
 
-        solicitud.setAdoptante(adoptante);
-        solicitud.setMascota(mascota);
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> pruebaService.createPrueba(prueba));
 
-        solicitud = solicitudRepository.save(solicitud);
-
-        AdopcionEntity nuevaAdopcion =
-                factory.manufacturePojo(AdopcionEntity.class);
-
-        nuevaAdopcion.setSolicitud(solicitud);
-
-        nuevaAdopcion = adopcionRepository.save(nuevaAdopcion);
-
-        PruebaConvivenciaEntity entity =
-                factory.manufacturePojo(PruebaConvivenciaEntity.class);
-
-        entity.setAdopcion(nuevaAdopcion);
-
-        PruebaConvivenciaEntity result = pruebaService.createPrueba(entity);
-
-        assertNotNull(result);
-        assertEquals(entity.getEstado(), result.getEstado());
+        assertEquals("Error al crear la prueba de convivencia.", exception.getMessage());
+        assertSame(causa, exception.getCause());
     }
 
     @Test
     void testGetPruebas() {
-        List<PruebaConvivenciaEntity> list = pruebaService.getPruebas();
-        assertEquals(3, list.size());
+        List<PruebaConvivenciaEntity> pruebas = List.of(new PruebaConvivenciaEntity());
+        when(pruebaRepository.findAll()).thenReturn(pruebas);
+
+        assertSame(pruebas, pruebaService.getPruebas());
+
+        verify(pruebaRepository).findAll();
     }
 
     @Test
-    void testGetPrueba() {
+    void testGetPruebaExistente() {
+        PruebaConvivenciaEntity prueba = new PruebaConvivenciaEntity();
+        when(pruebaRepository.findById(ID)).thenReturn(Optional.of(prueba));
 
-        PruebaConvivenciaEntity entity = data.get(0);
+        assertSame(prueba, pruebaService.getPrueba(ID));
 
-        PruebaConvivenciaEntity result =
-                pruebaService.getPrueba(entity.getId());
-
-        assertNotNull(result);
-        assertEquals(entity.getId(), result.getId());
+        verify(pruebaRepository).findById(ID);
     }
 
     @Test
-    void testUpdatePrueba() {
+    void testGetPruebaInexistente() {
+        when(pruebaRepository.findById(ID)).thenReturn(Optional.empty());
 
-        PruebaConvivenciaEntity entity = data.get(0);
-        entity.setEstado("FINALIZADA");
+        assertNull(pruebaService.getPrueba(ID));
 
-        PruebaConvivenciaEntity result =
-                pruebaService.updatePrueba(entity.getId(), entity);
+        verify(pruebaRepository).findById(ID);
+    }
 
-        assertNotNull(result);
-        assertEquals("FINALIZADA", result.getEstado());
+    @Test
+    void testGetPruebasByEstado() {
+        List<PruebaConvivenciaEntity> pruebas = List.of(new PruebaConvivenciaEntity());
+        when(pruebaRepository.findByEstado("FINALIZADA")).thenReturn(pruebas);
+
+        assertSame(pruebas, pruebaService.getPruebasByEstado("FINALIZADA"));
+
+        verify(pruebaRepository).findByEstado("FINALIZADA");
+    }
+
+    @Test
+    void testGetPruebaByAdopcionExistente() {
+        PruebaConvivenciaEntity prueba = new PruebaConvivenciaEntity();
+        when(pruebaRepository.findByAdopcionId(ID)).thenReturn(Optional.of(prueba));
+
+        assertSame(prueba, pruebaService.getPruebaByAdopcion(ID));
+
+        verify(pruebaRepository).findByAdopcionId(ID);
+    }
+
+    @Test
+    void testGetPruebaByAdopcionInexistente() {
+        when(pruebaRepository.findByAdopcionId(ID)).thenReturn(Optional.empty());
+
+        assertNull(pruebaService.getPruebaByAdopcion(ID));
+
+        verify(pruebaRepository).findByAdopcionId(ID);
+    }
+
+    @Test
+    void testUpdatePruebaExistente() {
+        PruebaConvivenciaEntity existente = new PruebaConvivenciaEntity();
+        PruebaConvivenciaEntity actualizada = new PruebaConvivenciaEntity();
+        when(pruebaRepository.findById(ID)).thenReturn(Optional.of(existente));
+        when(pruebaRepository.save(actualizada)).thenReturn(actualizada);
+
+        PruebaConvivenciaEntity result = pruebaService.updatePrueba(ID, actualizada);
+
+        assertSame(actualizada, result);
+        assertEquals(ID, actualizada.getId());
+        verify(pruebaRepository).save(actualizada);
+    }
+
+    @Test
+    void testUpdatePruebaInexistente() {
+        PruebaConvivenciaEntity prueba = new PruebaConvivenciaEntity();
+        when(pruebaRepository.findById(ID)).thenReturn(Optional.empty());
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> pruebaService.updatePrueba(ID, prueba));
+
+        assertEquals("Error al actualizar la prueba de convivencia.", exception.getMessage());
+        assertEquals("La prueba de convivencia no existe.", exception.getCause().getMessage());
+        verify(pruebaRepository).findById(ID);
+        verifyNoMoreInteractions(pruebaRepository);
+    }
+
+    @Test
+    void testUpdatePruebaCuandoRepositorioFalla() {
+        PruebaConvivenciaEntity existente = new PruebaConvivenciaEntity();
+        PruebaConvivenciaEntity actualizada = new PruebaConvivenciaEntity();
+        RuntimeException causa = new RuntimeException("fallo de persistencia");
+        when(pruebaRepository.findById(ID)).thenReturn(Optional.of(existente));
+        when(pruebaRepository.save(actualizada)).thenThrow(causa);
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> pruebaService.updatePrueba(ID, actualizada));
+
+        assertEquals("Error al actualizar la prueba de convivencia.", exception.getMessage());
+        assertSame(causa, exception.getCause());
+        assertEquals(ID, actualizada.getId());
     }
 
     @Test
     void testDeletePrueba() {
+        pruebaService.deletePrueba(ID);
 
-        PruebaConvivenciaEntity entity = data.get(0);
+        verify(pruebaRepository).deleteById(ID);
+    }
 
-        pruebaService.deletePrueba(entity.getId());
+    @Test
+    void testDeletePruebaCuandoRepositorioFalla() {
+        RuntimeException causa = new RuntimeException("fallo de persistencia");
+        doThrow(causa).when(pruebaRepository).deleteById(ID);
 
-        PruebaConvivenciaEntity deleted =
-                pruebaService.getPrueba(entity.getId());
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class, () -> pruebaService.deletePrueba(ID));
 
-        assertNull(deleted);
+        assertEquals("Error al eliminar la prueba de convivencia.", exception.getMessage());
+        assertSame(causa, exception.getCause());
     }
 }
